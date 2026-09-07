@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import TrackCarousel from "@/components/TrackCarousel";
 import VehicleCard from "@/components/VehicleCard";
 import type { Vehicle } from "@/lib/types";
 
@@ -45,6 +46,8 @@ export default async function DashboardPage() {
           ))}
         </div>
       )}
+
+      <TrackCarousel />
     </div>
   );
 }
