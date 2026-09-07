@@ -90,25 +90,32 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
     Beta: ["RR 350", "Xtrainer"],
     BMW: ["S 1000 RR", "R 1250 GS", "F 850 GS", "R nineT", "G 310 R", "F 900 R"],
     CFMoto: ["300NK", "450MT", "700CL-X"],
-    Ducati: ["Panigale V4", "Panigale V2", "Monster", "Multistrada", "Scrambler", "Diavel", "Streetfighter V4"],
+    Bimota: ["Tesi H2", "KB4"],
+    Ducati: ["Panigale V4", "Panigale V2", "Monster", "Multistrada", "Scrambler", "Diavel", "Streetfighter V4", "Hypermotard"],
     Fantic: ["Caballero"],
+    Generic: ["Trigger", "XOR"],
+    Gilera: ["Runner", "Nexus", "Fuoco"],
+    Italjet: ["Dragster"],
+    Keeway: ["RKS", "K300"],
     "Harley-Davidson": ["Sportster", "Fat Boy", "Street Bob", "Road King", "Pan America"],
     Honda: ["CBR600RR", "CBR1000RR-R", "CB650R", "Africa Twin", "CB500F", "Hornet", "SH 125/150", "Forza", "Vision"],
     Husqvarna: ["Svartpilen 401", "Vitpilen 401", "Norden 901"],
-    Kawasaki: ["Ninja 400", "Ninja 650", "Ninja ZX-10R", "Z650", "Z900", "Versys 650"],
+    Kawasaki: ["Ninja 400", "Ninja 650", "Ninja ZX-10R", "Z650", "Z900", "Versys 650", "Versys 1000", "Vulcan S"],
     KTM: ["Duke 125", "Duke 390", "Duke 790", "Duke 890", "1290 Super Duke", "Adventure 390", "Adventure 1290"],
     Kymco: ["People", "Agility"],
     Malaguti: ["Centro", "Madison"],
     "Moto Guzzi": ["V7", "V9", "V85 TT", "California"],
     "MV Agusta": ["Brutale", "F3", "Turismo Veloce", "Dragster"],
     "Peugeot Motocycles": ["Django", "Speedfight"],
-    Piaggio: ["Beverly", "MP3", "Liberty", "Zip"],
+    Piaggio: ["Beverly", "MP3", "Liberty", "Zip", "Medley", "X10"],
+    Rieju: ["MRT"],
     "Royal Enfield": ["Classic 350", "Meteor 350", "Himalayan", "Interceptor 650", "Continental GT 650"],
+    Sym: ["Joymax", "Fiddle"],
     Suzuki: ["GSX-R600", "GSX-R750", "GSX-R1000", "GSX-S750", "GSX-S1000", "SV650", "V-Strom 650", "Burgman", "Hayabusa"],
     SWM: ["Superdual", "Silver Vase"],
     Triumph: ["Street Triple", "Speed Triple", "Tiger 900", "Bonneville T120", "Trident 660"],
-    Vespa: ["Primavera", "GTS", "Sprint", "Elettrica"],
-    Yamaha: ["MT-07", "MT-09", "MT-10", "YZF-R1", "YZF-R6", "YZF-R125", "Tracer 9", "Tenere 700", "NMAX", "XMAX", "Tricity"],
+    Vespa: ["Primavera", "GTS", "Sprint", "50 Special", "Elettrica"],
+    Yamaha: ["MT-07", "MT-09", "MT-10", "YZF-R1", "YZF-R6", "YZF-R7", "YZF-R125", "Tracer 9", "Tenere 700", "NMAX", "XMAX", "Tricity", "Aerox", "XSR900"],
     "Zero Motorcycles": ["SR/F", "DSR"],
   },
 };
@@ -2088,6 +2095,26 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       "RR 350": [{ label: "350cc 4T enduro", yearFrom: 2013, yearTo: null }],
       Xtrainer: [{ label: "300cc 2T", yearFrom: 2015, yearTo: null }],
     },
+    Bimota: {
+      "Tesi H2": [{ label: "998cc Supercharged 228cv", yearFrom: 2020, yearTo: null }],
+      KB4: [{ label: "1043cc 144cv", yearFrom: 2022, yearTo: null }],
+    },
+    Generic: {
+      Trigger: [{ label: "125cc 15cv", yearFrom: 2010, yearTo: null }],
+      XOR: [{ label: "50cc 4cv", yearFrom: 2010, yearTo: null }],
+    },
+    Gilera: {
+      Runner: [{ label: "125cc 15cv", yearFrom: 1997, yearTo: null }],
+      Nexus: [{ label: "300cc 22cv", yearFrom: 2006, yearTo: null }],
+      Fuoco: [{ label: "500cc 40cv", yearFrom: 2007, yearTo: null }],
+    },
+    Italjet: {
+      Dragster: [{ label: "125cc 15cv", yearFrom: 1999, yearTo: null }],
+    },
+    Keeway: {
+      RKS: [{ label: "125cc 11cv", yearFrom: 2018, yearTo: null }],
+      K300: [{ label: "300cc 29cv", yearFrom: 2020, yearTo: null }],
+    },
     CFMoto: {
       "300NK": [{ label: "292cc 29cv", yearFrom: 2019, yearTo: null }],
       "450MT": [{ label: "449cc 43cv", yearFrom: 2023, yearTo: null }],
@@ -2181,6 +2208,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1262cc 159cv", yearFrom: 2019, yearTo: 2022 },
       ],
       "Streetfighter V4": [{ label: "1103cc 208cv", yearFrom: 2020, yearTo: null }],
+      Hypermotard: [{ label: "950cc 114cv", yearFrom: 2019, yearTo: null }],
     },
     "Harley-Davidson": {
       Sportster: [
@@ -2227,6 +2255,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       Z650: [{ label: "649cc 68cv", yearFrom: 2017, yearTo: null }],
       Z900: [{ label: "948cc 125cv", yearFrom: 2017, yearTo: null }],
       "Versys 650": [{ label: "649cc 68cv", yearFrom: 2015, yearTo: null }],
+      "Versys 1000": [{ label: "1043cc 120cv", yearFrom: 2019, yearTo: null }],
+      "Vulcan S": [{ label: "649cc 61cv", yearFrom: 2015, yearTo: null }],
     },
     KTM: {
       "Duke 125": [{ label: "125cc 15cv", yearFrom: 2017, yearTo: null }],
@@ -2266,6 +2296,11 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "150cc 13cv", yearFrom: 2010, yearTo: null },
       ],
       Zip: [{ label: "50cc 3cv", yearFrom: 2010, yearTo: null }],
+      Medley: [{ label: "125cc 12cv", yearFrom: 2016, yearTo: null }],
+      X10: [{ label: "350cc 33cv", yearFrom: 2012, yearTo: 2018 }],
+    },
+    Rieju: {
+      MRT: [{ label: "50cc 6cv", yearFrom: 2015, yearTo: null }],
     },
     "Royal Enfield": {
       "Classic 350": [{ label: "349cc 20cv", yearFrom: 2021, yearTo: null }],
@@ -2291,6 +2326,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1299cc 197cv", yearFrom: 2008, yearTo: 2020 },
       ],
     },
+    Sym: {
+      Joymax: [{ label: "300cc 27cv", yearFrom: 2015, yearTo: null }],
+      Fiddle: [{ label: "125cc 11cv", yearFrom: 2013, yearTo: null }],
+    },
     Triumph: {
       "Street Triple": [{ label: "765cc 128cv", yearFrom: 2017, yearTo: null }],
       "Speed Triple": [{ label: "1160cc 178cv", yearFrom: 2021, yearTo: null }],
@@ -2309,6 +2348,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "150cc 13cv", yearFrom: 2013, yearTo: null },
       ],
       Elettrica: [{ label: "Elettrica 4cv", yearFrom: 2019, yearTo: null }],
+      "50 Special": [{ label: "50cc 2cv", yearFrom: 1969, yearTo: 1983 }],
     },
     Yamaha: {
       "MT-07": [{ label: "689cc 75cv", yearFrom: 2014, yearTo: null }],
@@ -2319,7 +2359,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       "MT-10": [{ label: "998cc 165cv", yearFrom: 2016, yearTo: null }],
       "YZF-R1": [{ label: "998cc 200cv", yearFrom: 2015, yearTo: null }],
       "YZF-R6": [{ label: "599cc 118cv", yearFrom: 2006, yearTo: 2020 }],
+      "YZF-R7": [{ label: "689cc 73cv", yearFrom: 2021, yearTo: null }],
       "YZF-R125": [{ label: "125cc 15cv", yearFrom: 2019, yearTo: null }],
+      Aerox: [{ label: "125cc 11cv", yearFrom: 2013, yearTo: null }],
+      "XSR900": [{ label: "890cc 119cv", yearFrom: 2022, yearTo: null }],
       "Tracer 9": [{ label: "890cc 119cv", yearFrom: 2021, yearTo: null }],
       "Tenere 700": [{ label: "689cc 73cv", yearFrom: 2019, yearTo: null }],
       NMAX: [
