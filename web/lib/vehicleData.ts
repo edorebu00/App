@@ -178,8 +178,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.0 72cv", yearFrom: 2020, yearTo: null },
         { label: "1.5 Hybrid 116cv", yearFrom: 2020, yearTo: null },
         { label: "1.5 Hybrid 130cv GR Sport", yearFrom: 2022, yearTo: null },
-        { label: "GR Yaris 1.6 Turbo 261cv", yearFrom: 2020, yearTo: 2022 },
-        { label: "GR Yaris 1.6 Turbo 280cv", yearFrom: 2022, yearTo: null },
+        { label: "GR Yaris 1.6 Turbo 261cv", yearFrom: 2020, yearTo: 2023 },
+        { label: "GR Yaris 1.6 Turbo 280cv", yearFrom: 2024, yearTo: null },
       ],
       Corolla: [
         { label: "1.2 Turbo 116cv", yearFrom: 2019, yearTo: null },
