@@ -8,9 +8,12 @@ import type { SearchPayload } from "@/lib/types";
 // Hobby di Vercel supporta funzioni fino a 300s.
 export const maxDuration = 120;
 
-function extractPayload(text: string): SearchPayload {
+// Ritorna null se il blocco JSON non c'e' o non e' valido, cosi' chi chiama puo' distinguere
+// "l'IA ha risposto ma non ha trovato nulla" (array vuoti, ok) da "la risposta e' incompleta/rotta"
+// (es. troncata per max_tokens), che va segnalata come errore invece di sembrare un risultato vuoto.
+function extractPayload(text: string): SearchPayload | null {
   const match = text.match(/```json\s*([\s\S]*?)```/) || text.match(/(\{[\s\S]*\})/);
-  if (!match) return { risorse: [], specifiche: {} };
+  if (!match) return null;
   try {
     const parsed = JSON.parse(match[1]);
     return {
@@ -18,7 +21,7 @@ function extractPayload(text: string): SearchPayload {
       specifiche: typeof parsed.specifiche === "object" && parsed.specifiche ? parsed.specifiche : {},
     };
   } catch {
-    return { risorse: [], specifiche: {} };
+    return null;
   }
 }
 
@@ -58,7 +61,7 @@ export async function POST(request: Request) {
 
     const message = await anthropic.messages.create({
       model: CLAUDE_MODEL,
-      max_tokens: 3500,
+      max_tokens: 5500,
       system:
         "Sei l'assistente tecnico di My Vehicle. Quando un utente aggiunge un veicolo, il tuo compito è " +
         "riempire SUBITO le sue schede (Motore, Carrozzeria, Assetto, Impianto frenante, Trasmissione, " +
@@ -106,6 +109,22 @@ export async function POST(request: Request) {
     const textBlocks = message.content.filter((b) => b.type === "text") as Array<{ type: "text"; text: string }>;
     const fullText = textBlocks.map((b) => b.text).join("\n");
     const payload = extractPayload(fullText);
+
+    if (!payload) {
+      console.error(
+        `Ricerca IA: JSON non estraibile dalla risposta (stop_reason=${message.stop_reason}). ` +
+          `Testo (primi 500 caratteri): ${fullText.slice(0, 500)}`
+      );
+      return NextResponse.json(
+        {
+          error:
+            message.stop_reason === "max_tokens"
+              ? "La ricerca ha prodotto troppi risultati ed è stata interrotta. Riprova con una ricerca più specifica."
+              : "La ricerca non ha prodotto un risultato utilizzabile. Riprova.",
+        },
+        { status: 502 }
+      );
+    }
 
     await supabase.from("search_results").insert({
       user_id: user.id,
