@@ -69,7 +69,14 @@ export async function POST(request: Request) {
         "a mano. Usa lo strumento di ricerca web per trovare forum dedicati, manuali/PDF di manutenzione, video " +
         "YouTube (tutorial/riparazioni/revisioni), schemi tecnici/viste esplose, e negozi/cataloghi di pezzi di " +
         "ricambio pertinenti al modello e alla motorizzazione indicati. L'utente è in attesa: sii efficiente, fai " +
-        "al massimo 3-4 ricerche mirate (non ripetere ricerche simili) e vai dritto al risultato senza divagare.\n\n" +
+        "al massimo 4-5 ricerche mirate (non ripetere ricerche simili) e vai dritto al risultato senza divagare.\n\n" +
+        "DUE RICERCHE SONO PRIORITARIE e vanno fatte quasi sempre (salvo che il veicolo sia troppo generico/raro): " +
+        "1) la pagina del catalogo ricambi di AutoDoc (sito autodoc.it o autodoc.co) per questo esatto modello e " +
+        "motorizzazione, da salvare con categoria 'catalogo_ricambi'; 2) il piano di manutenzione/tagliandi " +
+        "ufficiale del costruttore (intervalli di manutenzione, cosa fare a quali km/anni), da salvare con " +
+        "categoria 'piano_manutenzione' — utile a chi vuole fare da sé i tagliandi senza andare dal meccanico. " +
+        "Se non trovi una pagina AutoDoc specifica per il modello esatto, usa la pagina di ricerca generica di " +
+        "AutoDoc per quella marca/modello invece di ometterla del tutto.\n\n" +
         "REGOLA IMPORTANTE su \"sezione\": per OGNI risultato scegli la sezione più specifica possibile tra " +
         "motore, carrozzeria, assetto, impianto_frenante, trasmissione, elettronica. Usa 'generale' SOLO come " +
         "ultima risorsa se davvero non è riconducibile a nessuna di queste (es. un forum generale sul marchio). " +
@@ -85,7 +92,7 @@ export async function POST(request: Request) {
         "avere dati plausibili, in quel caso ometti solo quella singola voce.\n\n" +
         "Rispondi in italiano con un riepilogo testuale di massimo 2-3 frasi, poi termina SEMPRE con un blocco ```json``` " +
         "contenente UN SOLO oggetto con questa forma esatta:\n" +
-        '{"risorse": [{"categoria": "forum|manuale_pdf|video|schema_tecnico|pezzo_ricambio|altro", ' +
+        '{"risorse": [{"categoria": "forum|manuale_pdf|video|schema_tecnico|pezzo_ricambio|catalogo_ricambi|piano_manutenzione|altro", ' +
         '"sezione": "motore|carrozzeria|assetto|impianto_frenante|trasmissione|elettronica|generale", ' +
         '"titolo": "...", "url": "...", "descrizione": "..."}], ' +
         '"specifiche": {"motore": {"Cilindrata": "1998 cc", "Potenza": "150 CV"}, "carrozzeria": {...}, ' +
@@ -101,7 +108,7 @@ export async function POST(request: Request) {
         {
           type: "web_search_20250305",
           name: "web_search",
-          max_uses: 4,
+          max_uses: 5,
         } as any,
       ],
     });

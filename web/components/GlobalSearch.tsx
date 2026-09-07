@@ -5,7 +5,11 @@ import ResourceCategoryView from "./ResourceCategoryView";
 import type { ResourceLink } from "@/lib/types";
 
 const TABS: Array<{ id: "documenti" | "forum" | "video"; label: string; categorie: ResourceLink["categoria"][] }> = [
-  { id: "documenti", label: "📄 Documenti", categorie: ["manuale_pdf", "schema_tecnico", "pezzo_ricambio"] },
+  {
+    id: "documenti",
+    label: "📄 Documenti",
+    categorie: ["manuale_pdf", "schema_tecnico", "pezzo_ricambio", "catalogo_ricambi", "piano_manutenzione"],
+  },
   { id: "forum", label: "💬 Forum", categorie: ["forum"] },
   { id: "video", label: "🎥 Video", categorie: ["video"] },
 ];

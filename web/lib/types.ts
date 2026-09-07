@@ -46,7 +46,15 @@ export type SectionKey =
   | "generale";
 
 export interface ResourceLink {
-  categoria: "forum" | "manuale_pdf" | "video" | "schema_tecnico" | "pezzo_ricambio" | "altro";
+  categoria:
+    | "forum"
+    | "manuale_pdf"
+    | "video"
+    | "schema_tecnico"
+    | "pezzo_ricambio"
+    | "catalogo_ricambi"
+    | "piano_manutenzione"
+    | "altro";
   sezione?: SectionKey;
   titolo: string;
   url: string;

@@ -8,7 +8,11 @@ import type { ResourceLink, SectionImage, SectionKey, SectionSpecs, VehicleSecti
 
 type ResourceTabId = "documenti" | "forum" | "video";
 const RESOURCE_TABS: Array<{ id: ResourceTabId; label: string; categorie: ResourceLink["categoria"][] }> = [
-  { id: "documenti", label: "📄 Documenti", categorie: ["manuale_pdf", "schema_tecnico", "pezzo_ricambio"] },
+  {
+    id: "documenti",
+    label: "📄 Documenti",
+    categorie: ["manuale_pdf", "schema_tecnico", "pezzo_ricambio", "catalogo_ricambi", "piano_manutenzione"],
+  },
   { id: "forum", label: "💬 Forum", categorie: ["forum"] },
   { id: "video", label: "🎥 Video", categorie: ["video"] },
 ];
@@ -79,9 +83,46 @@ export default function VehicleDetailTabs({
 
   const activeSection = sections.find((s) => s.id === activeId);
   const activeResourceTab = RESOURCE_TABS.find((t) => t.id === activeId);
+  const autodocLink = results.find((r) => r.categoria === "catalogo_ricambi");
+  const maintenanceLink = results.find((r) => r.categoria === "piano_manutenzione");
 
   return (
     <div>
+      {(autodocLink || maintenanceLink) && (
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {autodocLink && (
+            <a
+              href={autodocLink.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-lg border border-flag/40 bg-graphite-800 p-4 transition hover:border-flag"
+            >
+              <span className="text-2xl">🛒</span>
+              <span>
+                <span className="block font-display font-semibold text-graphite-50">Ricambi su AutoDoc</span>
+                <span className="block text-xs text-graphite-400">{autodocLink.titolo}</span>
+              </span>
+            </a>
+          )}
+          {maintenanceLink && (
+            <a
+              href={maintenanceLink.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-lg border border-flag/40 bg-graphite-800 p-4 transition hover:border-flag"
+            >
+              <span className="text-2xl">🛠️</span>
+              <span>
+                <span className="block font-display font-semibold text-graphite-50">
+                  Piano di manutenzione ufficiale
+                </span>
+                <span className="block text-xs text-graphite-400">{maintenanceLink.titolo}</span>
+              </span>
+            </a>
+          )}
+        </div>
+      )}
+
       {/* Barra di stato/aggiornamento ricerca: sempre visibile, in qualunque tab */}
       <div className="card mb-4">
         {loading ? (
