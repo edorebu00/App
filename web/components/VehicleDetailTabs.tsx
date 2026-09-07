@@ -85,7 +85,9 @@ export default function VehicleDetailTabs({
       {/* Barra di stato/aggiornamento ricerca: sempre visibile, in qualunque tab */}
       <div className="card mb-4">
         {loading ? (
-          <p className="text-sm text-graphite-300">🔎 L&apos;agente IA sta cercando informazioni online…</p>
+          <p className="text-sm text-graphite-300">
+            🔎 L&apos;agente IA sta cercando informazioni online… di solito serve mezzo minuto circa.
+          </p>
         ) : !hasSearchedOnce ? (
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm text-graphite-400">Nessuna informazione trovata ancora per questo veicolo.</p>

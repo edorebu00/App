@@ -3,7 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient, CLAUDE_MODEL } from "@/lib/anthropic";
 import type { SearchPayload } from "@/lib/types";
 
-export const maxDuration = 60;
+// La ricerca fa alcune chiamate allo strumento web_search piu' la generazione delle
+// specifiche per sezione: teniamo un margine oltre alla durata attesa (~20-40s), il piano
+// Hobby di Vercel supporta funzioni fino a 300s.
+export const maxDuration = 120;
 
 function extractPayload(text: string): SearchPayload {
   const match = text.match(/```json\s*([\s\S]*?)```/) || text.match(/(\{[\s\S]*\})/);
@@ -55,14 +58,15 @@ export async function POST(request: Request) {
 
     const message = await anthropic.messages.create({
       model: CLAUDE_MODEL,
-      max_tokens: 6000,
+      max_tokens: 3500,
       system:
         "Sei l'assistente tecnico di My Vehicle. Quando un utente aggiunge un veicolo, il tuo compito è " +
         "riempire SUBITO le sue schede (Motore, Carrozzeria, Assetto, Impianto frenante, Trasmissione, " +
         "Elettronica) con informazioni utili, cosi' l'utente trova già tutto pronto senza dover compilare nulla " +
         "a mano. Usa lo strumento di ricerca web per trovare forum dedicati, manuali/PDF di manutenzione, video " +
         "YouTube (tutorial/riparazioni/revisioni), schemi tecnici/viste esplose, e negozi/cataloghi di pezzi di " +
-        "ricambio pertinenti al modello e alla motorizzazione indicati.\n\n" +
+        "ricambio pertinenti al modello e alla motorizzazione indicati. L'utente è in attesa: sii efficiente, fai " +
+        "al massimo 3-4 ricerche mirate (non ripetere ricerche simili) e vai dritto al risultato senza divagare.\n\n" +
         "REGOLA IMPORTANTE su \"sezione\": per OGNI risultato scegli la sezione più specifica possibile tra " +
         "motore, carrozzeria, assetto, impianto_frenante, trasmissione, elettronica. Usa 'generale' SOLO come " +
         "ultima risorsa se davvero non è riconducibile a nessuna di queste (es. un forum generale sul marchio). " +
@@ -76,7 +80,7 @@ export async function POST(request: Request) {
         "è preferibile un'informazione indicativa utile piuttosto che nessuna informazione. Non inventare però " +
         "numeri specifici e mai visti per un veicolo generico: se il modello è troppo raro o sconosciuto per " +
         "avere dati plausibili, in quel caso ometti solo quella singola voce.\n\n" +
-        "Rispondi in italiano con un breve riepilogo testuale, poi termina SEMPRE con un blocco ```json``` " +
+        "Rispondi in italiano con un riepilogo testuale di massimo 2-3 frasi, poi termina SEMPRE con un blocco ```json``` " +
         "contenente UN SOLO oggetto con questa forma esatta:\n" +
         '{"risorse": [{"categoria": "forum|manuale_pdf|video|schema_tecnico|pezzo_ricambio|altro", ' +
         '"sezione": "motore|carrozzeria|assetto|impianto_frenante|trasmissione|elettronica|generale", ' +
@@ -94,7 +98,7 @@ export async function POST(request: Request) {
         {
           type: "web_search_20250305",
           name: "web_search",
-          max_uses: 6,
+          max_uses: 4,
         } as any,
       ],
     });

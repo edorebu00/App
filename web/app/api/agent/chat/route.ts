@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient, CLAUDE_MODEL } from "@/lib/anthropic";
 
-export const maxDuration = 60;
+export const maxDuration = 90;
 
 // Budget di caratteri per il contesto documentale iniettato nel prompt (MVP senza embeddings/vector DB)
 const MAX_CONTEXT_CHARS = 250_000;

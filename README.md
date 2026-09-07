@@ -91,6 +91,6 @@ Nessun costo fisso mensile: paghi solo se e quando l'IA viene effettivamente uti
 - Gli "esplosi" dei componenti sono gestiti come immagini collegate a ciascuna sezione: l'utente può
   caricarne una propria oppure trovarne una tramite la sezione Ricerca (i risultati con categoria
   "schema_tecnico" sono link esterni, non vengono scaricati automaticamente per motivi di copyright).
-- Le API route di ricerca/chat/elaborazione documenti girano come funzioni serverless Vercel con
-  `maxDuration = 60` secondi (il massimo configurabile sul piano Hobby): sufficiente per la maggior
-  parte dei casi, ma un PDF molto grande potrebbe richiedere più tempo di elaborazione.
+- Le API route di ricerca/chat/elaborazione documenti girano come funzioni serverless Vercel. Il
+  piano Hobby supporta funzioni fino a 300s: la ricerca (che può fare più chiamate allo strumento
+  web_search) usa `maxDuration = 180`, chat e processing documenti `maxDuration = 90`.
