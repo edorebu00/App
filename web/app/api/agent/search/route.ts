@@ -71,7 +71,9 @@ export async function POST(request: Request) {
         "ricambio pertinenti al modello e alla motorizzazione indicati. L'utente è in attesa: sii efficiente, fai " +
         "al massimo 4-5 ricerche mirate (non ripetere ricerche simili) e vai dritto al risultato senza divagare.\n\n" +
         "DUE RICERCHE SONO PRIORITARIE e vanno fatte quasi sempre (salvo che il veicolo sia troppo generico/raro): " +
-        "1) la pagina del catalogo ricambi di AutoDoc (sito autodoc.it o autodoc.co) per questo esatto modello e " +
+        "1) la pagina del catalogo ricambi di AUTODOC (dominio auto-doc.it per l'Italia, CON il trattino — NON " +
+        "autodoc.it senza trattino, che è un'azienda diversa e non centrata; per altri paesi il dominio è " +
+        "autodoc.<paese>, es. autodoc.co.uk, autodoc.de) per questo esatto modello e " +
         "motorizzazione, da salvare con categoria 'catalogo_ricambi'; 2) il piano di manutenzione/tagliandi " +
         "ufficiale del costruttore (intervalli di manutenzione, cosa fare a quali km/anni), da salvare con " +
         "categoria 'piano_manutenzione' — utile a chi vuole fare da sé i tagliandi senza andare dal meccanico. " +
