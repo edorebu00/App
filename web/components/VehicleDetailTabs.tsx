@@ -39,6 +39,7 @@ export default function VehicleDetailTabs({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearchedOnce, setHasSearchedOnce] = useState(initialResults.length > 0);
+  const [showSearchBox, setShowSearchBox] = useState(false);
 
   async function runSearch(q: string) {
     if (!q.trim()) return;
@@ -81,6 +82,56 @@ export default function VehicleDetailTabs({
 
   return (
     <div>
+      {/* Barra di stato/aggiornamento ricerca: sempre visibile, in qualunque tab */}
+      <div className="card mb-4">
+        {loading ? (
+          <p className="text-sm text-graphite-300">🔎 L&apos;agente IA sta cercando informazioni online…</p>
+        ) : !hasSearchedOnce ? (
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm text-graphite-400">Nessuna informazione trovata ancora per questo veicolo.</p>
+            <button onClick={() => runSearch(query)} className="btn-primary whitespace-nowrap">
+              🔍 Cerca informazioni online
+            </button>
+          </div>
+        ) : (
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm text-graphite-400">
+                {summary ? summary : "Informazioni trovate online per questo veicolo."}
+              </p>
+              <div className="flex shrink-0 gap-2">
+                <button onClick={() => setShowSearchBox((s) => !s)} className="btn-secondary text-xs">
+                  {showSearchBox ? "Chiudi" : "Cerca altro"}
+                </button>
+                <button onClick={() => runSearch(query)} className="btn-primary text-xs whitespace-nowrap">
+                  🔄 Aggiorna
+                </button>
+              </div>
+            </div>
+            {showSearchBox && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  runSearch(query);
+                }}
+                className="mt-3 flex gap-2"
+              >
+                <input
+                  className="input"
+                  placeholder="Modello, motorizzazione, o cosa cercare…"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+                <button type="submit" className="btn-primary whitespace-nowrap">
+                  Cerca
+                </button>
+              </form>
+            )}
+          </div>
+        )}
+        {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+      </div>
+
       <div className="mb-4 flex flex-wrap gap-2 border-b border-graphite-700 pb-2">
         {sections.map((s) => (
           <button
@@ -117,45 +168,16 @@ export default function VehicleDetailTabs({
               r.sezione === activeSection.section_key &&
               ["manuale_pdf", "schema_tecnico", "pezzo_ricambio"].includes(r.categoria)
           )}
+          searchPending={loading}
         />
       )}
 
       {activeResourceTab && (
-        <div>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              runSearch(query);
-            }}
-            className="card mb-4 flex gap-2"
-          >
-            <input
-              className="input"
-              placeholder="Modello o codice motore…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <button type="submit" disabled={loading} className="btn-primary whitespace-nowrap">
-              {loading ? "Ricerca…" : hasSearchedOnce ? "Aggiorna" : "Cerca"}
-            </button>
-          </form>
-
-          {error && <p className="mb-3 text-sm text-red-400">{error}</p>}
-          {!loading && !hasSearchedOnce && !error && (
-            <p className="mb-3 text-sm text-graphite-500">
-              Nessuna ricerca effettuata ancora. Clicca &quot;Cerca&quot; per trovare risorse online su questo veicolo.
-            </p>
-          )}
-          {!loading && summary && (
-            <p className="mb-4 whitespace-pre-wrap text-sm text-graphite-300">{summary}</p>
-          )}
-
-          <ResourceCategoryView
-            category={activeResourceTab.id}
-            loading={loading}
-            items={results.filter((r) => activeResourceTab.categorie.includes(r.categoria))}
-          />
-        </div>
+        <ResourceCategoryView
+          category={activeResourceTab.id}
+          loading={loading}
+          items={results.filter((r) => activeResourceTab.categorie.includes(r.categoria))}
+        />
       )}
     </div>
   );
