@@ -40,8 +40,8 @@ export default function RegisterPage() {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="card max-w-sm text-center">
-          <h1 className="mb-2 text-xl font-semibold text-brand-700">Controlla la tua email</h1>
-          <p className="text-sm text-slate-600">
+          <h1 className="mb-2 text-xl font-semibold text-brand-400">Controlla la tua email</h1>
+          <p className="text-sm text-graphite-300">
             Ti abbiamo inviato un link di conferma a <strong>{email}</strong>. Apri il link per attivare
             l&apos;account, poi torna qui per accedere.
           </p>
@@ -56,8 +56,8 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-center text-2xl font-bold text-brand-700">My Vehicle</h1>
-        <p className="mb-6 text-center text-sm text-slate-500">Crea il tuo account</p>
+        <h1 className="mb-1 text-center text-2xl font-bold text-brand-400">My Vehicle</h1>
+        <p className="mb-6 text-center text-sm text-graphite-400">Crea il tuo account</p>
 
         <form onSubmit={handleSubmit} className="card space-y-4">
           <div>
@@ -82,17 +82,17 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <p className="mt-1 text-xs text-slate-400">Almeno 6 caratteri.</p>
+            <p className="mt-1 text-xs text-graphite-500">Almeno 6 caratteri.</p>
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-red-400">{error}</p>}
 
           <button type="submit" disabled={loading} className="btn-primary w-full">
             {loading ? "Creazione account…" : "Registrati"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-slate-500">
+        <p className="mt-4 text-center text-sm text-graphite-400">
           Hai già un account?{" "}
           <Link href="/login" className="font-medium text-brand-600 hover:underline">
             Accedi

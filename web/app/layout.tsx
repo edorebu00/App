@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
+import { Rajdhani } from "next/font/google";
 import "./globals.css";
+
+const rajdhani = Rajdhani({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-display",
+});
 
 export const metadata: Metadata = {
   title: "My Vehicle",
@@ -8,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it">
+    <html lang="it" className={rajdhani.variable}>
       <body>{children}</body>
     </html>
   );

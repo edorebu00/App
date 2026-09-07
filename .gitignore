@@ -24,6 +24,7 @@ yarn-error.log*
 .DS_Store
 .vscode/
 .idea/
+.claude/
 
 # TypeScript
 *.tsbuildinfo

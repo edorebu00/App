@@ -74,8 +74,8 @@ export default function FileUploader({ vehicleId }: { vehicleId: string }) {
         {uploading ? "Caricamento…" : "📤 Carica file"}
         <input type="file" accept=".pdf,.txt" className="hidden" onChange={handleUpload} />
       </label>
-      <p className="mt-1 text-xs text-slate-400">Formati supportati per la lettura IA: PDF, TXT.</p>
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      <p className="mt-1 text-xs text-graphite-500">Formati supportati per la lettura IA: PDF, TXT.</p>
+      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
     </div>
   );
 }

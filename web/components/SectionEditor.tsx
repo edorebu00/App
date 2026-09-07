@@ -85,7 +85,7 @@ export default function SectionEditor({ section, images: initialImages }: Props)
 
   return (
     <div className="card">
-      <h2 className="mb-4 text-lg font-semibold text-slate-800">{section.label}</h2>
+      <h2 className="mb-4 text-lg font-semibold text-graphite-50">{section.label}</h2>
 
       <div className="space-y-2">
         {fields.map(([key, value], index) => (
@@ -131,10 +131,10 @@ export default function SectionEditor({ section, images: initialImages }: Props)
         <button onClick={handleSave} disabled={saving} className="btn-primary">
           {saving ? "Salvataggio…" : "Salva sezione"}
         </button>
-        {saved && <span className="text-sm text-green-600">Salvato ✓</span>}
+        {saved && <span className="text-sm text-green-400">Salvato ✓</span>}
       </div>
 
-      <div className="mt-6 border-t border-slate-100 pt-4">
+      <div className="mt-6 border-t border-graphite-800 pt-4">
         <div className="mb-2 flex items-center justify-between">
           <label className="label mb-0">Schemi ed esplosi</label>
           <label className="btn-secondary cursor-pointer text-xs">
@@ -144,16 +144,16 @@ export default function SectionEditor({ section, images: initialImages }: Props)
         </div>
 
         {images.length === 0 ? (
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-graphite-500">
             Nessuno schema caricato. Usa la sezione &quot;Ricerca&quot; del veicolo per trovarne uno online, oppure
             caricane uno tuo.
           </p>
         ) : (
           <ul className="space-y-1 text-sm">
             {images.map((img) => (
-              <li key={img.id} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
-                <span className="truncate text-slate-600">{img.caption || "Immagine"}</span>
-                <span className="text-xs text-slate-400">{img.source === "upload" ? "Caricata" : "Dal web"}</span>
+              <li key={img.id} className="flex items-center justify-between rounded-lg bg-graphite-700 px-3 py-2">
+                <span className="truncate text-graphite-300">{img.caption || "Immagine"}</span>
+                <span className="text-xs text-graphite-500">{img.source === "upload" ? "Caricata" : "Dal web"}</span>
               </li>
             ))}
           </ul>

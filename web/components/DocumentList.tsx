@@ -17,7 +17,7 @@ export default function DocumentList({ documents }: { documents: DocumentRow[] }
   }
 
   if (documents.length === 0) {
-    return <p className="text-sm text-slate-400">Nessun file caricato per questo veicolo.</p>;
+    return <p className="text-sm text-graphite-500">Nessun file caricato per questo veicolo.</p>;
   }
 
   return (
@@ -25,8 +25,8 @@ export default function DocumentList({ documents }: { documents: DocumentRow[] }
       {documents.map((doc) => (
         <li key={doc.id} className="card flex items-center justify-between">
           <div>
-            <p className="font-medium text-slate-700">{doc.file_name}</p>
-            <p className="text-xs text-slate-400">
+            <p className="font-medium text-graphite-200">{doc.file_name}</p>
+            <p className="text-xs text-graphite-500">
               {doc.processed
                 ? "Pronto per la chat IA"
                 : doc.processing_error

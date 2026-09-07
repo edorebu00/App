@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_SECTIONS, type VehicleType } from "@/lib/types";
+import { getMakes, getModels } from "@/lib/vehicleData";
 
 export default function NewVehiclePage() {
   const router = useRouter();
@@ -17,6 +18,20 @@ export default function NewVehiclePage() {
   const [plate, setPlate] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const makes = useMemo(() => getMakes(type), [type]);
+  const models = useMemo(() => (make ? getModels(type, make) : []), [type, make]);
+
+  function handleTypeChange(t: VehicleType) {
+    setType(t);
+    setMake("");
+    setModel("");
+  }
+
+  function handleMakeChange(m: string) {
+    setMake(m);
+    setModel("");
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -67,12 +82,14 @@ export default function NewVehiclePage() {
     }
 
     setLoading(false);
-    router.push(`/veicoli/${vehicle.id}`);
+    // Al primo arrivo sulla scheda veicolo, l'app avvia in automatico la ricerca di
+    // risorse online (documenti, forum, video) per marca/modello/motorizzazione.
+    router.push(`/veicoli/${vehicle.id}?autosearch=1`);
   }
 
   return (
     <div className="mx-auto max-w-lg">
-      <h1 className="mb-6 text-2xl font-bold text-slate-800">Aggiungi veicolo</h1>
+      <h1 className="mb-6 text-2xl font-bold text-graphite-50">Aggiungi veicolo</h1>
 
       <form onSubmit={handleSubmit} className="card space-y-4">
         <div>
@@ -82,11 +99,11 @@ export default function NewVehiclePage() {
               <button
                 key={t}
                 type="button"
-                onClick={() => setType(t)}
+                onClick={() => handleTypeChange(t)}
                 className={`flex-1 rounded-lg border px-4 py-2 text-sm font-medium capitalize ${
                   type === t
-                    ? "border-brand-600 bg-brand-50 text-brand-700"
-                    : "border-slate-300 text-slate-600 hover:bg-slate-50"
+                    ? "border-brand-600 bg-brand-50 text-brand-400"
+                    : "border-graphite-600 text-graphite-300 hover:bg-graphite-700"
                 }`}
               >
                 {t}
@@ -98,24 +115,56 @@ export default function NewVehiclePage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="label" htmlFor="make">Marca</label>
-            <input id="make" required className="input" value={make} onChange={(e) => setMake(e.target.value)} />
+            <select
+              id="make"
+              required
+              className="input"
+              value={make}
+              onChange={(e) => handleMakeChange(e.target.value)}
+            >
+              <option value="" disabled>
+                Seleziona marca…
+              </option>
+              {makes.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="label" htmlFor="model">Modello</label>
-            <input id="model" required className="input" value={model} onChange={(e) => setModel(e.target.value)} />
+            <select
+              id="model"
+              required
+              className="input"
+              value={model}
+              disabled={!make}
+              onChange={(e) => setModel(e.target.value)}
+            >
+              <option value="" disabled>
+                {make ? "Seleziona modello…" : "Scegli prima la marca"}
+              </option>
+              {models.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="label" htmlFor="engineCode">Codice motore</label>
+            <label className="label" htmlFor="engineCode">Motorizzazione</label>
             <input
               id="engineCode"
               className="input"
-              placeholder="es. CAHA, K20A…"
+              placeholder="es. 1.6 MultiJet, K20A…"
               value={engineCode}
               onChange={(e) => setEngineCode(e.target.value)}
             />
+            <p className="mt-1 text-xs text-graphite-500">Cilindrata/alimentazione o codice motore, se lo conosci.</p>
           </div>
           <div>
             <label className="label" htmlFor="year">Anno</label>
@@ -134,7 +183,7 @@ export default function NewVehiclePage() {
           <input id="plate" className="input" value={plate} onChange={(e) => setPlate(e.target.value)} />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
 
         <button type="submit" disabled={loading} className="btn-primary w-full">
           {loading ? "Salvataggio…" : "Salva veicolo"}

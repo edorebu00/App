@@ -34,8 +34,8 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-center text-2xl font-bold text-brand-700">My Vehicle</h1>
-        <p className="mb-6 text-center text-sm text-slate-500">Accedi al tuo garage digitale</p>
+        <h1 className="mb-1 text-center text-2xl font-bold text-brand-400">My Vehicle</h1>
+        <p className="mb-6 text-center text-sm text-graphite-400">Accedi al tuo garage digitale</p>
 
         <form onSubmit={handleSubmit} className="card space-y-4">
           <div>
@@ -61,14 +61,14 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-red-400">{error}</p>}
 
           <button type="submit" disabled={loading} className="btn-primary w-full">
             {loading ? "Accesso in corso…" : "Accedi"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-slate-500">
+        <p className="mt-4 text-center text-sm text-graphite-400">
           Non hai un account?{" "}
           <Link href="/registrati" className="font-medium text-brand-600 hover:underline">
             Registrati

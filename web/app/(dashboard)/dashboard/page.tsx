@@ -15,14 +15,14 @@ export default async function DashboardPage() {
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-800">I tuoi veicoli</h1>
+        <h1 className="text-2xl font-bold text-graphite-50">I tuoi veicoli</h1>
         <Link href="/veicoli/nuovo" className="btn-primary">
           + Aggiungi veicolo
         </Link>
       </div>
 
       {list.length === 0 ? (
-        <div className="card text-center text-slate-500">
+        <div className="card text-center text-graphite-400">
           <p>Non hai ancora aggiunto nessun veicolo.</p>
           <Link href="/veicoli/nuovo" className="btn-primary mt-4 inline-flex">
             Aggiungi il primo veicolo

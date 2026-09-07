@@ -62,7 +62,7 @@ export default function ChatPanel({
     <div className="card flex h-[520px] flex-col">
       <div className="flex-1 space-y-3 overflow-y-auto">
         {messages.length === 0 && (
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-graphite-500">
             Fai una domanda sul tuo veicolo: l&apos;assistente risponderà usando i documenti caricati.
           </p>
         )}
@@ -70,19 +70,19 @@ export default function ChatPanel({
           <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
               className={`max-w-[80%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
-                m.role === "user" ? "bg-brand-600 text-white" : "bg-slate-100 text-slate-700"
+                m.role === "user" ? "bg-brand-600 text-white" : "bg-graphite-700 text-graphite-200"
               }`}
             >
               {m.content}
             </div>
           </div>
         ))}
-        {loading && <p className="text-sm text-slate-400">L&apos;assistente sta scrivendo…</p>}
+        {loading && <p className="text-sm text-graphite-500">L&apos;assistente sta scrivendo…</p>}
       </div>
 
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
 
-      <form onSubmit={handleSend} className="mt-3 flex gap-2 border-t border-slate-100 pt-3">
+      <form onSubmit={handleSend} className="mt-3 flex gap-2 border-t border-graphite-800 pt-3">
         <input
           className="input"
           placeholder="Scrivi una domanda…"
