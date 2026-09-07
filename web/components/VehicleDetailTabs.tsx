@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import SectionEditor from "./SectionEditor";
 import ResourceCategoryView from "./ResourceCategoryView";
-import type { ResourceLink, SectionImage, VehicleSection } from "@/lib/types";
+import type { ResourceLink, SectionImage, SectionKey, SectionSpecs, VehicleSection } from "@/lib/types";
 
 type ResourceTabId = "documenti" | "forum" | "video";
 const RESOURCE_TABS: Array<{ id: ResourceTabId; label: string; categorie: ResourceLink["categoria"][] }> = [
-  { id: "documenti", label: "📄 Documenti", categorie: ["manuale_pdf", "schema_tecnico"] },
+  { id: "documenti", label: "📄 Documenti", categorie: ["manuale_pdf", "schema_tecnico", "pezzo_ricambio"] },
   { id: "forum", label: "💬 Forum", categorie: ["forum"] },
   { id: "video", label: "🎥 Video", categorie: ["video"] },
 ];
@@ -19,7 +19,7 @@ export default function VehicleDetailTabs({
   imagesBySection,
   defaultQuery,
   initialResults,
-  initialSummary,
+  initialSpecs,
   autoSearch,
 }: {
   vehicleId: string;
@@ -27,14 +27,15 @@ export default function VehicleDetailTabs({
   imagesBySection: Record<string, SectionImage[]>;
   defaultQuery: string;
   initialResults: ResourceLink[];
-  initialSummary: string;
+  initialSpecs: SectionSpecs;
   autoSearch: boolean;
 }) {
   const router = useRouter();
   const [activeId, setActiveId] = useState<string>(sections[0]?.id || "documenti");
   const [query, setQuery] = useState(defaultQuery);
   const [results, setResults] = useState<ResourceLink[]>(initialResults);
-  const [summary, setSummary] = useState(initialSummary);
+  const [specs, setSpecs] = useState<SectionSpecs>(initialSpecs);
+  const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearchedOnce, setHasSearchedOnce] = useState(initialResults.length > 0);
@@ -55,7 +56,8 @@ export default function VehicleDetailTabs({
       if (!res.ok) {
         setError(data.error || "Errore durante la ricerca.");
       } else {
-        setResults(data.results || []);
+        setResults(data.risorse || []);
+        setSpecs(data.specifiche || {});
         setSummary(data.summary || "");
         setHasSearchedOnce(true);
       }
@@ -106,7 +108,16 @@ export default function VehicleDetailTabs({
       </div>
 
       {activeSection && (
-        <SectionEditor section={activeSection} images={imagesBySection[activeSection.id] || []} />
+        <SectionEditor
+          section={activeSection}
+          images={imagesBySection[activeSection.id] || []}
+          specs={specs[activeSection.section_key as SectionKey]}
+          resources={results.filter(
+            (r) =>
+              r.sezione === activeSection.section_key &&
+              ["manuale_pdf", "schema_tecnico", "pezzo_ricambio"].includes(r.categoria)
+          )}
+        />
       )}
 
       {activeResourceTab && (

@@ -2,14 +2,18 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { SectionImage, VehicleSection } from "@/lib/types";
+import type { ResourceLink, SectionImage, VehicleSection } from "@/lib/types";
 
 interface Props {
   section: VehicleSection;
   images: SectionImage[];
+  /** Specifiche trovate online dall'agente IA per questa sezione (sola lettura). */
+  specs?: Record<string, string>;
+  /** Documenti/pezzi di ricambio trovati online e pertinenti a questa sezione. */
+  resources?: ResourceLink[];
 }
 
-export default function SectionEditor({ section, images: initialImages }: Props) {
+export default function SectionEditor({ section, images: initialImages, specs, resources }: Props) {
   const supabase = createClient();
   const [fields, setFields] = useState<Array<[string, string]>>(
     Object.entries(section.data || {}).length ? Object.entries(section.data) : [["", ""]]
@@ -87,6 +91,39 @@ export default function SectionEditor({ section, images: initialImages }: Props)
     <div className="card">
       <h2 className="mb-4 text-lg font-semibold text-graphite-50">{section.label}</h2>
 
+      {((specs && Object.keys(specs).length > 0) || (resources && resources.length > 0)) && (
+        <div className="mb-5 rounded-md border border-graphite-700 bg-graphite-900 p-4">
+          <p className="label mb-3">📡 Dati trovati online</p>
+
+          {specs && Object.keys(specs).length > 0 && (
+            <dl className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-3">
+              {Object.entries(specs).map(([k, v]) => (
+                <div key={k}>
+                  <dt className="text-xs uppercase tracking-wide text-graphite-500">{k}</dt>
+                  <dd className="text-graphite-100">{v}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
+          {resources && resources.length > 0 && (
+            <ul className="space-y-1.5 text-sm">
+              {resources.map((r, i) => (
+                <li key={i}>
+                  <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:underline">
+                    {r.titolo}
+                  </a>
+                  <span className="ml-1 text-xs text-graphite-500">
+                    ({r.categoria === "pezzo_ricambio" ? "ricambio" : r.categoria === "schema_tecnico" ? "schema" : "documento"})
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      <p className="label mb-2">I tuoi dati</p>
       <div className="space-y-2">
         {fields.map(([key, value], index) => (
           <div key={index} className="flex gap-2">
@@ -145,8 +182,8 @@ export default function SectionEditor({ section, images: initialImages }: Props)
 
         {images.length === 0 ? (
           <p className="text-sm text-graphite-500">
-            Nessuno schema caricato. Usa la sezione &quot;Ricerca&quot; del veicolo per trovarne uno online, oppure
-            caricane uno tuo.
+            Nessuno schema caricato. Guarda la tab &quot;Documenti&quot; per trovarne uno online, oppure caricane
+            uno tuo.
           </p>
         ) : (
           <ul className="space-y-1 text-sm">

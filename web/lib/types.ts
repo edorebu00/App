@@ -36,11 +36,37 @@ export interface SectionImage {
   created_at: string;
 }
 
+export type SectionKey =
+  | "motore"
+  | "carrozzeria"
+  | "assetto"
+  | "impianto_frenante"
+  | "trasmissione"
+  | "elettronica"
+  | "generale";
+
 export interface ResourceLink {
-  categoria: "forum" | "manuale_pdf" | "video" | "schema_tecnico" | "altro";
+  categoria: "forum" | "manuale_pdf" | "video" | "schema_tecnico" | "pezzo_ricambio" | "altro";
+  sezione?: SectionKey;
   titolo: string;
   url: string;
   descrizione: string;
+}
+
+/** Specifiche tecniche trovate online, raggruppate per sezione (es. motore -> {cilindrata: "1998 cc"}). */
+export type SectionSpecs = Partial<Record<SectionKey, Record<string, string>>>;
+
+/** Forma salvata in search_results.results. */
+export interface SearchPayload {
+  risorse: ResourceLink[];
+  specifiche: SectionSpecs;
+}
+
+export interface EngineVariant {
+  /** Es. "118d 2.0 143cv" oppure "1.6 MultiJet 120cv" */
+  label: string;
+  yearFrom: number;
+  yearTo: number | null;
 }
 
 export interface DocumentRow {

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import VehicleDetailTabs from "@/components/VehicleDetailTabs";
-import type { ResourceLink, SectionImage, Vehicle, VehicleSection } from "@/lib/types";
+import DeleteVehicleButton from "@/components/DeleteVehicleButton";
+import type { ResourceLink, SectionImage, SectionSpecs, Vehicle, VehicleSection } from "@/lib/types";
 
 export default async function VehicleDetailPage({
   params,
@@ -42,11 +43,17 @@ export default async function VehicleDetailPage({
 
   const { data: lastSearch } = await supabase
     .from("search_results")
-    .select("query, results, created_at")
+    .select("results, created_at")
     .eq("vehicle_id", id)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  // Compatibile sia con il vecchio formato (un array di risorse) sia con quello nuovo
+  // (oggetto { risorse, specifiche }), per non rompere ricerche fatte prima di questo aggiornamento.
+  const rawResults = lastSearch?.results;
+  const initialResults: ResourceLink[] = Array.isArray(rawResults) ? rawResults : rawResults?.risorse || [];
+  const initialSpecs: SectionSpecs = Array.isArray(rawResults) ? {} : rawResults?.specifiche || {};
 
   const v = vehicle as Vehicle;
   const defaultQuery = [v.make, v.model, v.engine_code].filter(Boolean).join(" ");
@@ -66,9 +73,12 @@ export default async function VehicleDetailPage({
             {v.plate && <>Targa: {v.plate}</>}
           </p>
         </div>
-        <Link href={`/veicoli/${v.id}/documenti`} className="btn-primary">
-          📤 I miei documenti e chat
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href={`/veicoli/${v.id}/documenti`} className="btn-primary">
+            📤 I miei documenti e chat
+          </Link>
+          <DeleteVehicleButton vehicleId={v.id} label={`${v.make} ${v.model}`} />
+        </div>
       </div>
 
       <VehicleDetailTabs
@@ -76,8 +86,8 @@ export default async function VehicleDetailPage({
         sections={(sections || []) as VehicleSection[]}
         imagesBySection={imagesBySection}
         defaultQuery={defaultQuery}
-        initialResults={(lastSearch?.results as ResourceLink[]) || []}
-        initialSummary=""
+        initialResults={initialResults}
+        initialSpecs={initialSpecs}
         autoSearch={autosearch === "1"}
       />
     </div>

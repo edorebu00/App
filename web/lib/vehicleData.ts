@@ -1,4 +1,4 @@
-import type { VehicleType } from "./types";
+import type { EngineVariant, VehicleType } from "./types";
 
 /**
  * Dataset curato di marche/modelli per popolare i menu a tendina del form "Aggiungi veicolo".
@@ -73,4 +73,153 @@ export function getMakes(type: VehicleType): string[] {
 
 export function getModels(type: VehicleType, make: string): string[] {
   return VEHICLE_DATA[type][make] || [];
+}
+
+/**
+ * Motorizzazioni con relativo periodo di produzione, curate solo per un sottoinsieme dei
+ * modelli più diffusi (i dati di ogni variante motore per ogni modello esistito sono troppi
+ * per un elenco statico affidabile). Per i modelli non presenti qui, il form ricade su un
+ * campo libero per motorizzazione e anno.
+ */
+const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVariant[]>>> = {
+  auto: {
+    Fiat: {
+      Panda: [
+        { label: "1.0 Hybrid 70cv", yearFrom: 2020, yearTo: null },
+        { label: "1.2 8v 69cv", yearFrom: 2012, yearTo: 2020 },
+        { label: "0.9 TwinAir 85cv", yearFrom: 2012, yearTo: 2019 },
+      ],
+      "500": [
+        { label: "1.0 Hybrid 70cv", yearFrom: 2020, yearTo: null },
+        { label: "1.2 8v 69cv", yearFrom: 2007, yearTo: 2020 },
+        { label: "0.9 TwinAir 85cv", yearFrom: 2010, yearTo: 2019 },
+        { label: "1.3 MultiJet 95cv", yearFrom: 2007, yearTo: 2016 },
+      ],
+    },
+    "Alfa Romeo": {
+      Giulia: [
+        { label: "2.0 Turbo 200cv", yearFrom: 2016, yearTo: null },
+        { label: "2.2 Diesel 160cv", yearFrom: 2016, yearTo: null },
+        { label: "2.2 Diesel 190cv", yearFrom: 2016, yearTo: null },
+        { label: "2.9 V6 Bi-Turbo Quadrifoglio 510cv", yearFrom: 2016, yearTo: null },
+      ],
+    },
+    BMW: {
+      "Serie 1": [
+        { label: "116d 1.5 116cv", yearFrom: 2015, yearTo: null },
+        { label: "118d 2.0 150cv", yearFrom: 2011, yearTo: null },
+        { label: "120d 2.0 190cv", yearFrom: 2011, yearTo: null },
+        { label: "125d 2.0 224cv", yearFrom: 2013, yearTo: null },
+        { label: "116i 1.5 109cv", yearFrom: 2019, yearTo: null },
+        { label: "118i 1.5 140cv", yearFrom: 2019, yearTo: null },
+        { label: "M135i / M140i 3.0 340cv", yearFrom: 2017, yearTo: null },
+      ],
+      "Serie 3": [
+        { label: "318d 2.0 150cv", yearFrom: 2012, yearTo: null },
+        { label: "320d 2.0 190cv", yearFrom: 2012, yearTo: null },
+        { label: "330d 3.0 265cv", yearFrom: 2012, yearTo: null },
+        { label: "320i 2.0 184cv", yearFrom: 2012, yearTo: null },
+        { label: "M340i 3.0 374cv", yearFrom: 2019, yearTo: null },
+      ],
+    },
+    Volkswagen: {
+      Golf: [
+        { label: "1.0 TSI 110cv", yearFrom: 2016, yearTo: null },
+        { label: "1.5 TSI 130cv", yearFrom: 2017, yearTo: null },
+        { label: "1.6 TDI 105cv", yearFrom: 2012, yearTo: 2019 },
+        { label: "2.0 TDI 150cv", yearFrom: 2012, yearTo: null },
+        { label: "2.0 TSI GTI 245cv", yearFrom: 2013, yearTo: null },
+      ],
+    },
+    Audi: {
+      A3: [
+        { label: "1.0 TFSI 116cv", yearFrom: 2016, yearTo: null },
+        { label: "1.5 TFSI 150cv", yearFrom: 2016, yearTo: null },
+        { label: "2.0 TDI 150cv", yearFrom: 2012, yearTo: null },
+        { label: "2.0 TFSI S3 310cv", yearFrom: 2013, yearTo: null },
+      ],
+    },
+    "Mercedes-Benz": {
+      "Classe A": [
+        { label: "A180 1.3 136cv", yearFrom: 2018, yearTo: null },
+        { label: "A200d 2.0 150cv", yearFrom: 2018, yearTo: null },
+        { label: "A250 2.0 224cv", yearFrom: 2018, yearTo: null },
+        { label: "A35 AMG 306cv", yearFrom: 2019, yearTo: null },
+      ],
+    },
+    Ford: {
+      Fiesta: [
+        { label: "1.1 Ti-VCT 85cv", yearFrom: 2017, yearTo: null },
+        { label: "1.0 EcoBoost 100cv", yearFrom: 2017, yearTo: null },
+        { label: "1.0 EcoBoost 125cv", yearFrom: 2017, yearTo: null },
+        { label: "1.5 TDCi 85cv", yearFrom: 2017, yearTo: 2021 },
+        { label: "1.5 EcoBoost ST 200cv", yearFrom: 2018, yearTo: null },
+      ],
+    },
+    Renault: {
+      Clio: [
+        { label: "1.0 SCe 65cv", yearFrom: 2019, yearTo: null },
+        { label: "1.0 TCe 100cv", yearFrom: 2019, yearTo: null },
+        { label: "1.5 dCi/Blue dCi 85cv", yearFrom: 2019, yearTo: null },
+        { label: "1.6 E-Tech Hybrid 140cv", yearFrom: 2020, yearTo: null },
+      ],
+    },
+    Peugeot: {
+      "208": [
+        { label: "1.2 PureTech 75cv", yearFrom: 2019, yearTo: null },
+        { label: "1.2 PureTech 100cv", yearFrom: 2019, yearTo: null },
+        { label: "1.2 PureTech 130cv", yearFrom: 2019, yearTo: null },
+        { label: "1.5 BlueHDi 100cv", yearFrom: 2019, yearTo: null },
+        { label: "Elettrica e-208 136cv", yearFrom: 2019, yearTo: null },
+      ],
+    },
+    Toyota: {
+      Yaris: [
+        { label: "1.0 72cv", yearFrom: 2020, yearTo: null },
+        { label: "1.5 Hybrid 116cv", yearFrom: 2020, yearTo: null },
+        { label: "1.5 Hybrid 130cv GR Sport", yearFrom: 2022, yearTo: null },
+      ],
+      Corolla: [
+        { label: "1.2 Turbo 116cv", yearFrom: 2019, yearTo: null },
+        { label: "1.8 Hybrid 122cv", yearFrom: 2019, yearTo: null },
+        { label: "2.0 Hybrid 196cv", yearFrom: 2019, yearTo: null },
+      ],
+    },
+  },
+  moto: {
+    Yamaha: {
+      "MT-07": [{ label: "689cc 75cv", yearFrom: 2014, yearTo: null }],
+      "MT-09": [
+        { label: "890cc 119cv", yearFrom: 2021, yearTo: null },
+        { label: "847cc 115cv", yearFrom: 2013, yearTo: 2020 },
+      ],
+    },
+    Ducati: {
+      "Panigale V4": [
+        { label: "1103cc 214cv", yearFrom: 2018, yearTo: null },
+        { label: "V4 S 1103cc 214cv", yearFrom: 2018, yearTo: null },
+        { label: "V4 R 998cc 218cv", yearFrom: 2019, yearTo: null },
+      ],
+      Monster: [
+        { label: "937cc 111cv", yearFrom: 2021, yearTo: null },
+        { label: "821cc 112cv", yearFrom: 2014, yearTo: 2020 },
+      ],
+    },
+    Honda: {
+      "Africa Twin": [
+        { label: "CRF1000L 998cc 95cv", yearFrom: 2016, yearTo: 2019 },
+        { label: "CRF1100L 1084cc 102cv", yearFrom: 2020, yearTo: null },
+      ],
+    },
+    BMW: {
+      "R 1250 GS": [{ label: "1254cc 136cv", yearFrom: 2019, yearTo: null }],
+    },
+    KTM: {
+      "Duke 390": [{ label: "373cc 44cv", yearFrom: 2013, yearTo: null }],
+    },
+  },
+};
+
+export function getEngineVariants(type: VehicleType, make: string, model: string): EngineVariant[] | null {
+  return ENGINE_DATA[type]?.[make]?.[model] || null;
 }

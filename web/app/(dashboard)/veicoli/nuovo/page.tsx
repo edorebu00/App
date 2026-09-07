@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_SECTIONS, type VehicleType } from "@/lib/types";
-import { getMakes, getModels } from "@/lib/vehicleData";
+import { getEngineVariants, getMakes, getModels } from "@/lib/vehicleData";
+
+const CURRENT_YEAR = new Date().getFullYear();
 
 export default function NewVehiclePage() {
   const router = useRouter();
@@ -21,16 +23,43 @@ export default function NewVehiclePage() {
 
   const makes = useMemo(() => getMakes(type), [type]);
   const models = useMemo(() => (make ? getModels(type, make) : []), [type, make]);
+  const variants = useMemo(
+    () => (make && model ? getEngineVariants(type, make, model) : null),
+    [type, make, model]
+  );
+  const selectedVariant = variants?.find((v) => v.label === engineCode) || null;
+  const yearOptions = useMemo(() => {
+    if (!selectedVariant) return [];
+    const to = selectedVariant.yearTo ?? CURRENT_YEAR;
+    const years: number[] = [];
+    for (let y = to; y >= selectedVariant.yearFrom; y--) years.push(y);
+    return years;
+  }, [selectedVariant]);
 
   function handleTypeChange(t: VehicleType) {
     setType(t);
     setMake("");
     setModel("");
+    setEngineCode("");
+    setYear("");
   }
 
   function handleMakeChange(m: string) {
     setMake(m);
     setModel("");
+    setEngineCode("");
+    setYear("");
+  }
+
+  function handleModelChange(m: string) {
+    setModel(m);
+    setEngineCode("");
+    setYear("");
+  }
+
+  function handleVariantChange(label: string) {
+    setEngineCode(label);
+    setYear("");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -140,7 +169,7 @@ export default function NewVehiclePage() {
               className="input"
               value={model}
               disabled={!make}
-              onChange={(e) => setModel(e.target.value)}
+              onChange={(e) => handleModelChange(e.target.value)}
             >
               <option value="" disabled>
                 {make ? "Seleziona modello…" : "Scegli prima la marca"}
@@ -157,24 +186,70 @@ export default function NewVehiclePage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="label" htmlFor="engineCode">Motorizzazione</label>
-            <input
-              id="engineCode"
-              className="input"
-              placeholder="es. 1.6 MultiJet, K20A…"
-              value={engineCode}
-              onChange={(e) => setEngineCode(e.target.value)}
-            />
-            <p className="mt-1 text-xs text-graphite-500">Cilindrata/alimentazione o codice motore, se lo conosci.</p>
+            {variants ? (
+              <select
+                id="engineCode"
+                required
+                className="input"
+                value={engineCode}
+                onChange={(e) => handleVariantChange(e.target.value)}
+              >
+                <option value="" disabled>
+                  Seleziona motorizzazione…
+                </option>
+                {variants.map((v) => (
+                  <option key={v.label} value={v.label}>
+                    {v.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <>
+                <input
+                  id="engineCode"
+                  className="input"
+                  placeholder="es. 1.6 MultiJet, K20A…"
+                  value={engineCode}
+                  onChange={(e) => setEngineCode(e.target.value)}
+                  disabled={!model}
+                />
+                <p className="mt-1 text-xs text-graphite-500">
+                  {model
+                    ? "Motorizzazioni non precaricate per questo modello: inseriscila manualmente."
+                    : "Scegli prima marca e modello."}
+                </p>
+              </>
+            )}
           </div>
           <div>
             <label className="label" htmlFor="year">Anno</label>
-            <input
-              id="year"
-              type="number"
-              className="input"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-            />
+            {variants ? (
+              <select
+                id="year"
+                required
+                className="input"
+                value={year}
+                disabled={!selectedVariant}
+                onChange={(e) => setYear(e.target.value)}
+              >
+                <option value="" disabled>
+                  {selectedVariant ? "Seleziona anno…" : "Scegli prima la motorizzazione"}
+                </option>
+                {yearOptions.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                id="year"
+                type="number"
+                className="input"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+              />
+            )}
           </div>
         </div>
 
