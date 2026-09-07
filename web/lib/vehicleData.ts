@@ -3,8 +3,7 @@ import type { EngineVariant, VehicleType } from "./types";
 /**
  * Dataset curato di marche/modelli per popolare i menu a tendina del form "Aggiungi veicolo".
  * Non è un catalogo ufficiale/esaustivo di ogni allestimento storico: copre le marche e i modelli
- * più comuni sul mercato italiano. La motorizzazione resta un campo libero perché il numero di
- * varianti motore per singolo modello è troppo elevato per un elenco statico affidabile.
+ * più comuni sul mercato italiano.
  */
 export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
   auto: {
@@ -48,7 +47,7 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
   },
   moto: {
     Aprilia: ["RS 660", "Tuono 660", "RSV4", "Tuareg 660", "SR GT", "Shiver 900"],
-    "Benelli": ["TRK 502", "Leoncino 500", "752 S", "TNT 125"],
+    Benelli: ["TRK 502", "Leoncino 500", "752 S", "TNT 125"],
     BMW: ["S 1000 RR", "R 1250 GS", "F 850 GS", "R nineT", "G 310 R", "F 900 R"],
     Ducati: ["Panigale V4", "Panigale V2", "Monster", "Multistrada", "Scrambler", "Diavel", "Streetfighter V4"],
     "Harley-Davidson": ["Sportster", "Fat Boy", "Street Bob", "Road King", "Pan America"],
@@ -76,24 +75,37 @@ export function getModels(type: VehicleType, make: string): string[] {
 }
 
 /**
- * Motorizzazioni con relativo periodo di produzione, curate solo per un sottoinsieme dei
- * modelli più diffusi (i dati di ogni variante motore per ogni modello esistito sono troppi
- * per un elenco statico affidabile). Per i modelli non presenti qui, il form ricade su un
- * campo libero per motorizzazione e anno.
+ * Motorizzazioni con relativo periodo di produzione, scritte a mano (conoscenza generale,
+ * nessuna ricerca IA a runtime). Non è un catalogo ufficiale esaustivo di ogni allestimento/
+ * mercato: copre le varianti più diffuse per ciascun modello. Se un modello dovesse mancare
+ * o un dato risultare sbagliato, il form ricade su un campo libero — segnalalo pure, è
+ * un file di testo facile da correggere.
  */
 const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVariant[]>>> = {
   auto: {
-    Fiat: {
-      Panda: [
-        { label: "1.0 Hybrid 70cv", yearFrom: 2020, yearTo: null },
-        { label: "1.2 8v 69cv", yearFrom: 2012, yearTo: 2020 },
-        { label: "0.9 TwinAir 85cv", yearFrom: 2012, yearTo: 2019 },
-      ],
+    Abarth: {
       "500": [
-        { label: "1.0 Hybrid 70cv", yearFrom: 2020, yearTo: null },
-        { label: "1.2 8v 69cv", yearFrom: 2007, yearTo: 2020 },
-        { label: "0.9 TwinAir 85cv", yearFrom: 2010, yearTo: 2019 },
-        { label: "1.3 MultiJet 95cv", yearFrom: 2007, yearTo: 2016 },
+        { label: "1.4 T-Jet 135cv", yearFrom: 2008, yearTo: 2016 },
+        { label: "1.4 T-Jet 145cv", yearFrom: 2016, yearTo: 2019 },
+      ],
+      "500C": [{ label: "1.4 T-Jet 135cv", yearFrom: 2010, yearTo: 2019 }],
+      "595": [
+        { label: "1.4 T-Jet 145cv", yearFrom: 2016, yearTo: null },
+        { label: "1.4 T-Jet 165cv Competizione", yearFrom: 2016, yearTo: null },
+        { label: "1.4 T-Jet 180cv Scorpioneoro", yearFrom: 2018, yearTo: null },
+      ],
+      "595C": [
+        { label: "1.4 T-Jet 145cv", yearFrom: 2016, yearTo: null },
+        { label: "1.4 T-Jet 165cv Competizione", yearFrom: 2016, yearTo: null },
+      ],
+      "695": [
+        { label: "1.4 T-Jet 180cv", yearFrom: 2018, yearTo: null },
+        { label: "1.4 T-Jet 200cv Esseesse", yearFrom: 2021, yearTo: null },
+      ],
+      "124 Spider": [{ label: "1.4 MultiAir Turbo 170cv", yearFrom: 2016, yearTo: 2019 }],
+      "Punto Evo": [
+        { label: "1.4 T-Jet 155cv", yearFrom: 2010, yearTo: 2012 },
+        { label: "1.4 T-Jet 165cv", yearFrom: 2010, yearTo: 2012 },
       ],
     },
     "Alfa Romeo": {
@@ -102,6 +114,110 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "2.2 Diesel 160cv", yearFrom: 2016, yearTo: null },
         { label: "2.2 Diesel 190cv", yearFrom: 2016, yearTo: null },
         { label: "2.9 V6 Bi-Turbo Quadrifoglio 510cv", yearFrom: 2016, yearTo: null },
+      ],
+      Giulietta: [
+        { label: "1.4 MultiAir 120cv", yearFrom: 2010, yearTo: 2020 },
+        { label: "1.6 JTDm 120cv", yearFrom: 2010, yearTo: 2020 },
+        { label: "2.0 JTDm 150cv", yearFrom: 2010, yearTo: 2020 },
+        { label: "1.75 TBi QV 240cv", yearFrom: 2010, yearTo: 2020 },
+      ],
+      Stelvio: [
+        { label: "2.0 Turbo 200cv", yearFrom: 2017, yearTo: null },
+        { label: "2.2 Diesel 190cv", yearFrom: 2017, yearTo: null },
+        { label: "2.9 V6 Bi-Turbo Quadrifoglio 510cv", yearFrom: 2018, yearTo: null },
+      ],
+      Tonale: [
+        { label: "1.5 Hybrid 130cv", yearFrom: 2022, yearTo: null },
+        { label: "1.3 Plug-in Hybrid 280cv", yearFrom: 2022, yearTo: null },
+      ],
+      MiTo: [
+        { label: "0.9 TwinAir 105cv", yearFrom: 2014, yearTo: 2018 },
+        { label: "1.4 MultiAir 135cv", yearFrom: 2008, yearTo: 2018 },
+        { label: "1.3 JTDm 95cv", yearFrom: 2008, yearTo: 2018 },
+      ],
+      "159": [
+        { label: "1.9 JTDm 150cv", yearFrom: 2005, yearTo: 2011 },
+        { label: "2.4 JTDm 200cv", yearFrom: 2005, yearTo: 2011 },
+        { label: "3.2 V6 260cv", yearFrom: 2005, yearTo: 2011 },
+      ],
+      "147": [
+        { label: "1.6 Twin Spark 105cv", yearFrom: 2000, yearTo: 2010 },
+        { label: "1.9 JTD 115cv", yearFrom: 2000, yearTo: 2010 },
+        { label: "GTA 3.2 V6 250cv", yearFrom: 2002, yearTo: 2005 },
+      ],
+      Brera: [
+        { label: "2.2 JTS 185cv", yearFrom: 2005, yearTo: 2010 },
+        { label: "3.2 V6 260cv", yearFrom: 2005, yearTo: 2010 },
+      ],
+      GT: [
+        { label: "1.9 JTD 150cv", yearFrom: 2003, yearTo: 2010 },
+        { label: "3.2 V6 240cv", yearFrom: 2004, yearTo: 2010 },
+      ],
+    },
+    Audi: {
+      A1: [
+        { label: "1.0 TFSI 95cv", yearFrom: 2018, yearTo: null },
+        { label: "1.4 TFSI 150cv S line", yearFrom: 2018, yearTo: null },
+        { label: "2.0 TFSI S1 231cv", yearFrom: 2019, yearTo: null },
+      ],
+      A3: [
+        { label: "1.0 TFSI 116cv", yearFrom: 2016, yearTo: null },
+        { label: "1.5 TFSI 150cv", yearFrom: 2016, yearTo: null },
+        { label: "2.0 TDI 150cv", yearFrom: 2012, yearTo: null },
+        { label: "2.0 TFSI S3 310cv", yearFrom: 2013, yearTo: null },
+      ],
+      A4: [
+        { label: "2.0 TDI 150cv", yearFrom: 2015, yearTo: null },
+        { label: "2.0 TFSI 190cv", yearFrom: 2015, yearTo: null },
+        { label: "3.0 TDI 286cv", yearFrom: 2015, yearTo: null },
+      ],
+      A5: [
+        { label: "2.0 TDI 190cv", yearFrom: 2016, yearTo: null },
+        { label: "2.0 TFSI 252cv", yearFrom: 2016, yearTo: null },
+      ],
+      A6: [
+        { label: "2.0 TDI 204cv", yearFrom: 2018, yearTo: null },
+        { label: "3.0 TDI 286cv", yearFrom: 2018, yearTo: null },
+        { label: "3.0 TFSI 340cv", yearFrom: 2018, yearTo: null },
+      ],
+      A7: [
+        { label: "3.0 TDI 286cv", yearFrom: 2017, yearTo: null },
+        { label: "3.0 TFSI 340cv", yearFrom: 2017, yearTo: null },
+      ],
+      A8: [
+        { label: "3.0 TDI 286cv", yearFrom: 2017, yearTo: null },
+        { label: "3.0 TFSI 340cv", yearFrom: 2017, yearTo: null },
+      ],
+      Q2: [
+        { label: "1.0 TFSI 116cv", yearFrom: 2016, yearTo: null },
+        { label: "2.0 TDI 150cv", yearFrom: 2016, yearTo: null },
+      ],
+      Q3: [
+        { label: "2.0 TDI 150cv", yearFrom: 2018, yearTo: null },
+        { label: "2.0 TFSI 190cv", yearFrom: 2018, yearTo: null },
+        { label: "RS Q3 2.5 TFSI 400cv", yearFrom: 2019, yearTo: null },
+      ],
+      "Q4 e-tron": [
+        { label: "Elettrica 40 204cv", yearFrom: 2021, yearTo: null },
+        { label: "Elettrica 50 quattro 299cv", yearFrom: 2021, yearTo: null },
+      ],
+      Q5: [
+        { label: "2.0 TDI 190cv", yearFrom: 2016, yearTo: null },
+        { label: "2.0 TFSI 252cv", yearFrom: 2016, yearTo: null },
+        { label: "SQ5 3.0 TDI 341cv", yearFrom: 2016, yearTo: null },
+      ],
+      Q7: [
+        { label: "3.0 TDI 286cv", yearFrom: 2015, yearTo: null },
+        { label: "3.0 TFSI 340cv", yearFrom: 2015, yearTo: null },
+      ],
+      Q8: [
+        { label: "3.0 TDI 286cv", yearFrom: 2018, yearTo: null },
+        { label: "SQ8 4.0 TDI 435cv", yearFrom: 2019, yearTo: null },
+      ],
+      TT: [
+        { label: "2.0 TFSI 230cv", yearFrom: 2014, yearTo: 2023 },
+        { label: "2.0 TDI 184cv", yearFrom: 2014, yearTo: 2023 },
+        { label: "TTS 2.0 TFSI 310cv", yearFrom: 2014, yearTo: 2023 },
       ],
     },
     BMW: {
@@ -114,6 +230,11 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "118i 1.5 140cv", yearFrom: 2019, yearTo: null },
         { label: "M135i / M140i 3.0 340cv", yearFrom: 2017, yearTo: null },
       ],
+      "Serie 2": [
+        { label: "218d 2.0 150cv", yearFrom: 2014, yearTo: null },
+        { label: "220i 2.0 184cv", yearFrom: 2014, yearTo: null },
+        { label: "M240i 3.0 374cv", yearFrom: 2017, yearTo: null },
+      ],
       "Serie 3": [
         { label: "318d 2.0 150cv", yearFrom: 2012, yearTo: null },
         { label: "320d 2.0 190cv", yearFrom: 2012, yearTo: null },
@@ -121,30 +242,207 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "320i 2.0 184cv", yearFrom: 2012, yearTo: null },
         { label: "M340i 3.0 374cv", yearFrom: 2019, yearTo: null },
       ],
-    },
-    Volkswagen: {
-      Golf: [
-        { label: "1.0 TSI 110cv", yearFrom: 2016, yearTo: null },
-        { label: "1.5 TSI 130cv", yearFrom: 2017, yearTo: null },
-        { label: "1.6 TDI 105cv", yearFrom: 2012, yearTo: 2019 },
-        { label: "2.0 TDI 150cv", yearFrom: 2012, yearTo: null },
-        { label: "2.0 TSI GTI 245cv", yearFrom: 2013, yearTo: null },
+      "Serie 4": [
+        { label: "420d 2.0 190cv", yearFrom: 2013, yearTo: null },
+        { label: "430i 2.0 258cv", yearFrom: 2013, yearTo: null },
+        { label: "M440i 3.0 374cv", yearFrom: 2020, yearTo: null },
+      ],
+      "Serie 5": [
+        { label: "520d 2.0 190cv", yearFrom: 2017, yearTo: null },
+        { label: "530d 3.0 286cv", yearFrom: 2017, yearTo: null },
+        { label: "M550i 4.4 530cv", yearFrom: 2017, yearTo: null },
+      ],
+      "Serie 7": [
+        { label: "730d 3.0 286cv", yearFrom: 2015, yearTo: null },
+        { label: "750i 4.4 530cv", yearFrom: 2015, yearTo: null },
+      ],
+      X1: [
+        { label: "18d 2.0 150cv", yearFrom: 2015, yearTo: null },
+        { label: "20i 2.0 192cv", yearFrom: 2015, yearTo: null },
+      ],
+      X2: [
+        { label: "18d 2.0 150cv", yearFrom: 2018, yearTo: null },
+        { label: "M35i 2.0 306cv", yearFrom: 2019, yearTo: null },
+      ],
+      X3: [
+        { label: "20d 2.0 190cv", yearFrom: 2017, yearTo: null },
+        { label: "30i 2.0 252cv", yearFrom: 2017, yearTo: null },
+        { label: "X3 M 3.0 480cv", yearFrom: 2019, yearTo: null },
+      ],
+      X4: [
+        { label: "20d 2.0 190cv", yearFrom: 2018, yearTo: null },
+        { label: "M40i 3.0 360cv", yearFrom: 2018, yearTo: null },
+      ],
+      X5: [
+        { label: "30d 3.0 286cv", yearFrom: 2018, yearTo: null },
+        { label: "X5 M 4.4 600cv", yearFrom: 2019, yearTo: null },
+      ],
+      X6: [
+        { label: "30d 3.0 286cv", yearFrom: 2019, yearTo: null },
+        { label: "X6 M 4.4 600cv", yearFrom: 2019, yearTo: null },
+      ],
+      Z4: [
+        { label: "20i 2.0 197cv", yearFrom: 2018, yearTo: null },
+        { label: "M40i 3.0 340cv", yearFrom: 2018, yearTo: null },
+      ],
+      i3: [
+        { label: "Elettrica 170cv", yearFrom: 2013, yearTo: 2022 },
+        { label: "i3 REX (range extender) 170cv", yearFrom: 2013, yearTo: 2022 },
+      ],
+      i4: [
+        { label: "eDrive40 340cv", yearFrom: 2021, yearTo: null },
+        { label: "M50 544cv", yearFrom: 2021, yearTo: null },
       ],
     },
-    Audi: {
-      A3: [
-        { label: "1.0 TFSI 116cv", yearFrom: 2016, yearTo: null },
-        { label: "1.5 TFSI 150cv", yearFrom: 2016, yearTo: null },
-        { label: "2.0 TDI 150cv", yearFrom: 2012, yearTo: null },
-        { label: "2.0 TFSI S3 310cv", yearFrom: 2013, yearTo: null },
+    Citroën: {
+      C1: [
+        { label: "1.0 VTi 68cv", yearFrom: 2014, yearTo: 2021 },
+        { label: "1.2 PureTech 82cv", yearFrom: 2014, yearTo: 2021 },
+      ],
+      C3: [
+        { label: "1.2 PureTech 83cv", yearFrom: 2016, yearTo: null },
+        { label: "1.2 PureTech 110cv", yearFrom: 2016, yearTo: null },
+        { label: "1.5 BlueHDi 100cv", yearFrom: 2016, yearTo: null },
+      ],
+      "C3 Aircross": [
+        { label: "1.2 PureTech 110cv", yearFrom: 2017, yearTo: null },
+        { label: "1.5 BlueHDi 100cv", yearFrom: 2017, yearTo: null },
+      ],
+      C4: [
+        { label: "1.2 PureTech 130cv", yearFrom: 2020, yearTo: null },
+        { label: "1.5 BlueHDi 130cv", yearFrom: 2020, yearTo: null },
+        { label: "Elettrica ë-C4 136cv", yearFrom: 2020, yearTo: null },
+      ],
+      "C4 Picasso": [
+        { label: "1.6 BlueHDi 120cv", yearFrom: 2013, yearTo: 2018 },
+        { label: "1.2 PureTech 130cv", yearFrom: 2013, yearTo: 2018 },
+      ],
+      "C5 Aircross": [
+        { label: "1.2 PureTech 130cv", yearFrom: 2018, yearTo: null },
+        { label: "1.5 BlueHDi 130cv", yearFrom: 2018, yearTo: null },
+        { label: "Hybrid Plug-in 225cv", yearFrom: 2020, yearTo: null },
+      ],
+      Berlingo: [
+        { label: "1.5 BlueHDi 100cv", yearFrom: 2018, yearTo: null },
+        { label: "1.2 PureTech 110cv", yearFrom: 2018, yearTo: null },
+      ],
+      DS3: [
+        { label: "1.2 PureTech 110cv", yearFrom: 2010, yearTo: 2019 },
+        { label: "1.6 THP 155cv", yearFrom: 2010, yearTo: 2015 },
+      ],
+      DS4: [
+        { label: "1.6 THP 165cv", yearFrom: 2011, yearTo: 2018 },
+        { label: "2.0 HDi 160cv", yearFrom: 2011, yearTo: 2018 },
       ],
     },
-    "Mercedes-Benz": {
-      "Classe A": [
-        { label: "A180 1.3 136cv", yearFrom: 2018, yearTo: null },
-        { label: "A200d 2.0 150cv", yearFrom: 2018, yearTo: null },
-        { label: "A250 2.0 224cv", yearFrom: 2018, yearTo: null },
-        { label: "A35 AMG 306cv", yearFrom: 2019, yearTo: null },
+    Cupra: {
+      Formentor: [
+        { label: "1.5 TSI 150cv", yearFrom: 2020, yearTo: null },
+        { label: "2.0 TSI 190cv", yearFrom: 2020, yearTo: null },
+        { label: "2.0 TSI VZ5 390cv", yearFrom: 2021, yearTo: null },
+      ],
+      Leon: [
+        { label: "1.5 TSI 150cv", yearFrom: 2020, yearTo: null },
+        { label: "2.0 TSI 300cv", yearFrom: 2020, yearTo: null },
+      ],
+      Born: [
+        { label: "Elettrica 150cv", yearFrom: 2021, yearTo: null },
+        { label: "Elettrica 231cv", yearFrom: 2021, yearTo: null },
+      ],
+      Ateca: [
+        { label: "2.0 TSI 300cv", yearFrom: 2019, yearTo: null },
+        { label: "2.0 TDI 190cv", yearFrom: 2019, yearTo: null },
+      ],
+    },
+    Dacia: {
+      Sandero: [
+        { label: "1.0 SCe 65cv", yearFrom: 2020, yearTo: null },
+        { label: "1.0 TCe 90cv", yearFrom: 2020, yearTo: null },
+        { label: "1.0 Bi-Fuel GPL 100cv", yearFrom: 2021, yearTo: null },
+      ],
+      Duster: [
+        { label: "1.0 TCe 90cv", yearFrom: 2018, yearTo: null },
+        { label: "1.3 TCe 150cv", yearFrom: 2018, yearTo: null },
+        { label: "1.5 dCi 115cv", yearFrom: 2018, yearTo: 2022 },
+      ],
+      Jogger: [
+        { label: "1.0 TCe 110cv", yearFrom: 2022, yearTo: null },
+        { label: "1.6 Hybrid 140cv", yearFrom: 2022, yearTo: null },
+      ],
+      Spring: [
+        { label: "Elettrica 45cv", yearFrom: 2021, yearTo: null },
+        { label: "Elettrica 65cv", yearFrom: 2021, yearTo: null },
+      ],
+    },
+    "DS Automobiles": {
+      "DS 3": [
+        { label: "1.2 PureTech 130cv", yearFrom: 2019, yearTo: null },
+        { label: "Elettrica E-Tense 156cv", yearFrom: 2019, yearTo: null },
+      ],
+      "DS 4": [
+        { label: "1.2 PureTech 130cv", yearFrom: 2021, yearTo: null },
+        { label: "1.5 BlueHDi 130cv", yearFrom: 2021, yearTo: null },
+      ],
+      "DS 7": [
+        { label: "1.6 PureTech 180cv", yearFrom: 2017, yearTo: null },
+        { label: "Hybrid E-Tense 4x4 300cv", yearFrom: 2019, yearTo: null },
+      ],
+      "DS 9": [
+        { label: "1.6 PureTech 250cv", yearFrom: 2021, yearTo: null },
+        { label: "Hybrid E-Tense 360cv", yearFrom: 2021, yearTo: null },
+      ],
+    },
+    Fiat: {
+      Panda: [
+        { label: "1.0 Hybrid 70cv", yearFrom: 2020, yearTo: null },
+        { label: "1.2 8v 69cv", yearFrom: 2012, yearTo: 2020 },
+        { label: "0.9 TwinAir 85cv", yearFrom: 2012, yearTo: 2019 },
+      ],
+      "500": [
+        { label: "1.0 Hybrid 70cv", yearFrom: 2020, yearTo: null },
+        { label: "1.2 8v 69cv", yearFrom: 2007, yearTo: 2020 },
+        { label: "0.9 TwinAir 85cv", yearFrom: 2010, yearTo: 2019 },
+        { label: "1.3 MultiJet 95cv", yearFrom: 2007, yearTo: 2016 },
+      ],
+      "500X": [
+        { label: "1.0 T3 120cv", yearFrom: 2018, yearTo: null },
+        { label: "1.3 FireFly 150cv", yearFrom: 2018, yearTo: null },
+        { label: "1.6 MultiJet 130cv", yearFrom: 2015, yearTo: 2020 },
+      ],
+      "500L": [
+        { label: "1.4 95cv", yearFrom: 2012, yearTo: 2020 },
+        { label: "1.3 MultiJet 95cv", yearFrom: 2012, yearTo: 2020 },
+      ],
+      Tipo: [
+        { label: "1.0 T3 100cv", yearFrom: 2020, yearTo: null },
+        { label: "1.3 MultiJet 95cv", yearFrom: 2016, yearTo: null },
+        { label: "1.6 MultiJet 130cv", yearFrom: 2016, yearTo: null },
+      ],
+      Punto: [
+        { label: "1.2 8v 69cv", yearFrom: 2012, yearTo: 2018 },
+        { label: "1.3 MultiJet 75cv", yearFrom: 2012, yearTo: 2018 },
+        { label: "1.4 T-Jet 120cv", yearFrom: 2012, yearTo: 2015 },
+      ],
+      Bravo: [
+        { label: "1.4 T-Jet 120cv", yearFrom: 2007, yearTo: 2014 },
+        { label: "1.6 MultiJet 105cv", yearFrom: 2007, yearTo: 2014 },
+        { label: "2.0 MultiJet 165cv", yearFrom: 2007, yearTo: 2014 },
+      ],
+      Ducato: [
+        { label: "2.3 MultiJet 120cv", yearFrom: 2014, yearTo: null },
+        { label: "2.3 MultiJet 160cv", yearFrom: 2014, yearTo: null },
+      ],
+      Doblo: [
+        { label: "1.6 MultiJet 100cv", yearFrom: 2010, yearTo: null },
+        { label: "1.3 MultiJet 95cv", yearFrom: 2010, yearTo: null },
+      ],
+      Qubo: [
+        { label: "1.3 MultiJet 80cv", yearFrom: 2008, yearTo: null },
+        { label: "1.4 77cv", yearFrom: 2008, yearTo: null },
+      ],
+      Sedici: [
+        { label: "1.6 107cv", yearFrom: 2006, yearTo: 2014 },
+        { label: "1.9 MultiJet 120cv", yearFrom: 2006, yearTo: 2014 },
       ],
     },
     Ford: {
@@ -155,6 +453,500 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.5 TDCi 85cv", yearFrom: 2017, yearTo: 2021 },
         { label: "1.5 EcoBoost ST 200cv", yearFrom: 2018, yearTo: null },
       ],
+      Focus: [
+        { label: "1.0 EcoBoost 125cv", yearFrom: 2018, yearTo: null },
+        { label: "1.5 EcoBlue 120cv", yearFrom: 2018, yearTo: null },
+        { label: "ST 2.3 EcoBoost 280cv", yearFrom: 2019, yearTo: null },
+      ],
+      Puma: [
+        { label: "1.0 EcoBoost 125cv", yearFrom: 2019, yearTo: null },
+        { label: "1.0 EcoBoost Hybrid 155cv", yearFrom: 2019, yearTo: null },
+        { label: "ST 1.5 EcoBoost 200cv", yearFrom: 2020, yearTo: null },
+      ],
+      Kuga: [
+        { label: "1.5 EcoBlue 120cv", yearFrom: 2019, yearTo: null },
+        { label: "2.5 Duratec Plug-in Hybrid 225cv", yearFrom: 2020, yearTo: null },
+      ],
+      EcoSport: [
+        { label: "1.0 EcoBoost 125cv", yearFrom: 2017, yearTo: 2022 },
+        { label: "1.5 TDCi 100cv", yearFrom: 2017, yearTo: 2022 },
+      ],
+      Mondeo: [
+        { label: "2.0 TDCi 150cv", yearFrom: 2014, yearTo: 2022 },
+        { label: "2.0 EcoBlue 190cv", yearFrom: 2014, yearTo: 2022 },
+      ],
+      "C-Max": [
+        { label: "1.0 EcoBoost 125cv", yearFrom: 2010, yearTo: 2019 },
+        { label: "1.5 TDCi 120cv", yearFrom: 2010, yearTo: 2019 },
+      ],
+      Ka: [
+        { label: "1.2 Ti-VCT 70cv", yearFrom: 2016, yearTo: 2021 },
+        { label: "1.2 Ti-VCT 85cv", yearFrom: 2016, yearTo: 2021 },
+      ],
+      Transit: [
+        { label: "2.0 EcoBlue 130cv", yearFrom: 2019, yearTo: null },
+        { label: "2.0 EcoBlue 170cv", yearFrom: 2019, yearTo: null },
+      ],
+    },
+    Honda: {
+      Civic: [
+        { label: "1.0 VTEC Turbo 126cv", yearFrom: 2017, yearTo: 2022 },
+        { label: "1.5 VTEC Turbo 182cv", yearFrom: 2017, yearTo: 2022 },
+        { label: "e:HEV 2.0 Hybrid 184cv", yearFrom: 2022, yearTo: null },
+        { label: "Type R 2.0 Turbo 329cv", yearFrom: 2017, yearTo: null },
+      ],
+      Jazz: [
+        { label: "1.3 i-VTEC 102cv", yearFrom: 2015, yearTo: 2020 },
+        { label: "1.5 e:HEV Hybrid 109cv", yearFrom: 2020, yearTo: null },
+      ],
+      "CR-V": [
+        { label: "1.5 VTEC Turbo 173cv", yearFrom: 2018, yearTo: null },
+        { label: "2.0 e:HEV Hybrid 184cv", yearFrom: 2018, yearTo: null },
+      ],
+      "HR-V": [
+        { label: "1.5 i-VTEC 130cv", yearFrom: 2015, yearTo: 2021 },
+        { label: "1.5 e:HEV Hybrid 131cv", yearFrom: 2021, yearTo: null },
+      ],
+      Accord: [
+        { label: "1.5 VTEC Turbo 192cv", yearFrom: 2018, yearTo: 2022 },
+        { label: "2.0 e:HEV Hybrid 215cv", yearFrom: 2018, yearTo: 2022 },
+      ],
+    },
+    Hyundai: {
+      i10: [
+        { label: "1.0 MPI 67cv", yearFrom: 2019, yearTo: null },
+        { label: "1.2 MPI 84cv", yearFrom: 2019, yearTo: null },
+      ],
+      i20: [
+        { label: "1.0 T-GDI 100cv", yearFrom: 2020, yearTo: null },
+        { label: "1.2 MPI 84cv", yearFrom: 2020, yearTo: null },
+        { label: "N 1.6 T-GDI 204cv", yearFrom: 2021, yearTo: null },
+      ],
+      i30: [
+        { label: "1.0 T-GDI 120cv", yearFrom: 2017, yearTo: null },
+        { label: "1.6 CRDi 136cv", yearFrom: 2017, yearTo: null },
+        { label: "N 2.0 T-GDI 280cv", yearFrom: 2018, yearTo: null },
+      ],
+      Kona: [
+        { label: "1.0 T-GDI 120cv", yearFrom: 2017, yearTo: null },
+        { label: "1.6 T-GDI Hybrid 141cv", yearFrom: 2019, yearTo: null },
+        { label: "Elettrica 204cv", yearFrom: 2018, yearTo: null },
+      ],
+      Tucson: [
+        { label: "1.6 T-GDI 150cv", yearFrom: 2020, yearTo: null },
+        { label: "1.6 CRDi Hybrid 230cv", yearFrom: 2020, yearTo: null },
+      ],
+      "Santa Fe": [
+        { label: "2.2 CRDi 200cv", yearFrom: 2018, yearTo: null },
+        { label: "1.6 T-GDI Plug-in Hybrid 265cv", yearFrom: 2020, yearTo: null },
+      ],
+      Ioniq: [
+        { label: "Hybrid 141cv", yearFrom: 2016, yearTo: 2022 },
+        { label: "Elettrica 136cv", yearFrom: 2016, yearTo: 2022 },
+      ],
+    },
+    Jaguar: {
+      XE: [
+        { label: "2.0 D 163cv", yearFrom: 2015, yearTo: 2020 },
+        { label: "2.0 P250 250cv", yearFrom: 2015, yearTo: 2020 },
+      ],
+      XF: [
+        { label: "2.0 D 180cv", yearFrom: 2015, yearTo: null },
+        { label: "3.0 D 300cv", yearFrom: 2015, yearTo: null },
+      ],
+      "F-Pace": [
+        { label: "2.0 D 180cv", yearFrom: 2016, yearTo: null },
+        { label: "3.0 D 300cv", yearFrom: 2016, yearTo: null },
+        { label: "SVR 5.0 V8 550cv", yearFrom: 2018, yearTo: null },
+      ],
+      "E-Pace": [
+        { label: "2.0 D 150cv", yearFrom: 2017, yearTo: null },
+        { label: "2.0 P200 200cv", yearFrom: 2017, yearTo: null },
+      ],
+      "I-Pace": [{ label: "Elettrica 400cv", yearFrom: 2018, yearTo: null }],
+    },
+    Jeep: {
+      Renegade: [
+        { label: "1.0 T3 120cv", yearFrom: 2018, yearTo: null },
+        { label: "1.6 MultiJet 130cv", yearFrom: 2014, yearTo: null },
+        { label: "4xe Plug-in Hybrid 190cv", yearFrom: 2020, yearTo: null },
+      ],
+      Compass: [
+        { label: "1.3 T4 130cv", yearFrom: 2017, yearTo: null },
+        { label: "1.6 MultiJet 130cv", yearFrom: 2017, yearTo: null },
+        { label: "4xe Plug-in Hybrid 240cv", yearFrom: 2020, yearTo: null },
+      ],
+      Cherokee: [{ label: "2.2 MultiJet 200cv", yearFrom: 2014, yearTo: 2020 }],
+      "Grand Cherokee": [
+        { label: "3.0 CRD 250cv", yearFrom: 2010, yearTo: null },
+        { label: "4xe Plug-in Hybrid 380cv", yearFrom: 2022, yearTo: null },
+      ],
+      Avenger: [
+        { label: "1.2 T3 Hybrid 100cv", yearFrom: 2023, yearTo: null },
+        { label: "Elettrica 156cv", yearFrom: 2023, yearTo: null },
+      ],
+      Wrangler: [
+        { label: "2.2 MultiJet 200cv", yearFrom: 2018, yearTo: null },
+        { label: "2.0 Turbo 272cv", yearFrom: 2018, yearTo: null },
+        { label: "4xe Plug-in Hybrid 380cv", yearFrom: 2021, yearTo: null },
+      ],
+    },
+    Kia: {
+      Picanto: [
+        { label: "1.0 MPI 67cv", yearFrom: 2017, yearTo: null },
+        { label: "1.2 MPI 84cv", yearFrom: 2017, yearTo: null },
+      ],
+      Rio: [
+        { label: "1.0 T-GDI 100cv", yearFrom: 2017, yearTo: null },
+        { label: "1.4 MPI 100cv", yearFrom: 2017, yearTo: null },
+      ],
+      Ceed: [
+        { label: "1.0 T-GDI 120cv", yearFrom: 2018, yearTo: null },
+        { label: "1.6 CRDi 136cv", yearFrom: 2018, yearTo: null },
+        { label: "GT 1.6 T-GDI 204cv", yearFrom: 2019, yearTo: null },
+      ],
+      Sportage: [
+        { label: "1.6 T-GDI 150cv", yearFrom: 2021, yearTo: null },
+        { label: "1.6 CRDi Hybrid 230cv", yearFrom: 2021, yearTo: null },
+      ],
+      Niro: [
+        { label: "1.6 GDI Hybrid 141cv", yearFrom: 2016, yearTo: null },
+        { label: "Elettrica e-Niro 204cv", yearFrom: 2018, yearTo: null },
+      ],
+      Stonic: [
+        { label: "1.0 T-GDI 120cv", yearFrom: 2017, yearTo: null },
+        { label: "1.4 CRDi 90cv", yearFrom: 2017, yearTo: null },
+      ],
+      Sorento: [
+        { label: "2.2 CRDi 200cv", yearFrom: 2020, yearTo: null },
+        { label: "1.6 T-GDI Plug-in Hybrid 265cv", yearFrom: 2020, yearTo: null },
+      ],
+    },
+    Lamborghini: {
+      Huracán: [
+        { label: "5.2 V10 610cv", yearFrom: 2014, yearTo: null },
+        { label: "Performante 5.2 V10 640cv", yearFrom: 2017, yearTo: null },
+        { label: "STO 5.2 V10 640cv", yearFrom: 2021, yearTo: null },
+      ],
+      Aventador: [
+        { label: "6.5 V12 700cv", yearFrom: 2011, yearTo: 2022 },
+        { label: "SVJ 6.5 V12 770cv", yearFrom: 2018, yearTo: 2022 },
+      ],
+      Urus: [
+        { label: "4.0 V8 Biturbo 650cv", yearFrom: 2018, yearTo: null },
+        { label: "Performante 4.0 V8 666cv", yearFrom: 2022, yearTo: null },
+      ],
+    },
+    Lancia: {
+      Ypsilon: [
+        { label: "1.2 69cv", yearFrom: 2011, yearTo: null },
+        { label: "0.9 TwinAir 85cv", yearFrom: 2011, yearTo: 2021 },
+        { label: "1.0 Hybrid 70cv", yearFrom: 2021, yearTo: null },
+      ],
+      Delta: [
+        { label: "1.4 MultiAir 120cv", yearFrom: 2008, yearTo: 2014 },
+        { label: "1.6 MultiJet 105cv", yearFrom: 2008, yearTo: 2014 },
+      ],
+      Musa: [
+        { label: "1.4 8v 77cv", yearFrom: 2004, yearTo: 2012 },
+        { label: "1.3 MultiJet 90cv", yearFrom: 2004, yearTo: 2012 },
+      ],
+      Thesis: [
+        { label: "2.4 20v 170cv", yearFrom: 2002, yearTo: 2009 },
+        { label: "2.4 JTD 150cv", yearFrom: 2002, yearTo: 2009 },
+      ],
+    },
+    "Land Rover": {
+      Defender: [
+        { label: "2.0 D200 200cv", yearFrom: 2020, yearTo: null },
+        { label: "3.0 D300 300cv", yearFrom: 2020, yearTo: null },
+        { label: "P400e Plug-in Hybrid 404cv", yearFrom: 2020, yearTo: null },
+      ],
+      Discovery: [
+        { label: "3.0 D250 249cv", yearFrom: 2017, yearTo: null },
+        { label: "3.0 D300 300cv", yearFrom: 2017, yearTo: null },
+      ],
+      "Discovery Sport": [
+        { label: "2.0 D165 163cv", yearFrom: 2019, yearTo: null },
+        { label: "P300e Plug-in Hybrid 309cv", yearFrom: 2020, yearTo: null },
+      ],
+      "Range Rover": [
+        { label: "3.0 D300 300cv", yearFrom: 2022, yearTo: null },
+        { label: "P440e Plug-in Hybrid 440cv", yearFrom: 2022, yearTo: null },
+      ],
+      "Range Rover Evoque": [
+        { label: "2.0 D150 150cv", yearFrom: 2019, yearTo: null },
+        { label: "P300e Plug-in Hybrid 309cv", yearFrom: 2020, yearTo: null },
+      ],
+      "Range Rover Sport": [
+        { label: "3.0 D300 300cv", yearFrom: 2022, yearTo: null },
+        { label: "P440e Plug-in Hybrid 440cv", yearFrom: 2022, yearTo: null },
+      ],
+    },
+    Maserati: {
+      Ghibli: [
+        { label: "3.0 V6 Diesel 275cv", yearFrom: 2013, yearTo: null },
+        { label: "3.0 V6 350cv", yearFrom: 2013, yearTo: null },
+        { label: "Trofeo 3.8 V8 580cv", yearFrom: 2020, yearTo: null },
+      ],
+      Quattroporte: [
+        { label: "3.0 V6 Diesel 275cv", yearFrom: 2013, yearTo: null },
+        { label: "3.0 V6 350cv", yearFrom: 2013, yearTo: null },
+        { label: "Trofeo 3.8 V8 580cv", yearFrom: 2020, yearTo: null },
+      ],
+      Levante: [
+        { label: "3.0 V6 Diesel 275cv", yearFrom: 2016, yearTo: null },
+        { label: "3.0 V6 350cv", yearFrom: 2016, yearTo: null },
+        { label: "Trofeo 3.8 V8 580cv", yearFrom: 2018, yearTo: null },
+      ],
+      Grecale: [
+        { label: "2.0 Mild Hybrid 300cv", yearFrom: 2022, yearTo: null },
+        { label: "Trofeo 3.0 V6 530cv", yearFrom: 2022, yearTo: null },
+      ],
+      GranTurismo: [
+        { label: "4.7 V8 460cv", yearFrom: 2007, yearTo: 2019 },
+        { label: "Folgore Elettrica 761cv", yearFrom: 2023, yearTo: null },
+      ],
+    },
+    Mazda: {
+      Mazda2: [
+        { label: "1.5 Skyactiv-G 90cv", yearFrom: 2015, yearTo: null },
+        { label: "1.5 Skyactiv-G 115cv", yearFrom: 2015, yearTo: null },
+      ],
+      Mazda3: [
+        { label: "2.0 Skyactiv-G 122cv", yearFrom: 2019, yearTo: null },
+        { label: "2.0 e-Skyactiv X 180cv", yearFrom: 2019, yearTo: null },
+      ],
+      Mazda6: [
+        { label: "2.0 Skyactiv-G 145cv", yearFrom: 2012, yearTo: 2022 },
+        { label: "2.2 Skyactiv-D 150cv", yearFrom: 2012, yearTo: 2022 },
+      ],
+      "CX-3": [
+        { label: "2.0 Skyactiv-G 121cv", yearFrom: 2015, yearTo: 2021 },
+        { label: "1.8 Skyactiv-D 115cv", yearFrom: 2015, yearTo: 2021 },
+      ],
+      "CX-30": [
+        { label: "2.0 Skyactiv-G 122cv", yearFrom: 2019, yearTo: null },
+        { label: "2.0 e-Skyactiv X 180cv", yearFrom: 2019, yearTo: null },
+      ],
+      "CX-5": [
+        { label: "2.0 Skyactiv-G 165cv", yearFrom: 2017, yearTo: null },
+        { label: "2.2 Skyactiv-D 184cv", yearFrom: 2017, yearTo: null },
+      ],
+      "MX-5": [
+        { label: "1.5 Skyactiv-G 132cv", yearFrom: 2015, yearTo: null },
+        { label: "2.0 Skyactiv-G 184cv", yearFrom: 2015, yearTo: null },
+      ],
+    },
+    "Mercedes-Benz": {
+      "Classe A": [
+        { label: "A180 1.3 136cv", yearFrom: 2018, yearTo: null },
+        { label: "A200d 2.0 150cv", yearFrom: 2018, yearTo: null },
+        { label: "A250 2.0 224cv", yearFrom: 2018, yearTo: null },
+        { label: "A35 AMG 306cv", yearFrom: 2019, yearTo: null },
+      ],
+      "Classe B": [
+        { label: "B180 1.3 136cv", yearFrom: 2018, yearTo: null },
+        { label: "B200d 2.0 150cv", yearFrom: 2018, yearTo: null },
+      ],
+      "Classe C": [
+        { label: "C200 1.5 204cv", yearFrom: 2021, yearTo: null },
+        { label: "C220d 2.0 200cv", yearFrom: 2021, yearTo: null },
+        { label: "C63 AMG 2.0 Turbo Hybrid 680cv", yearFrom: 2023, yearTo: null },
+      ],
+      "Classe E": [
+        { label: "E200 2.0 197cv", yearFrom: 2016, yearTo: null },
+        { label: "E220d 2.0 194cv", yearFrom: 2016, yearTo: null },
+        { label: "E63 AMG 4.0 V8 612cv", yearFrom: 2017, yearTo: null },
+      ],
+      "Classe S": [
+        { label: "S350d 3.0 286cv", yearFrom: 2020, yearTo: null },
+        { label: "S500 3.0 435cv", yearFrom: 2020, yearTo: null },
+      ],
+      CLA: [
+        { label: "CLA200 1.3 163cv", yearFrom: 2019, yearTo: null },
+        { label: "CLA220d 2.0 190cv", yearFrom: 2019, yearTo: null },
+      ],
+      GLA: [
+        { label: "GLA200 1.3 163cv", yearFrom: 2020, yearTo: null },
+        { label: "GLA220d 2.0 190cv", yearFrom: 2020, yearTo: null },
+      ],
+      GLB: [
+        { label: "GLB200 1.3 163cv", yearFrom: 2019, yearTo: null },
+        { label: "GLB220d 2.0 190cv", yearFrom: 2019, yearTo: null },
+      ],
+      GLC: [
+        { label: "GLC200 2.0 197cv", yearFrom: 2019, yearTo: null },
+        { label: "GLC300d 2.0 245cv", yearFrom: 2019, yearTo: null },
+      ],
+      GLE: [
+        { label: "GLE300d 2.0 245cv", yearFrom: 2019, yearTo: null },
+        { label: "GLE450 3.0 367cv", yearFrom: 2019, yearTo: null },
+      ],
+      Sprinter: [
+        { label: "2.1 CDI 143cv", yearFrom: 2018, yearTo: null },
+        { label: "2.1 CDI 163cv", yearFrom: 2018, yearTo: null },
+      ],
+      Vito: [
+        { label: "2.0 CDI 116cv", yearFrom: 2014, yearTo: null },
+        { label: "2.0 CDI 163cv", yearFrom: 2014, yearTo: null },
+      ],
+    },
+    Mini: {
+      Cooper: [
+        { label: "1.5 Cooper 136cv", yearFrom: 2014, yearTo: null },
+        { label: "2.0 Cooper S 178cv", yearFrom: 2014, yearTo: null },
+        { label: "John Cooper Works 231cv", yearFrom: 2014, yearTo: null },
+      ],
+      Countryman: [
+        { label: "1.5 Cooper 136cv", yearFrom: 2017, yearTo: null },
+        { label: "2.0 Cooper S 178cv", yearFrom: 2017, yearTo: null },
+        { label: "Cooper SE Plug-in Hybrid 224cv", yearFrom: 2017, yearTo: null },
+      ],
+      Clubman: [
+        { label: "1.5 Cooper 136cv", yearFrom: 2015, yearTo: null },
+        { label: "2.0 Cooper S 178cv", yearFrom: 2015, yearTo: null },
+      ],
+      Cabrio: [
+        { label: "1.5 Cooper 136cv", yearFrom: 2016, yearTo: null },
+        { label: "2.0 Cooper S 178cv", yearFrom: 2016, yearTo: null },
+      ],
+    },
+    Mitsubishi: {
+      "Space Star": [{ label: "1.2 MIVEC 80cv", yearFrom: 2013, yearTo: null }],
+      ASX: [
+        { label: "1.6 MIVEC 117cv", yearFrom: 2010, yearTo: null },
+        { label: "1.6 DI-D 114cv", yearFrom: 2010, yearTo: null },
+      ],
+      "Eclipse Cross": [
+        { label: "1.5 MIVEC Turbo 163cv", yearFrom: 2018, yearTo: null },
+        { label: "Plug-in Hybrid 188cv", yearFrom: 2020, yearTo: null },
+      ],
+      Outlander: [
+        { label: "2.0 MIVEC 150cv", yearFrom: 2012, yearTo: null },
+        { label: "Plug-in Hybrid 224cv", yearFrom: 2013, yearTo: null },
+      ],
+      L200: [
+        { label: "2.2 DI-D 150cv", yearFrom: 2015, yearTo: null },
+        { label: "2.4 DI-D 181cv", yearFrom: 2019, yearTo: null },
+      ],
+    },
+    Nissan: {
+      Micra: [
+        { label: "1.0 IG-T 92cv", yearFrom: 2017, yearTo: null },
+        { label: "0.9 IG-T 90cv", yearFrom: 2017, yearTo: null },
+      ],
+      Note: [
+        { label: "1.5 dCi 90cv", yearFrom: 2013, yearTo: 2016 },
+        { label: "1.2 80cv", yearFrom: 2013, yearTo: 2016 },
+      ],
+      Juke: [
+        { label: "1.0 DIG-T 114cv", yearFrom: 2019, yearTo: null },
+        { label: "Hybrid 143cv", yearFrom: 2021, yearTo: null },
+      ],
+      Qashqai: [
+        { label: "1.3 DIG-T 140cv", yearFrom: 2021, yearTo: null },
+        { label: "e-Power Hybrid 190cv", yearFrom: 2021, yearTo: null },
+      ],
+      "X-Trail": [
+        { label: "1.5 e-Power 204cv", yearFrom: 2022, yearTo: null },
+        { label: "1.3 DIG-T 158cv", yearFrom: 2022, yearTo: null },
+      ],
+      Leaf: [
+        { label: "Elettrica 150cv", yearFrom: 2018, yearTo: null },
+        { label: "Elettrica e+ 217cv", yearFrom: 2019, yearTo: null },
+      ],
+    },
+    Opel: {
+      Corsa: [
+        { label: "1.2 75cv", yearFrom: 2019, yearTo: null },
+        { label: "1.2 Turbo 100cv", yearFrom: 2019, yearTo: null },
+        { label: "Elettrica 136cv", yearFrom: 2020, yearTo: null },
+      ],
+      Astra: [
+        { label: "1.2 Turbo 110cv", yearFrom: 2021, yearTo: null },
+        { label: "1.5 Diesel 122cv", yearFrom: 2021, yearTo: null },
+      ],
+      Insignia: [
+        { label: "1.5 Turbo 165cv", yearFrom: 2017, yearTo: null },
+        { label: "2.0 Diesel 174cv", yearFrom: 2017, yearTo: null },
+      ],
+      Mokka: [
+        { label: "1.2 Turbo 130cv", yearFrom: 2020, yearTo: null },
+        { label: "Elettrica 136cv", yearFrom: 2020, yearTo: null },
+      ],
+      Crossland: [
+        { label: "1.2 Turbo 110cv", yearFrom: 2017, yearTo: null },
+        { label: "1.5 Diesel 102cv", yearFrom: 2017, yearTo: null },
+      ],
+      Grandland: [
+        { label: "1.2 Turbo 130cv", yearFrom: 2017, yearTo: null },
+        { label: "Hybrid Plug-in 224cv", yearFrom: 2019, yearTo: null },
+      ],
+    },
+    Peugeot: {
+      "108": [
+        { label: "1.0 VTi 68cv", yearFrom: 2014, yearTo: 2021 },
+        { label: "1.2 PureTech 82cv", yearFrom: 2014, yearTo: 2021 },
+      ],
+      "208": [
+        { label: "1.2 PureTech 75cv", yearFrom: 2019, yearTo: null },
+        { label: "1.2 PureTech 100cv", yearFrom: 2019, yearTo: null },
+        { label: "1.2 PureTech 130cv", yearFrom: 2019, yearTo: null },
+        { label: "1.5 BlueHDi 100cv", yearFrom: 2019, yearTo: null },
+        { label: "Elettrica e-208 136cv", yearFrom: 2019, yearTo: null },
+      ],
+      "308": [
+        { label: "1.2 PureTech 130cv", yearFrom: 2021, yearTo: null },
+        { label: "1.5 BlueHDi 130cv", yearFrom: 2021, yearTo: null },
+      ],
+      "2008": [
+        { label: "1.2 PureTech 130cv", yearFrom: 2019, yearTo: null },
+        { label: "Elettrica e-2008 136cv", yearFrom: 2019, yearTo: null },
+      ],
+      "3008": [
+        { label: "1.2 PureTech 130cv", yearFrom: 2016, yearTo: null },
+        { label: "Hybrid4 300cv", yearFrom: 2020, yearTo: null },
+      ],
+      "5008": [
+        { label: "1.2 PureTech 130cv", yearFrom: 2017, yearTo: null },
+        { label: "1.5 BlueHDi 130cv", yearFrom: 2017, yearTo: null },
+      ],
+      Partner: [
+        { label: "1.5 BlueHDi 100cv", yearFrom: 2018, yearTo: null },
+        { label: "Elettrica e-Partner 136cv", yearFrom: 2021, yearTo: null },
+      ],
+    },
+    Porsche: {
+      "911": [
+        { label: "Carrera 3.0 385cv", yearFrom: 2019, yearTo: null },
+        { label: "Carrera S 3.0 450cv", yearFrom: 2019, yearTo: null },
+        { label: "Turbo S 3.7 650cv", yearFrom: 2020, yearTo: null },
+      ],
+      "718 Cayman": [
+        { label: "2.0 Turbo 300cv", yearFrom: 2016, yearTo: null },
+        { label: "GTS 4.0 400cv", yearFrom: 2020, yearTo: null },
+      ],
+      "718 Boxster": [
+        { label: "2.0 Turbo 300cv", yearFrom: 2016, yearTo: null },
+        { label: "GTS 4.0 400cv", yearFrom: 2020, yearTo: null },
+      ],
+      Panamera: [
+        { label: "3.0 V6 330cv", yearFrom: 2016, yearTo: null },
+        { label: "Turbo 4.0 V8 620cv", yearFrom: 2016, yearTo: null },
+      ],
+      Macan: [
+        { label: "2.0 Turbo 265cv", yearFrom: 2014, yearTo: null },
+        { label: "GTS 2.9 V6 380cv", yearFrom: 2020, yearTo: null },
+      ],
+      Cayenne: [
+        { label: "3.0 V6 340cv", yearFrom: 2018, yearTo: null },
+        { label: "Turbo GT 4.0 640cv", yearFrom: 2021, yearTo: null },
+      ],
+      Taycan: [
+        { label: "Elettrica 4S 435cv", yearFrom: 2019, yearTo: null },
+        { label: "Turbo S 761cv", yearFrom: 2019, yearTo: null },
+      ],
     },
     Renault: {
       Clio: [
@@ -163,17 +955,142 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.5 dCi/Blue dCi 85cv", yearFrom: 2019, yearTo: null },
         { label: "1.6 E-Tech Hybrid 140cv", yearFrom: 2020, yearTo: null },
       ],
+      Captur: [
+        { label: "1.0 TCe 100cv", yearFrom: 2019, yearTo: null },
+        { label: "E-Tech Hybrid 145cv", yearFrom: 2020, yearTo: null },
+      ],
+      Megane: [
+        { label: "1.3 TCe 140cv", yearFrom: 2020, yearTo: null },
+        { label: "E-Tech Elettrica 218cv", yearFrom: 2022, yearTo: null },
+      ],
+      Kadjar: [
+        { label: "1.3 TCe 140cv", yearFrom: 2019, yearTo: null },
+        { label: "1.5 Blue dCi 115cv", yearFrom: 2019, yearTo: 2022 },
+      ],
+      Scenic: [
+        { label: "1.3 TCe 140cv", yearFrom: 2016, yearTo: 2022 },
+        { label: "1.5 dCi 110cv", yearFrom: 2016, yearTo: 2022 },
+      ],
+      Twingo: [
+        { label: "1.0 SCe 65cv", yearFrom: 2014, yearTo: null },
+        { label: "Elettrica 82cv", yearFrom: 2020, yearTo: null },
+      ],
+      Austral: [
+        { label: "1.3 TCe 140cv", yearFrom: 2022, yearTo: null },
+        { label: "E-Tech Full Hybrid 200cv", yearFrom: 2022, yearTo: null },
+      ],
     },
-    Peugeot: {
-      "208": [
-        { label: "1.2 PureTech 75cv", yearFrom: 2019, yearTo: null },
-        { label: "1.2 PureTech 100cv", yearFrom: 2019, yearTo: null },
-        { label: "1.2 PureTech 130cv", yearFrom: 2019, yearTo: null },
-        { label: "1.5 BlueHDi 100cv", yearFrom: 2019, yearTo: null },
-        { label: "Elettrica e-208 136cv", yearFrom: 2019, yearTo: null },
+    Seat: {
+      Ibiza: [
+        { label: "1.0 TSI 95cv", yearFrom: 2017, yearTo: null },
+        { label: "1.5 TSI 150cv FR", yearFrom: 2017, yearTo: null },
+      ],
+      Leon: [
+        { label: "1.5 TSI 150cv", yearFrom: 2020, yearTo: null },
+        { label: "Cupra 2.0 TSI 300cv", yearFrom: 2020, yearTo: null },
+      ],
+      Arona: [
+        { label: "1.0 TSI 115cv", yearFrom: 2017, yearTo: null },
+        { label: "1.5 TSI 150cv", yearFrom: 2017, yearTo: null },
+      ],
+      Ateca: [
+        { label: "1.5 TSI 150cv", yearFrom: 2016, yearTo: null },
+        { label: "2.0 TDI 150cv", yearFrom: 2016, yearTo: null },
+      ],
+      Tarraco: [
+        { label: "1.5 TSI 150cv", yearFrom: 2018, yearTo: null },
+        { label: "2.0 TDI 190cv", yearFrom: 2018, yearTo: null },
+      ],
+    },
+    Škoda: {
+      Fabia: [
+        { label: "1.0 TSI 95cv", yearFrom: 2021, yearTo: null },
+        { label: "1.0 TSI 110cv", yearFrom: 2021, yearTo: null },
+      ],
+      Octavia: [
+        { label: "1.5 TSI 150cv", yearFrom: 2020, yearTo: null },
+        { label: "2.0 TDI 150cv", yearFrom: 2020, yearTo: null },
+        { label: "RS 2.0 TSI 245cv", yearFrom: 2020, yearTo: null },
+      ],
+      Kamiq: [
+        { label: "1.0 TSI 116cv", yearFrom: 2019, yearTo: null },
+        { label: "1.5 TSI 150cv", yearFrom: 2019, yearTo: null },
+      ],
+      Karoq: [
+        { label: "1.5 TSI 150cv", yearFrom: 2017, yearTo: null },
+        { label: "2.0 TDI 150cv", yearFrom: 2017, yearTo: null },
+      ],
+      Kodiaq: [
+        { label: "2.0 TSI 190cv", yearFrom: 2017, yearTo: null },
+        { label: "2.0 TDI 150cv", yearFrom: 2017, yearTo: null },
+      ],
+      Superb: [
+        { label: "2.0 TSI 190cv", yearFrom: 2015, yearTo: null },
+        { label: "2.0 TDI 190cv", yearFrom: 2015, yearTo: null },
+      ],
+    },
+    Smart: {
+      Fortwo: [
+        { label: "1.0 71cv", yearFrom: 2014, yearTo: null },
+        { label: "Elettrica EQ 82cv", yearFrom: 2017, yearTo: null },
+      ],
+      Forfour: [
+        { label: "1.0 71cv", yearFrom: 2014, yearTo: null },
+        { label: "Elettrica EQ 82cv", yearFrom: 2017, yearTo: null },
+      ],
+    },
+    Subaru: {
+      Impreza: [
+        { label: "1.6i 114cv", yearFrom: 2016, yearTo: null },
+        { label: "2.0i e-Boxer Hybrid 150cv", yearFrom: 2018, yearTo: null },
+      ],
+      Forester: [{ label: "2.0i e-Boxer Hybrid 150cv", yearFrom: 2018, yearTo: null }],
+      XV: [
+        { label: "1.6i 114cv", yearFrom: 2017, yearTo: 2023 },
+        { label: "2.0i e-Boxer Hybrid 150cv", yearFrom: 2019, yearTo: 2023 },
+      ],
+      Outback: [
+        { label: "2.5i 169cv", yearFrom: 2020, yearTo: null },
+        { label: "2.0i e-Boxer Hybrid 150cv", yearFrom: 2021, yearTo: null },
+      ],
+    },
+    Suzuki: {
+      Swift: [
+        { label: "1.2 Dualjet 90cv", yearFrom: 2017, yearTo: null },
+        { label: "1.4 Boosterjet Sport 140cv", yearFrom: 2018, yearTo: null },
+      ],
+      Vitara: [
+        { label: "1.4 Boosterjet 129cv", yearFrom: 2015, yearTo: null },
+        { label: "1.4 Hybrid 129cv", yearFrom: 2020, yearTo: null },
+      ],
+      "S-Cross": [
+        { label: "1.4 Boosterjet 129cv", yearFrom: 2013, yearTo: null },
+        { label: "1.4 Hybrid 129cv", yearFrom: 2020, yearTo: null },
+      ],
+      Ignis: [{ label: "1.2 Dualjet 83cv", yearFrom: 2016, yearTo: null }],
+      Jimny: [{ label: "1.5 102cv", yearFrom: 2018, yearTo: null }],
+    },
+    Tesla: {
+      "Model 3": [
+        { label: "Standard Range 283cv", yearFrom: 2019, yearTo: null },
+        { label: "Long Range Dual Motor 498cv", yearFrom: 2019, yearTo: null },
+        { label: "Performance 513cv", yearFrom: 2019, yearTo: null },
+      ],
+      "Model S": [
+        { label: "Long Range 670cv", yearFrom: 2021, yearTo: null },
+        { label: "Plaid 1020cv", yearFrom: 2021, yearTo: null },
+      ],
+      "Model X": [
+        { label: "Long Range 670cv", yearFrom: 2021, yearTo: null },
+        { label: "Plaid 1020cv", yearFrom: 2021, yearTo: null },
+      ],
+      "Model Y": [
+        { label: "Long Range Dual Motor 498cv", yearFrom: 2021, yearTo: null },
+        { label: "Performance 514cv", yearFrom: 2021, yearTo: null },
       ],
     },
     Toyota: {
+      Aygo: [{ label: "1.0 VVT-i 72cv", yearFrom: 2014, yearTo: 2022 }],
       Yaris: [
         { label: "1.0 72cv", yearFrom: 2020, yearTo: null },
         { label: "1.5 Hybrid 116cv", yearFrom: 2020, yearTo: null },
@@ -186,15 +1103,126 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.8 Hybrid 122cv", yearFrom: 2019, yearTo: null },
         { label: "2.0 Hybrid 196cv", yearFrom: 2019, yearTo: null },
       ],
+      "C-HR": [
+        { label: "1.8 Hybrid 122cv", yearFrom: 2016, yearTo: null },
+        { label: "2.0 Hybrid 184cv", yearFrom: 2020, yearTo: null },
+      ],
+      RAV4: [
+        { label: "2.5 Hybrid 218cv", yearFrom: 2019, yearTo: null },
+        { label: "Plug-in Hybrid 306cv", yearFrom: 2020, yearTo: null },
+      ],
+      Auris: [
+        { label: "1.8 Hybrid 136cv", yearFrom: 2012, yearTo: 2019 },
+        { label: "1.2 Turbo 116cv", yearFrom: 2015, yearTo: 2019 },
+      ],
+      Prius: [
+        { label: "1.8 Hybrid 122cv", yearFrom: 2016, yearTo: null },
+        { label: "Plug-in Hybrid 223cv", yearFrom: 2016, yearTo: null },
+      ],
+      Hilux: [
+        { label: "2.4 D-4D 150cv", yearFrom: 2015, yearTo: null },
+        { label: "2.8 D-4D 204cv", yearFrom: 2020, yearTo: null },
+      ],
+    },
+    Volkswagen: {
+      Polo: [
+        { label: "1.0 TSI 95cv", yearFrom: 2017, yearTo: null },
+        { label: "GTI 2.0 TSI 207cv", yearFrom: 2018, yearTo: null },
+      ],
+      Golf: [
+        { label: "1.0 TSI 110cv", yearFrom: 2016, yearTo: null },
+        { label: "1.5 TSI 130cv", yearFrom: 2017, yearTo: null },
+        { label: "1.6 TDI 105cv", yearFrom: 2012, yearTo: 2019 },
+        { label: "2.0 TDI 150cv", yearFrom: 2012, yearTo: null },
+        { label: "2.0 TSI GTI 245cv", yearFrom: 2013, yearTo: null },
+      ],
+      Passat: [
+        { label: "2.0 TDI 150cv", yearFrom: 2014, yearTo: null },
+        { label: "2.0 TSI 190cv", yearFrom: 2014, yearTo: null },
+      ],
+      Tiguan: [
+        { label: "1.5 TSI 150cv", yearFrom: 2016, yearTo: null },
+        { label: "2.0 TDI 150cv", yearFrom: 2016, yearTo: null },
+        { label: "R 2.0 TSI 320cv", yearFrom: 2021, yearTo: null },
+      ],
+      "T-Roc": [
+        { label: "1.5 TSI 150cv", yearFrom: 2017, yearTo: null },
+        { label: "2.0 TDI 150cv", yearFrom: 2017, yearTo: null },
+        { label: "R 2.0 TSI 300cv", yearFrom: 2019, yearTo: null },
+      ],
+      "T-Cross": [
+        { label: "1.0 TSI 95cv", yearFrom: 2019, yearTo: null },
+        { label: "1.0 TSI 110cv", yearFrom: 2019, yearTo: null },
+      ],
+      Touareg: [
+        { label: "3.0 TDI 231cv", yearFrom: 2018, yearTo: null },
+        { label: "3.0 TSI 340cv", yearFrom: 2018, yearTo: null },
+      ],
+      "Up!": [
+        { label: "1.0 60cv", yearFrom: 2016, yearTo: null },
+        { label: "Elettrica e-up! 82cv", yearFrom: 2016, yearTo: null },
+      ],
+      "ID.3": [
+        { label: "Elettrica Pro 150cv", yearFrom: 2020, yearTo: null },
+        { label: "Elettrica Pro S 204cv", yearFrom: 2020, yearTo: null },
+      ],
+      "ID.4": [
+        { label: "Elettrica Pro 170cv", yearFrom: 2021, yearTo: null },
+        { label: "GTX 4motion 299cv", yearFrom: 2021, yearTo: null },
+      ],
+    },
+    Volvo: {
+      V40: [
+        { label: "T3 1.5 152cv", yearFrom: 2012, yearTo: 2019 },
+        { label: "D2 1.6 120cv", yearFrom: 2012, yearTo: 2019 },
+      ],
+      V60: [
+        { label: "B4 2.0 197cv", yearFrom: 2018, yearTo: null },
+        { label: "T8 Plug-in Hybrid 390cv", yearFrom: 2018, yearTo: null },
+      ],
+      V90: [
+        { label: "B4 2.0 197cv", yearFrom: 2016, yearTo: null },
+        { label: "T8 Plug-in Hybrid 390cv", yearFrom: 2016, yearTo: null },
+      ],
+      XC40: [
+        { label: "B3 1.5 163cv", yearFrom: 2018, yearTo: null },
+        { label: "Elettrica Recharge 231cv", yearFrom: 2020, yearTo: null },
+      ],
+      XC60: [
+        { label: "B4 2.0 197cv", yearFrom: 2017, yearTo: null },
+        { label: "T8 Plug-in Hybrid 390cv", yearFrom: 2017, yearTo: null },
+      ],
+      XC90: [
+        { label: "B5 2.0 235cv", yearFrom: 2014, yearTo: null },
+        { label: "T8 Plug-in Hybrid 390cv", yearFrom: 2014, yearTo: null },
+      ],
     },
   },
   moto: {
-    Yamaha: {
-      "MT-07": [{ label: "689cc 75cv", yearFrom: 2014, yearTo: null }],
-      "MT-09": [
-        { label: "890cc 119cv", yearFrom: 2021, yearTo: null },
-        { label: "847cc 115cv", yearFrom: 2013, yearTo: 2020 },
+    Aprilia: {
+      "RS 660": [{ label: "659cc 100cv", yearFrom: 2020, yearTo: null }],
+      "Tuono 660": [{ label: "659cc 95cv", yearFrom: 2021, yearTo: null }],
+      RSV4: [{ label: "1099cc 217cv", yearFrom: 2021, yearTo: null }],
+      "Tuareg 660": [{ label: "659cc 80cv", yearFrom: 2022, yearTo: null }],
+      "SR GT": [
+        { label: "125cc 15cv", yearFrom: 2022, yearTo: null },
+        { label: "200cc 18cv", yearFrom: 2022, yearTo: null },
       ],
+      "Shiver 900": [{ label: "896cc 95cv", yearFrom: 2017, yearTo: null }],
+    },
+    Benelli: {
+      "TRK 502": [{ label: "500cc 47cv", yearFrom: 2017, yearTo: null }],
+      "Leoncino 500": [{ label: "500cc 47cv", yearFrom: 2017, yearTo: null }],
+      "752 S": [{ label: "754cc 76cv", yearFrom: 2020, yearTo: null }],
+      "TNT 125": [{ label: "125cc 15cv", yearFrom: 2018, yearTo: null }],
+    },
+    BMW: {
+      "S 1000 RR": [{ label: "999cc 210cv", yearFrom: 2019, yearTo: null }],
+      "R 1250 GS": [{ label: "1254cc 136cv", yearFrom: 2019, yearTo: null }],
+      "F 850 GS": [{ label: "853cc 95cv", yearFrom: 2018, yearTo: null }],
+      "R nineT": [{ label: "1170cc 109cv", yearFrom: 2014, yearTo: null }],
+      "G 310 R": [{ label: "313cc 34cv", yearFrom: 2017, yearTo: null }],
+      "F 900 R": [{ label: "895cc 105cv", yearFrom: 2020, yearTo: null }],
     },
     Ducati: {
       "Panigale V4": [
@@ -202,22 +1230,154 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "V4 S 1103cc 214cv", yearFrom: 2018, yearTo: null },
         { label: "V4 R 998cc 218cv", yearFrom: 2019, yearTo: null },
       ],
+      "Panigale V2": [{ label: "955cc 155cv", yearFrom: 2020, yearTo: null }],
       Monster: [
         { label: "937cc 111cv", yearFrom: 2021, yearTo: null },
         { label: "821cc 112cv", yearFrom: 2014, yearTo: 2020 },
       ],
+      Multistrada: [
+        { label: "1158cc 170cv V4", yearFrom: 2021, yearTo: null },
+        { label: "937cc 113cv", yearFrom: 2016, yearTo: 2020 },
+      ],
+      Scrambler: [{ label: "803cc 73cv", yearFrom: 2015, yearTo: null }],
+      Diavel: [
+        { label: "1158cc 168cv V4", yearFrom: 2023, yearTo: null },
+        { label: "1262cc 159cv", yearFrom: 2019, yearTo: 2022 },
+      ],
+      "Streetfighter V4": [{ label: "1103cc 208cv", yearFrom: 2020, yearTo: null }],
+    },
+    "Harley-Davidson": {
+      Sportster: [
+        { label: "883cc 50cv", yearFrom: 2004, yearTo: 2022 },
+        { label: "S 1252cc 121cv", yearFrom: 2021, yearTo: null },
+      ],
+      "Fat Boy": [{ label: "1868cc 92cv", yearFrom: 2018, yearTo: null }],
+      "Street Bob": [{ label: "1746cc 78cv", yearFrom: 2018, yearTo: null }],
+      "Road King": [{ label: "1868cc 92cv", yearFrom: 2017, yearTo: null }],
+      "Pan America": [{ label: "1250cc 150cv", yearFrom: 2021, yearTo: null }],
     },
     Honda: {
+      CBR600RR: [{ label: "599cc 121cv", yearFrom: 2007, yearTo: 2020 }],
+      "CBR1000RR-R": [{ label: "999cc 217cv", yearFrom: 2020, yearTo: null }],
+      CB650R: [{ label: "649cc 95cv", yearFrom: 2019, yearTo: null }],
       "Africa Twin": [
         { label: "CRF1000L 998cc 95cv", yearFrom: 2016, yearTo: 2019 },
         { label: "CRF1100L 1084cc 102cv", yearFrom: 2020, yearTo: null },
       ],
+      CB500F: [{ label: "471cc 47cv", yearFrom: 2013, yearTo: null }],
+      Hornet: [
+        { label: "755cc 92cv", yearFrom: 2023, yearTo: null },
+        { label: "CB600F 599cc 102cv", yearFrom: 2007, yearTo: 2013 },
+      ],
+      "SH 125/150": [
+        { label: "125cc 13cv", yearFrom: 2013, yearTo: null },
+        { label: "150cc 14cv", yearFrom: 2013, yearTo: null },
+      ],
     },
-    BMW: {
-      "R 1250 GS": [{ label: "1254cc 136cv", yearFrom: 2019, yearTo: null }],
+    Husqvarna: {
+      "Svartpilen 401": [{ label: "373cc 44cv", yearFrom: 2018, yearTo: null }],
+      "Vitpilen 401": [{ label: "373cc 44cv", yearFrom: 2018, yearTo: null }],
+      "Norden 901": [{ label: "889cc 105cv", yearFrom: 2022, yearTo: null }],
+    },
+    Kawasaki: {
+      "Ninja 400": [{ label: "399cc 45cv", yearFrom: 2018, yearTo: null }],
+      "Ninja 650": [{ label: "649cc 68cv", yearFrom: 2017, yearTo: null }],
+      "Ninja ZX-10R": [{ label: "998cc 203cv", yearFrom: 2016, yearTo: null }],
+      Z650: [{ label: "649cc 68cv", yearFrom: 2017, yearTo: null }],
+      Z900: [{ label: "948cc 125cv", yearFrom: 2017, yearTo: null }],
+      "Versys 650": [{ label: "649cc 68cv", yearFrom: 2015, yearTo: null }],
     },
     KTM: {
+      "Duke 125": [{ label: "125cc 15cv", yearFrom: 2017, yearTo: null }],
       "Duke 390": [{ label: "373cc 44cv", yearFrom: 2013, yearTo: null }],
+      "Duke 790": [{ label: "799cc 105cv", yearFrom: 2018, yearTo: 2021 }],
+      "Duke 890": [{ label: "889cc 115cv", yearFrom: 2021, yearTo: null }],
+      "1290 Super Duke": [{ label: "1301cc 180cv", yearFrom: 2020, yearTo: null }],
+      "Adventure 390": [{ label: "373cc 44cv", yearFrom: 2020, yearTo: null }],
+      "Adventure 1290": [{ label: "1301cc 160cv", yearFrom: 2021, yearTo: null }],
+    },
+    "Moto Guzzi": {
+      V7: [
+        { label: "850cc 65cv", yearFrom: 2021, yearTo: null },
+        { label: "750cc 52cv", yearFrom: 2012, yearTo: 2020 },
+      ],
+      V9: [{ label: "850cc 55cv", yearFrom: 2016, yearTo: null }],
+      "V85 TT": [{ label: "850cc 80cv", yearFrom: 2019, yearTo: null }],
+      California: [{ label: "1380cc 96cv", yearFrom: 2013, yearTo: 2020 }],
+    },
+    "MV Agusta": {
+      Brutale: [{ label: "798cc 140cv", yearFrom: 2016, yearTo: null }],
+      F3: [{ label: "798cc 147cv", yearFrom: 2012, yearTo: null }],
+      "Turismo Veloce": [{ label: "798cc 110cv", yearFrom: 2014, yearTo: null }],
+      Dragster: [{ label: "798cc 140cv", yearFrom: 2014, yearTo: null }],
+    },
+    Piaggio: {
+      Beverly: [
+        { label: "300cc 22cv", yearFrom: 2010, yearTo: null },
+        { label: "400cc 34cv", yearFrom: 2010, yearTo: null },
+      ],
+      MP3: [
+        { label: "300cc 22cv", yearFrom: 2010, yearTo: null },
+        { label: "500cc 44cv", yearFrom: 2010, yearTo: null },
+      ],
+      Liberty: [
+        { label: "125cc 11cv", yearFrom: 2010, yearTo: null },
+        { label: "150cc 13cv", yearFrom: 2010, yearTo: null },
+      ],
+    },
+    "Royal Enfield": {
+      "Classic 350": [{ label: "349cc 20cv", yearFrom: 2021, yearTo: null }],
+      "Meteor 350": [{ label: "349cc 20cv", yearFrom: 2021, yearTo: null }],
+      Himalayan: [{ label: "411cc 24cv", yearFrom: 2016, yearTo: null }],
+      "Interceptor 650": [{ label: "648cc 47cv", yearFrom: 2018, yearTo: null }],
+      "Continental GT 650": [{ label: "648cc 47cv", yearFrom: 2018, yearTo: null }],
+    },
+    Suzuki: {
+      "GSX-R600": [{ label: "599cc 125cv", yearFrom: 2006, yearTo: null }],
+      "GSX-R750": [{ label: "750cc 148cv", yearFrom: 2006, yearTo: null }],
+      "GSX-R1000": [{ label: "999cc 202cv", yearFrom: 2017, yearTo: null }],
+      SV650: [{ label: "645cc 75cv", yearFrom: 2016, yearTo: null }],
+      "V-Strom 650": [{ label: "645cc 71cv", yearFrom: 2017, yearTo: null }],
+      Hayabusa: [
+        { label: "1340cc 190cv", yearFrom: 2021, yearTo: null },
+        { label: "1299cc 197cv", yearFrom: 2008, yearTo: 2020 },
+      ],
+    },
+    Triumph: {
+      "Street Triple": [{ label: "765cc 128cv", yearFrom: 2017, yearTo: null }],
+      "Speed Triple": [{ label: "1160cc 178cv", yearFrom: 2021, yearTo: null }],
+      "Tiger 900": [{ label: "888cc 95cv", yearFrom: 2020, yearTo: null }],
+      "Bonneville T120": [{ label: "1200cc 80cv", yearFrom: 2016, yearTo: null }],
+      "Trident 660": [{ label: "660cc 81cv", yearFrom: 2021, yearTo: null }],
+    },
+    Vespa: {
+      Primavera: [
+        { label: "125cc 11cv", yearFrom: 2013, yearTo: null },
+        { label: "150cc 13cv", yearFrom: 2013, yearTo: null },
+      ],
+      GTS: [{ label: "300cc 23cv", yearFrom: 2016, yearTo: null }],
+      Sprint: [
+        { label: "125cc 11cv", yearFrom: 2013, yearTo: null },
+        { label: "150cc 13cv", yearFrom: 2013, yearTo: null },
+      ],
+      Elettrica: [{ label: "Elettrica 4cv", yearFrom: 2019, yearTo: null }],
+    },
+    Yamaha: {
+      "MT-07": [{ label: "689cc 75cv", yearFrom: 2014, yearTo: null }],
+      "MT-09": [
+        { label: "890cc 119cv", yearFrom: 2021, yearTo: null },
+        { label: "847cc 115cv", yearFrom: 2013, yearTo: 2020 },
+      ],
+      "MT-10": [{ label: "998cc 165cv", yearFrom: 2016, yearTo: null }],
+      "YZF-R1": [{ label: "998cc 200cv", yearFrom: 2015, yearTo: null }],
+      "YZF-R6": [{ label: "599cc 118cv", yearFrom: 2006, yearTo: 2020 }],
+      "YZF-R125": [{ label: "125cc 15cv", yearFrom: 2019, yearTo: null }],
+      "Tracer 9": [{ label: "890cc 119cv", yearFrom: 2021, yearTo: null }],
+      "Tenere 700": [{ label: "689cc 73cv", yearFrom: 2019, yearTo: null }],
+      NMAX: [
+        { label: "125cc 12cv", yearFrom: 2015, yearTo: null },
+        { label: "155cc 15cv", yearFrom: 2020, yearTo: null },
+      ],
     },
   },
 };
