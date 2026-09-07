@@ -85,10 +85,10 @@ export default function VehicleAddedOverlay({
         />
 
         {/* Scia dietro al veicolo */}
-        <div className="absolute animate-drive-trail" aria-hidden>
+        <div className="absolute left-0 top-1/2 animate-drive-trail" aria-hidden>
           <Vehicle />
         </div>
-        <div className="absolute animate-drive-across">
+        <div className="absolute left-0 top-1/2 animate-drive-across">
           <Vehicle />
         </div>
 

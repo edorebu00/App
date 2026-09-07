@@ -127,7 +127,7 @@ h3 {
    simula il motion blur, invece di un semplice slide lineare. */
 @keyframes drive-across {
   0% {
-    transform: translateX(-25vw) translateY(0) scaleX(-1);
+    transform: translateX(-30vw) translateY(-50%);
     opacity: 0;
     filter: blur(3px);
   }
@@ -136,23 +136,23 @@ h3 {
     filter: blur(0);
   }
   22% {
-    transform: translateX(5vw) translateY(-3px) scaleX(-1);
+    transform: translateX(5vw) translateY(calc(-50% - 3px));
   }
   38% {
-    transform: translateX(35vw) translateY(0) scaleX(-1);
+    transform: translateX(35vw) translateY(-50%);
   }
   55% {
-    transform: translateX(60vw) translateY(-4px) scaleX(-1);
+    transform: translateX(60vw) translateY(calc(-50% - 4px));
   }
   72% {
-    transform: translateX(85vw) translateY(0) scaleX(-1);
+    transform: translateX(85vw) translateY(-50%);
   }
   90% {
     opacity: 1;
     filter: blur(0);
   }
   100% {
-    transform: translateX(128vw) translateY(0) scaleX(-1);
+    transform: translateX(120vw) translateY(-50%);
     opacity: 0;
     filter: blur(3px);
   }
@@ -209,7 +209,7 @@ h3 {
     animation: none !important;
     opacity: 1 !important;
     filter: none !important;
-    transform: translateX(50vw) !important;
+    transform: translateX(50vw) translateY(-50%) !important;
   }
   .animate-drive-trail {
     display: none !important;

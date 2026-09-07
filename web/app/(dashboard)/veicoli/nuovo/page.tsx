@@ -8,6 +8,7 @@ import { getEngineVariants, getMakes, getModels } from "@/lib/vehicleData";
 import VehicleAddedOverlay from "@/components/VehicleAddedOverlay";
 
 const CURRENT_YEAR = new Date().getFullYear();
+const MIN_YEAR = 1990;
 
 export default function NewVehiclePage() {
   const router = useRouter();
@@ -33,8 +34,9 @@ export default function NewVehiclePage() {
   const yearOptions = useMemo(() => {
     if (!selectedVariant) return [];
     const to = selectedVariant.yearTo ?? CURRENT_YEAR;
+    const from = Math.min(selectedVariant.yearFrom, MIN_YEAR);
     const years: number[] = [];
-    for (let y = to; y >= selectedVariant.yearFrom; y--) years.push(y);
+    for (let y = to; y >= from; y--) years.push(y);
     return years;
   }, [selectedVariant]);
 
