@@ -42,6 +42,7 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
     Innocenti: ["Mini"],
     Isuzu: ["D-Max"],
     Iveco: ["Daily"],
+    Jaecoo: ["Jaecoo 7"],
     Lada: ["Niva"],
     Jaguar: ["XE", "XF", "F-Pace", "E-Pace", "I-Pace", "F-Type", "S-Type", "X-Type", "XJ", "XK"],
     Jeep: ["Renegade", "Compass", "Cherokee", "Grand Cherokee", "Avenger", "Wrangler", "Gladiator", "Commander", "Patriot"],
@@ -56,15 +57,18 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
     Microcar: ["Dué", "M.GO"],
     Lexus: ["UX", "NX", "RX", "IS", "LC", "LS"],
     Maserati: ["Ghibli", "Quattroporte", "Levante", "Grecale", "GranTurismo", "MC20"],
+    Maxus: ["T90", "eDeliver 9", "eDeliver 3"],
     Mazda: ["Mazda2", "Mazda3", "Mazda6", "626", "RX-8", "CX-3", "CX-30", "CX-5", "CX-60", "MX-5", "MX-30"],
     "Mercedes-Benz": ["190", "Classe A", "Classe B", "Classe C", "Classe E", "Classe G", "Classe S", "Classe V", "CLA", "CLK", "CLS", "GLA", "GLB", "GLC", "GLE", "GLS", "AMG GT", "EQA", "EQB", "EQC", "EQE", "EQS", "EQV", "Sprinter", "Vito"],
     MG: ["ZS", "HS", "MG4", "MG3"],
     Mini: ["Cooper", "Countryman", "Clubman", "Paceman", "Cabrio"],
     Mitsubishi: ["Space Star", "ASX", "Eclipse Cross", "Outlander", "L200", "Colt", "Lancer", "Pajero", "Pajero Pinin", "Pajero Sport"],
     Nissan: ["Micra", "Note", "Primera", "Pulsar", "Juke", "Qashqai", "X-Trail", "350Z", "370Z", "GT-R", "Ariya", "Navara", "Leaf", "e-NV200", "Murano", "Pathfinder", "Patrol", "Terrano II"],
+    Omoda: ["Omoda 5"],
     Opel: ["Corsa", "Astra", "Insignia", "Mokka", "Crossland", "Grandland", "Zafira", "Combo", "Vectra", "Meriva", "Calibra", "Tigra", "Antara", "Agila", "Adam", "Frontera", "Karl"],
     Peugeot: ["106", "107", "108", "205", "206", "207", "208", "306", "307", "308", "406", "407", "408", "508", "807", "1007", "RCZ", "2008", "3008", "5008", "Partner", "Bipper", "Traveller"],
     Polestar: ["Polestar 2"],
+    RAM: ["1500"],
     Pontiac: ["Firebird"],
     Porsche: ["911", "718 Cayman", "718 Boxster", "Panamera", "Macan", "Cayenne", "Taycan", "924", "928", "944"],
     Renault: ["Clio", "Captur", "Megane", "Kadjar", "Scenic", "Espace", "Laguna", "Trafic", "Twingo", "Twizy", "Zoe", "Austral", "Arkana", "Koleos", "Talisman", "Kangoo", "Modus", "R4", "R5", "R19"],
@@ -247,6 +251,26 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
     },
     XEV: {
       Yoyo: [{ label: "Elettrica 6cv", yearFrom: 2020, yearTo: null }],
+    },
+    Jaecoo: {
+      "Jaecoo 7": [
+        { label: "1.6 Turbo 145cv", yearFrom: 2024, yearTo: null },
+        { label: "Plug-in Hybrid halcyon 306cv", yearFrom: 2024, yearTo: null },
+      ],
+    },
+    Maxus: {
+      T90: [{ label: "2.0 Diesel 163cv", yearFrom: 2021, yearTo: null }],
+      "eDeliver 9": [{ label: "Elettrica 177cv", yearFrom: 2021, yearTo: null }],
+      "eDeliver 3": [{ label: "Elettrica 122cv", yearFrom: 2021, yearTo: null }],
+    },
+    Omoda: {
+      "Omoda 5": [
+        { label: "1.6 Turbo 145cv", yearFrom: 2023, yearTo: null },
+        { label: "Elettrica 204cv", yearFrom: 2023, yearTo: null },
+      ],
+    },
+    RAM: {
+      "1500": [{ label: "5.7 V8 HEMI 395cv", yearFrom: 2019, yearTo: null }],
     },
     Ferrari: {
       California: [{ label: "4.3 V8 460cv", yearFrom: 2008, yearTo: 2017 }],
