@@ -168,12 +168,41 @@ h3 {
   will-change: transform, opacity, filter;
 }
 
-/* Scia dietro al veicolo: stessa traiettoria, leggermente sfalsata e piu' trasparente */
+/* Scia dietro al veicolo: stessa traiettoria, leggermente sfalsata e piu' trasparente.
+   Keyframe dedicato (invece di riusare drive-across) perche' l'opacita' li' sale a 1:
+   qui resta sempre sotto 0.25 cosi' la scia non "lampeggia" opaca come il veicolo. */
+@keyframes drive-across-trail {
+  0% {
+    transform: translateX(-35vw) translateY(-50%) translateZ(-280px) rotateY(-16deg);
+    opacity: 0;
+    filter: blur(4px);
+  }
+  10% {
+    opacity: 0.25;
+    filter: blur(3px);
+  }
+  30% {
+    transform: translateX(0vw) translateY(-50%) translateZ(-60px) rotateY(-6deg);
+  }
+  50% {
+    transform: translateX(38vw) translateY(calc(-50% - 5px)) translateZ(60px) rotateY(0deg);
+  }
+  70% {
+    transform: translateX(75vw) translateY(-50%) translateZ(-40px) rotateY(6deg);
+  }
+  90% {
+    opacity: 0.25;
+    filter: blur(3px);
+  }
+  100% {
+    transform: translateX(122vw) translateY(-50%) translateZ(-280px) rotateY(16deg);
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
 .animate-drive-trail {
-  animation: drive-across 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: drive-across-trail 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: 0.06s;
-  opacity: 0.25;
-  filter: blur(4px);
   will-change: transform, opacity, filter;
 }
 
@@ -272,7 +301,8 @@ h3 {
     animation: none !important;
     opacity: 1 !important;
     filter: none !important;
-    transform: translateX(50vw) translateY(-50%) !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(-50%) !important;
   }
   .animate-drive-trail {
     display: none !important;
@@ -298,5 +328,14 @@ h3 {
   .track-card:hover,
   .track-card:focus-within {
     transform: none !important;
+  }
+  .card-interactive:hover,
+  .card-interactive:focus-within {
+    transform: none !important;
+    transition: none !important;
+  }
+  .group-hover\:translate-x-1 {
+    transform: none !important;
+    transition: none !important;
   }
 }
