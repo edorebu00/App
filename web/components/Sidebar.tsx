@@ -11,8 +11,10 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className={`block rounded-md px-3 py-2 text-sm font-medium transition ${
-        active ? "bg-brand-600 text-white" : "text-graphite-300 hover:bg-graphite-700 hover:text-white"
+      className={`block rounded-md px-3 py-2 text-sm font-medium transition-all duration-150 ${
+        active
+          ? "bg-brand-600 text-white shadow shadow-brand-900/40"
+          : "text-graphite-300 hover:translate-x-0.5 hover:bg-graphite-700 hover:text-white"
       }`}
     >
       {children}
@@ -39,8 +41,10 @@ export default function Sidebar({ vehicles }: { vehicles: Vehicle[] }) {
                 <Link
                   key={v.id}
                   href={href}
-                  className={`block truncate rounded-md px-3 py-2 text-sm font-medium transition ${
-                    active ? "bg-brand-600 text-white" : "text-graphite-300 hover:bg-graphite-700 hover:text-white"
+                  className={`block truncate rounded-md px-3 py-2 text-sm font-medium transition-all duration-150 ${
+                    active
+                      ? "bg-brand-600 text-white shadow shadow-brand-900/40"
+                      : "text-graphite-300 hover:translate-x-0.5 hover:bg-graphite-700 hover:text-white"
                   }`}
                 >
                   {v.type === "moto" ? "🏍️" : "🚗"} {v.make} {v.model}

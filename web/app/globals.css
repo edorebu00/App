@@ -16,6 +16,11 @@ h3 {
   @apply rounded-lg border border-graphite-700 border-l-4 border-l-brand-600 bg-graphite-800 p-5 shadow-lg shadow-black/20;
 }
 
+/* Card cliccabili (es. veicoli in dashboard): un piccolo sollevamento al passaggio del mouse */
+.card-interactive {
+  @apply transition-all duration-200 ease-out hover:-translate-y-1 hover:border-brand-600 hover:shadow-xl hover:shadow-brand-900/30;
+}
+
 .btn-primary {
   @apply inline-flex items-center justify-center rounded-md bg-brand-600 px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide text-white shadow shadow-brand-900/40 transition hover:bg-brand-700 disabled:opacity-50;
 }
@@ -55,6 +60,35 @@ h3 {
   z-index: 0;
 }
 
+/* Griglia con ingresso "a cascata" (es. elenco veicoli in dashboard) */
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-stagger > * {
+  animation: stagger-in 0.35s ease-out both;
+}
+.animate-stagger > *:nth-child(1) { animation-delay: 0.02s; }
+.animate-stagger > *:nth-child(2) { animation-delay: 0.06s; }
+.animate-stagger > *:nth-child(3) { animation-delay: 0.1s; }
+.animate-stagger > *:nth-child(4) { animation-delay: 0.14s; }
+.animate-stagger > *:nth-child(5) { animation-delay: 0.18s; }
+.animate-stagger > *:nth-child(6) { animation-delay: 0.22s; }
+.animate-stagger > *:nth-child(n + 7) { animation-delay: 0.26s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-stagger > * {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+  }
+}
+
 /* Ingresso morbido per card/contenuti principali */
 @keyframes rise-in {
   from {
@@ -87,28 +121,54 @@ h3 {
   transform: translateX(100%);
 }
 
-/* Veicolo che attraversa lo schermo da sinistra a destra (conferma inserimento) */
+/* Veicolo che attraversa lo schermo da sinistra a destra (conferma inserimento).
+   Piu' fotogrammi chiave = movimento percepito come piu' fluido, con un leggero
+   "rimbalzo" da sospensioni (translateY) e una sfumatura in ingresso/uscita che
+   simula il motion blur, invece di un semplice slide lineare. */
 @keyframes drive-across {
   0% {
-    transform: translateX(-30vw) translateY(0) scaleX(-1);
+    transform: translateX(-25vw) translateY(0) scaleX(-1);
     opacity: 0;
+    filter: blur(3px);
   }
-  8% {
+  10% {
     opacity: 1;
+    filter: blur(0);
   }
-  50% {
-    transform: translateX(50vw) translateY(-6px) scaleX(-1);
+  22% {
+    transform: translateX(5vw) translateY(-3px) scaleX(-1);
   }
-  92% {
+  38% {
+    transform: translateX(35vw) translateY(0) scaleX(-1);
+  }
+  55% {
+    transform: translateX(60vw) translateY(-4px) scaleX(-1);
+  }
+  72% {
+    transform: translateX(85vw) translateY(0) scaleX(-1);
+  }
+  90% {
     opacity: 1;
+    filter: blur(0);
   }
   100% {
-    transform: translateX(130vw) translateY(0) scaleX(-1);
+    transform: translateX(128vw) translateY(0) scaleX(-1);
     opacity: 0;
+    filter: blur(3px);
   }
 }
 .animate-drive-across {
-  animation: drive-across 1.6s cubic-bezier(0.33, 0, 0.2, 1) both;
+  animation: drive-across 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity, filter;
+}
+
+/* Scia dietro al veicolo: stessa traiettoria, leggermente sfalsata e piu' trasparente */
+.animate-drive-trail {
+  animation: drive-across 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.06s;
+  opacity: 0.25;
+  filter: blur(4px);
+  will-change: transform, opacity, filter;
 }
 
 @keyframes speed-lines {
@@ -116,11 +176,14 @@ h3 {
     background-position: 0 0;
   }
   to {
-    background-position: -200px 0;
+    background-position: -240px 0;
   }
 }
 .animate-speed-lines {
-  animation: speed-lines 0.5s linear infinite;
+  animation: speed-lines 0.6s linear infinite;
+}
+.animate-speed-lines-fast {
+  animation: speed-lines 0.35s linear infinite;
 }
 
 @keyframes pop-in {
@@ -145,9 +208,14 @@ h3 {
   .animate-drive-across {
     animation: none !important;
     opacity: 1 !important;
+    filter: none !important;
     transform: translateX(50vw) !important;
   }
-  .animate-speed-lines {
+  .animate-drive-trail {
+    display: none !important;
+  }
+  .animate-speed-lines,
+  .animate-speed-lines-fast {
     animation: none !important;
   }
   .animate-rise-in,

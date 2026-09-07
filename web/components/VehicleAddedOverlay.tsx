@@ -49,16 +49,26 @@ export default function VehicleAddedOverlay({
   onDone: () => void;
 }) {
   useEffect(() => {
-    const t = setTimeout(onDone, 1650);
+    const t = setTimeout(onDone, 1550);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const Vehicle = type === "moto" ? MotoSilhouette : CarSilhouette;
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-graphite-900/95 backdrop-blur-sm">
       <div className="flag-stripe w-full" />
 
       <div className="relative flex w-full flex-1 items-center justify-center overflow-hidden">
+        {/* Linee di velocita' su due livelli per un effetto di profondita' */}
+        <div
+          className="absolute inset-x-0 top-[calc(50%+22px)] h-0.5 opacity-20 animate-speed-lines-fast"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(90deg, #9d9da5 0, #9d9da5 24px, transparent 24px, transparent 60px)",
+          }}
+        />
         <div
           className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 opacity-30 animate-speed-lines"
           style={{
@@ -66,9 +76,20 @@ export default function VehicleAddedOverlay({
               "repeating-linear-gradient(90deg, #9d9da5 0, #9d9da5 40px, transparent 40px, transparent 80px)",
           }}
         />
+        <div
+          className="absolute inset-x-0 top-[calc(50%-22px)] h-0.5 opacity-15 animate-speed-lines-fast"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(90deg, #9d9da5 0, #9d9da5 24px, transparent 24px, transparent 60px)",
+          }}
+        />
 
+        {/* Scia dietro al veicolo */}
+        <div className="absolute animate-drive-trail" aria-hidden>
+          <Vehicle />
+        </div>
         <div className="absolute animate-drive-across">
-          {type === "moto" ? <MotoSilhouette /> : <CarSilhouette />}
+          <Vehicle />
         </div>
 
         <div className="animate-pop-in text-center">
