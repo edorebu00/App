@@ -16,6 +16,11 @@ h3 {
   @apply rounded-lg border border-graphite-700 border-l-4 border-l-brand-600 bg-graphite-800 p-5 shadow-lg shadow-black/20;
 }
 
+/* Card cliccabili (es. veicoli in dashboard): un piccolo sollevamento al passaggio del mouse */
+.card-interactive {
+  @apply transition-all duration-200 ease-out hover:-translate-y-1 hover:border-brand-600 hover:shadow-xl hover:shadow-brand-900/30;
+}
+
 .btn-primary {
   @apply inline-flex items-center justify-center rounded-md bg-brand-600 px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide text-white shadow shadow-brand-900/40 transition hover:bg-brand-700 disabled:opacity-50;
 }
@@ -55,6 +60,35 @@ h3 {
   z-index: 0;
 }
 
+/* Griglia con ingresso "a cascata" (es. elenco veicoli in dashboard) */
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-stagger > * {
+  animation: stagger-in 0.35s ease-out both;
+}
+.animate-stagger > *:nth-child(1) { animation-delay: 0.02s; }
+.animate-stagger > *:nth-child(2) { animation-delay: 0.06s; }
+.animate-stagger > *:nth-child(3) { animation-delay: 0.1s; }
+.animate-stagger > *:nth-child(4) { animation-delay: 0.14s; }
+.animate-stagger > *:nth-child(5) { animation-delay: 0.18s; }
+.animate-stagger > *:nth-child(6) { animation-delay: 0.22s; }
+.animate-stagger > *:nth-child(n + 7) { animation-delay: 0.26s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-stagger > * {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+  }
+}
+
 /* Ingresso morbido per card/contenuti principali */
 @keyframes rise-in {
   from {
@@ -87,28 +121,89 @@ h3 {
   transform: translateX(100%);
 }
 
-/* Veicolo che attraversa lo schermo da sinistra a destra (conferma inserimento) */
+/* Palcoscenico con prospettiva: da' profondita' (asse Z) al passaggio del veicolo,
+   invece di un semplice scorrimento piatto sull'asse X. */
+.scene-3d {
+  perspective: 1000px;
+}
+
+/* Veicolo che attraversa lo schermo da sinistra a destra (conferma inserimento),
+   con una traiettoria in profondita': arriva da lontano (piccolo, translateZ negativo),
+   passa vicino alla camera al centro (ingrandito, translateZ positivo, "hero moment")
+   e si allontana di nuovo verso destra, con una leggera imbardata (rotateY) che
+   accompagna la curva. Il motion blur in ingresso/uscita rinforza la sensazione di velocita'. */
 @keyframes drive-across {
   0% {
-    transform: translateX(-30vw) translateY(0) scaleX(-1);
+    transform: translateX(-35vw) translateY(-50%) translateZ(-280px) rotateY(-16deg);
     opacity: 0;
+    filter: blur(4px);
   }
-  8% {
+  10% {
     opacity: 1;
+    filter: blur(1px);
+  }
+  30% {
+    transform: translateX(0vw) translateY(-50%) translateZ(-60px) rotateY(-6deg);
+    filter: blur(0);
   }
   50% {
-    transform: translateX(50vw) translateY(-6px) scaleX(-1);
+    transform: translateX(38vw) translateY(calc(-50% - 5px)) translateZ(60px) rotateY(0deg);
   }
-  92% {
+  70% {
+    transform: translateX(75vw) translateY(-50%) translateZ(-40px) rotateY(6deg);
+  }
+  90% {
     opacity: 1;
+    filter: blur(1px);
   }
   100% {
-    transform: translateX(130vw) translateY(0) scaleX(-1);
+    transform: translateX(122vw) translateY(-50%) translateZ(-280px) rotateY(16deg);
     opacity: 0;
+    filter: blur(4px);
   }
 }
 .animate-drive-across {
-  animation: drive-across 1.6s cubic-bezier(0.33, 0, 0.2, 1) both;
+  animation: drive-across 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+}
+
+/* Scia dietro al veicolo: stessa traiettoria, leggermente sfalsata e piu' trasparente.
+   Keyframe dedicato (invece di riusare drive-across) perche' l'opacita' li' sale a 1:
+   qui resta sempre sotto 0.25 cosi' la scia non "lampeggia" opaca come il veicolo. */
+@keyframes drive-across-trail {
+  0% {
+    transform: translateX(-35vw) translateY(-50%) translateZ(-280px) rotateY(-16deg);
+    opacity: 0;
+    filter: blur(4px);
+  }
+  10% {
+    opacity: 0.25;
+    filter: blur(3px);
+  }
+  30% {
+    transform: translateX(0vw) translateY(-50%) translateZ(-60px) rotateY(-6deg);
+  }
+  50% {
+    transform: translateX(38vw) translateY(calc(-50% - 5px)) translateZ(60px) rotateY(0deg);
+  }
+  70% {
+    transform: translateX(75vw) translateY(-50%) translateZ(-40px) rotateY(6deg);
+  }
+  90% {
+    opacity: 0.25;
+    filter: blur(3px);
+  }
+  100% {
+    transform: translateX(122vw) translateY(-50%) translateZ(-280px) rotateY(16deg);
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+.animate-drive-trail {
+  animation: drive-across-trail 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.06s;
+  will-change: transform, opacity, filter;
 }
 
 @keyframes speed-lines {
@@ -116,11 +211,14 @@ h3 {
     background-position: 0 0;
   }
   to {
-    background-position: -200px 0;
+    background-position: -240px 0;
   }
 }
 .animate-speed-lines {
-  animation: speed-lines 0.5s linear infinite;
+  animation: speed-lines 0.6s linear infinite;
+}
+.animate-speed-lines-fast {
+  animation: speed-lines 0.35s linear infinite;
 }
 
 @keyframes pop-in {
@@ -140,14 +238,77 @@ h3 {
   animation: pop-in 0.4s ease-out 0.5s both;
 }
 
+/* Carosello di circuiti in 3D (dashboard): righe scorrevoli con card inclinate
+   a "ventaglio", che si appiattiscono e si sollevano al passaggio del mouse. */
+.track-carousel-fade {
+  position: relative;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+}
+.track-carousel {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding: 1.5rem 1.5rem 2rem;
+  perspective: 1400px;
+}
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.track-card {
+  flex: 0 0 auto;
+  width: 220px;
+  scroll-snap-align: center;
+  border-radius: 0.75rem;
+  border: 1px solid #3f3f46;
+  background: linear-gradient(160deg, #1c1c1f, #0c0c0e);
+  padding: 1rem;
+  box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.6);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  transform-style: preserve-3d;
+}
+.track-card-inner {
+  aspect-ratio: 5 / 3;
+}
+.track-card-tilt-a {
+  transform: rotateY(-14deg) rotateX(3deg);
+}
+.track-card-tilt-b {
+  transform: rotateY(14deg) rotateX(3deg) translateY(10px);
+}
+.track-card:hover,
+.track-card:focus-within {
+  transform: rotateY(0deg) rotateX(0deg) translateY(-6px) scale(1.04);
+  border-color: #dc2626;
+  box-shadow: 0 20px 34px -14px rgba(220, 38, 38, 0.35);
+}
+
+@media (max-width: 640px) {
+  .track-card-tilt-a,
+  .track-card-tilt-b {
+    transform: none;
+  }
+}
+
 /* Rispetta la preferenza di riduzione del movimento: niente corsa, solo un fade rapido */
 @media (prefers-reduced-motion: reduce) {
   .animate-drive-across {
     animation: none !important;
     opacity: 1 !important;
-    transform: translateX(50vw) !important;
+    filter: none !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(-50%) !important;
   }
-  .animate-speed-lines {
+  .animate-drive-trail {
+    display: none !important;
+  }
+  .animate-speed-lines,
+  .animate-speed-lines-fast {
     animation: none !important;
   }
   .animate-rise-in,
@@ -156,5 +317,25 @@ h3 {
   }
   .btn-primary::after {
     display: none;
+  }
+  .track-card-tilt-a,
+  .track-card-tilt-b {
+    transform: none !important;
+  }
+  .track-card {
+    transition-duration: 0.01ms !important;
+  }
+  .track-card:hover,
+  .track-card:focus-within {
+    transform: none !important;
+  }
+  .card-interactive:hover,
+  .card-interactive:focus-within {
+    transform: none !important;
+    transition: none !important;
+  }
+  .group-hover\:translate-x-1 {
+    transform: none !important;
+    transition: none !important;
   }
 }
