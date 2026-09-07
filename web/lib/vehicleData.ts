@@ -11,23 +11,29 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
     "Alfa Romeo": ["Giulia", "Giulietta", "Stelvio", "Tonale", "MiTo", "159", "147", "Brera", "GT"],
     Audi: ["A1", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q4 e-tron", "Q5", "Q7", "Q8", "TT"],
     BMW: ["Serie 1", "Serie 2", "Serie 3", "Serie 4", "Serie 5", "Serie 7", "X1", "X2", "X3", "X4", "X5", "X6", "Z4", "i3", "i4"],
+    BYD: ["Atto 3", "Seal", "Dolphin", "Seal U"],
+    Chevrolet: ["Aveo", "Spark", "Captiva"],
     Citroën: ["C1", "C3", "C3 Aircross", "C4", "C4 Picasso", "C5 Aircross", "Berlingo", "DS3", "DS4"],
     Cupra: ["Formentor", "Leon", "Born", "Ateca"],
     Dacia: ["Sandero", "Duster", "Jogger", "Spring"],
     "DS Automobiles": ["DS 3", "DS 4", "DS 7", "DS 9"],
     Fiat: ["Panda", "500", "500X", "500L", "Tipo", "Punto", "Bravo", "Ducato", "Doblo", "Qubo", "Sedici"],
     Ford: ["Fiesta", "Focus", "Puma", "Kuga", "EcoSport", "Mondeo", "C-Max", "Ka", "Transit"],
+    GWM: ["Ora Funky Cat"],
     Honda: ["Civic", "Jazz", "CR-V", "HR-V", "Accord"],
     Hyundai: ["i10", "i20", "i30", "Kona", "Tucson", "Santa Fe", "Ioniq"],
+    Isuzu: ["D-Max"],
     Jaguar: ["XE", "XF", "F-Pace", "E-Pace", "I-Pace"],
     Jeep: ["Renegade", "Compass", "Cherokee", "Grand Cherokee", "Avenger", "Wrangler"],
     Kia: ["Picanto", "Rio", "Ceed", "Sportage", "Niro", "Stonic", "Sorento"],
     Lamborghini: ["Huracán", "Aventador", "Urus"],
     Lancia: ["Ypsilon", "Delta", "Musa", "Thesis"],
     "Land Rover": ["Defender", "Discovery", "Discovery Sport", "Range Rover", "Range Rover Evoque", "Range Rover Sport"],
+    Lexus: ["UX", "NX", "RX"],
     Maserati: ["Ghibli", "Quattroporte", "Levante", "Grecale", "GranTurismo"],
     Mazda: ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "MX-5"],
     "Mercedes-Benz": ["Classe A", "Classe B", "Classe C", "Classe E", "Classe S", "CLA", "GLA", "GLB", "GLC", "GLE", "Sprinter", "Vito"],
+    MG: ["ZS", "HS", "MG4", "MG3"],
     Mini: ["Cooper", "Countryman", "Clubman", "Cabrio"],
     Mitsubishi: ["Space Star", "ASX", "Eclipse Cross", "Outlander", "L200"],
     Nissan: ["Micra", "Note", "Juke", "Qashqai", "X-Trail", "Leaf"],
@@ -38,6 +44,7 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
     Seat: ["Ibiza", "Leon", "Arona", "Ateca", "Tarraco"],
     Škoda: ["Fabia", "Octavia", "Kamiq", "Karoq", "Kodiaq", "Superb"],
     Smart: ["Fortwo", "Forfour"],
+    SsangYong: ["Tivoli", "Korando", "Rexton"],
     Subaru: ["Impreza", "Forester", "XV", "Outback"],
     Suzuki: ["Swift", "Vitara", "S-Cross", "Ignis", "Jimny"],
     Tesla: ["Model 3", "Model S", "Model X", "Model Y"],
@@ -48,21 +55,29 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
   moto: {
     Aprilia: ["RS 660", "Tuono 660", "RSV4", "Tuareg 660", "SR GT", "Shiver 900"],
     Benelli: ["TRK 502", "Leoncino 500", "752 S", "TNT 125"],
+    Beta: ["RR 350", "Xtrainer"],
     BMW: ["S 1000 RR", "R 1250 GS", "F 850 GS", "R nineT", "G 310 R", "F 900 R"],
+    CFMoto: ["300NK", "450MT", "700CL-X"],
     Ducati: ["Panigale V4", "Panigale V2", "Monster", "Multistrada", "Scrambler", "Diavel", "Streetfighter V4"],
+    Fantic: ["Caballero"],
     "Harley-Davidson": ["Sportster", "Fat Boy", "Street Bob", "Road King", "Pan America"],
     Honda: ["CBR600RR", "CBR1000RR-R", "CB650R", "Africa Twin", "CB500F", "Hornet", "SH 125/150"],
     Husqvarna: ["Svartpilen 401", "Vitpilen 401", "Norden 901"],
     Kawasaki: ["Ninja 400", "Ninja 650", "Ninja ZX-10R", "Z650", "Z900", "Versys 650"],
     KTM: ["Duke 125", "Duke 390", "Duke 790", "Duke 890", "1290 Super Duke", "Adventure 390", "Adventure 1290"],
+    Kymco: ["People", "Agility"],
+    Malaguti: ["Centro", "Madison"],
     "Moto Guzzi": ["V7", "V9", "V85 TT", "California"],
     "MV Agusta": ["Brutale", "F3", "Turismo Veloce", "Dragster"],
+    "Peugeot Motocycles": ["Django", "Speedfight"],
     Piaggio: ["Beverly", "MP3", "Liberty"],
     "Royal Enfield": ["Classic 350", "Meteor 350", "Himalayan", "Interceptor 650", "Continental GT 650"],
     Suzuki: ["GSX-R600", "GSX-R750", "GSX-R1000", "SV650", "V-Strom 650", "Hayabusa"],
+    SWM: ["Superdual", "Silver Vase"],
     Triumph: ["Street Triple", "Speed Triple", "Tiger 900", "Bonneville T120", "Trident 660"],
     Vespa: ["Primavera", "GTS", "Sprint", "Elettrica"],
     Yamaha: ["MT-07", "MT-09", "MT-10", "YZF-R1", "YZF-R6", "YZF-R125", "Tracer 9", "Tenere 700", "NMAX"],
+    "Zero Motorcycles": ["SR/F", "DSR"],
   },
 };
 
@@ -83,6 +98,66 @@ export function getModels(type: VehicleType, make: string): string[] {
  */
 const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVariant[]>>> = {
   auto: {
+    BYD: {
+      "Atto 3": [{ label: "Elettrica 204cv", yearFrom: 2022, yearTo: null }],
+      Seal: [
+        { label: "Elettrica RWD 313cv", yearFrom: 2023, yearTo: null },
+        { label: "Elettrica AWD 530cv", yearFrom: 2023, yearTo: null },
+      ],
+      Dolphin: [
+        { label: "Elettrica 95cv", yearFrom: 2023, yearTo: null },
+        { label: "Elettrica 204cv", yearFrom: 2023, yearTo: null },
+      ],
+      "Seal U": [{ label: "Elettrica 218cv", yearFrom: 2024, yearTo: null }],
+    },
+    Chevrolet: {
+      Aveo: [{ label: "1.2 16v 86cv", yearFrom: 2011, yearTo: 2015 }],
+      Spark: [{ label: "1.0 16v 68cv", yearFrom: 2010, yearTo: 2015 }],
+      Captiva: [{ label: "2.2 VCDi 184cv", yearFrom: 2011, yearTo: 2015 }],
+    },
+    GWM: {
+      "Ora Funky Cat": [{ label: "Elettrica 171cv", yearFrom: 2023, yearTo: null }],
+    },
+    Isuzu: {
+      "D-Max": [
+        { label: "1.9 D 164cv", yearFrom: 2020, yearTo: null },
+        { label: "1.9 D 150cv", yearFrom: 2017, yearTo: 2020 },
+      ],
+    },
+    Lexus: {
+      UX: [{ label: "250h Hybrid 184cv", yearFrom: 2018, yearTo: null }],
+      NX: [
+        { label: "350h Hybrid 242cv", yearFrom: 2021, yearTo: null },
+        { label: "450h+ Plug-in Hybrid 309cv", yearFrom: 2021, yearTo: null },
+      ],
+      RX: [{ label: "450h Hybrid 313cv", yearFrom: 2022, yearTo: null }],
+    },
+    MG: {
+      ZS: [
+        { label: "1.5 VTi 106cv", yearFrom: 2019, yearTo: null },
+        { label: "Elettrica ZS EV 177cv", yearFrom: 2019, yearTo: null },
+      ],
+      HS: [
+        { label: "1.5 T-GDI 162cv", yearFrom: 2020, yearTo: null },
+        { label: "Plug-in Hybrid 258cv", yearFrom: 2021, yearTo: null },
+      ],
+      MG4: [
+        { label: "Elettrica Standard 170cv", yearFrom: 2022, yearTo: null },
+        { label: "Elettrica Extended 245cv", yearFrom: 2022, yearTo: null },
+      ],
+      MG3: [{ label: "1.5 Hybrid+ 194cv", yearFrom: 2023, yearTo: null }],
+    },
+    SsangYong: {
+      Tivoli: [
+        { label: "1.5 T-GDI 163cv", yearFrom: 2019, yearTo: null },
+        { label: "1.6 e-XDi 136cv", yearFrom: 2015, yearTo: 2019 },
+      ],
+      Korando: [
+        { label: "1.5 T-GDI 163cv", yearFrom: 2019, yearTo: null },
+        { label: "1.6 e-XDi 136cv", yearFrom: 2019, yearTo: null },
+      ],
+      Rexton: [{ label: "2.2 e-XDi 202cv", yearFrom: 2017, yearTo: null }],
+    },
     Abarth: {
       "500": [
         { label: "1.4 T-Jet 135cv", yearFrom: 2008, yearTo: 2016 },
@@ -1199,6 +1274,53 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
     },
   },
   moto: {
+    Beta: {
+      "RR 350": [{ label: "350cc 4T enduro", yearFrom: 2013, yearTo: null }],
+      Xtrainer: [{ label: "300cc 2T", yearFrom: 2015, yearTo: null }],
+    },
+    CFMoto: {
+      "300NK": [{ label: "292cc 29cv", yearFrom: 2019, yearTo: null }],
+      "450MT": [{ label: "449cc 43cv", yearFrom: 2023, yearTo: null }],
+      "700CL-X": [{ label: "693cc 74cv", yearFrom: 2022, yearTo: null }],
+    },
+    Fantic: {
+      Caballero: [
+        { label: "500cc 40cv", yearFrom: 2018, yearTo: null },
+        { label: "125cc 15cv", yearFrom: 2018, yearTo: null },
+      ],
+    },
+    Kymco: {
+      People: [
+        { label: "125cc 11cv", yearFrom: 2010, yearTo: null },
+        { label: "300cc 27cv", yearFrom: 2010, yearTo: null },
+      ],
+      Agility: [
+        { label: "125cc 11cv", yearFrom: 2010, yearTo: null },
+        { label: "150cc 13cv", yearFrom: 2010, yearTo: null },
+      ],
+    },
+    Malaguti: {
+      Centro: [{ label: "125cc 11cv", yearFrom: 2010, yearTo: null }],
+      Madison: [
+        { label: "125cc 11cv", yearFrom: 2010, yearTo: null },
+        { label: "400cc 32cv", yearFrom: 2010, yearTo: null },
+      ],
+    },
+    "Peugeot Motocycles": {
+      Django: [
+        { label: "125cc 12cv", yearFrom: 2014, yearTo: null },
+        { label: "150cc 13cv", yearFrom: 2014, yearTo: null },
+      ],
+      Speedfight: [{ label: "125cc 15cv", yearFrom: 2014, yearTo: null }],
+    },
+    SWM: {
+      Superdual: [{ label: "600cc 54cv", yearFrom: 2017, yearTo: null }],
+      "Silver Vase": [{ label: "440cc 34cv", yearFrom: 2017, yearTo: null }],
+    },
+    "Zero Motorcycles": {
+      "SR/F": [{ label: "Elettrica 110cv", yearFrom: 2019, yearTo: null }],
+      DSR: [{ label: "Elettrica 70cv", yearFrom: 2019, yearTo: null }],
+    },
     Aprilia: {
       "RS 660": [{ label: "659cc 100cv", yearFrom: 2020, yearTo: null }],
       "Tuono 660": [{ label: "659cc 95cv", yearFrom: 2021, yearTo: null }],
