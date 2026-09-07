@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_SECTIONS, type VehicleType } from "@/lib/types";
 import { getEngineVariants, getMakes, getModels } from "@/lib/vehicleData";
+import VehicleAddedOverlay from "@/components/VehicleAddedOverlay";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -20,6 +21,7 @@ export default function NewVehiclePage() {
   const [plate, setPlate] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [justAdded, setJustAdded] = useState<{ id: string; type: VehicleType; label: string } | null>(null);
 
   const makes = useMemo(() => getMakes(type), [type]);
   const models = useMemo(() => (make ? getModels(type, make) : []), [type, make]);
@@ -110,17 +112,24 @@ export default function NewVehiclePage() {
       console.error(sectionsError);
     }
 
-    setLoading(false);
-    // Al primo arrivo sulla scheda veicolo, l'app avvia in automatico la ricerca di
-    // risorse online (documenti, forum, video) per marca/modello/motorizzazione.
-    router.push(`/veicoli/${vehicle.id}?autosearch=1`);
+    // Il redirect (con avvio automatico della ricerca) parte solo dopo l'animazione
+    // di conferma, gestita da VehicleAddedOverlay -> onDone.
+    setJustAdded({ id: vehicle.id, type, label: `${make} ${model}` });
   }
 
   return (
-    <div className="mx-auto max-w-lg">
-      <h1 className="mb-6 text-2xl font-bold text-graphite-50">Aggiungi veicolo</h1>
+    <div className="relative mx-auto max-w-lg">
+      <div className="hero-glow" />
 
-      <form onSubmit={handleSubmit} className="card space-y-4">
+      <div className="relative z-10 mb-6 text-center">
+        <h1 className="text-3xl font-bold text-white">🏁 Aggiungi veicolo</h1>
+        <p className="mt-1 text-sm text-graphite-400">
+          Scegli marca, modello e motorizzazione: al resto pensa l&apos;agente IA.
+        </p>
+        <div className="flag-stripe mx-auto mt-4 w-24 rounded-full" />
+      </div>
+
+      <form onSubmit={handleSubmit} className="card relative z-10 animate-rise-in space-y-4">
         <div>
           <label className="label">Tipologia</label>
           <div className="flex gap-3">
@@ -129,12 +138,13 @@ export default function NewVehiclePage() {
                 key={t}
                 type="button"
                 onClick={() => handleTypeChange(t)}
-                className={`flex-1 rounded-lg border px-4 py-2 text-sm font-medium capitalize ${
+                className={`flex-1 rounded-lg border px-4 py-3 text-sm font-semibold capitalize transition-all duration-200 ${
                   type === t
-                    ? "border-brand-600 bg-brand-50 text-brand-400"
+                    ? "scale-[1.02] border-brand-600 bg-brand-50 text-brand-400 shadow-md shadow-brand-900/40"
                     : "border-graphite-600 text-graphite-300 hover:bg-graphite-700"
                 }`}
               >
+                <span className="mr-1.5">{t === "moto" ? "🏍️" : "🚗"}</span>
                 {t}
               </button>
             ))}
@@ -260,10 +270,18 @@ export default function NewVehiclePage() {
 
         {error && <p className="text-sm text-red-400">{error}</p>}
 
-        <button type="submit" disabled={loading} className="btn-primary w-full">
-          {loading ? "Salvataggio…" : "Salva veicolo"}
+        <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
+          {loading ? "Salvataggio…" : "🏁 Salva veicolo"}
         </button>
       </form>
+
+      {justAdded && (
+        <VehicleAddedOverlay
+          type={justAdded.type}
+          label={justAdded.label}
+          onDone={() => router.push(`/veicoli/${justAdded.id}?autosearch=1`)}
+        />
+      )}
     </div>
   );
 }
