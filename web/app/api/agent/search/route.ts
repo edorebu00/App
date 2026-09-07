@@ -1,27 +1,99 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { getAnthropicClient, CLAUDE_MODEL } from "@/lib/anthropic";
+import type { ResourceLink } from "@/lib/types";
+
+export const maxDuration = 60;
+
+function extractJson(text: string): ResourceLink[] {
+  const match = text.match(/```json\s*([\s\S]*?)```/) || text.match(/(\[[\s\S]*\])/);
+  if (!match) return [];
+  try {
+    const parsed = JSON.parse(match[1]);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
 
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     return NextResponse.json({ error: "Non autenticato." }, { status: 401 });
   }
 
-  const body = await request.json();
+  const { query, vehicleId } = (await request.json()) as { query?: string; vehicleId?: string };
 
-  const agentRes = await fetch(`${process.env.AGENT_SERVICE_URL}/api/search`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.access_token}`,
-    },
-    body: JSON.stringify(body),
-  });
+  if (!query || query.trim().length < 2) {
+    return NextResponse.json({ error: "Specifica un modello o un codice motore da cercare." }, { status: 400 });
+  }
 
-  const data = await agentRes.json();
-  return NextResponse.json(data, { status: agentRes.status });
+  let vehicleContext = "";
+  if (vehicleId) {
+    const { data: vehicle } = await supabase
+      .from("vehicles")
+      .select("type, make, model, engine_code, year")
+      .eq("id", vehicleId)
+      .maybeSingle();
+
+    if (vehicle) {
+      vehicleContext = `Veicolo di riferimento: ${vehicle.type === "moto" ? "moto" : "auto"} ${vehicle.make} ${vehicle.model}${
+        vehicle.year ? ` (${vehicle.year})` : ""
+      }${vehicle.engine_code ? `, codice motore ${vehicle.engine_code}` : ""}.`;
+    }
+  }
+
+  try {
+    const anthropic = getAnthropicClient();
+
+    const message = await anthropic.messages.create({
+      model: CLAUDE_MODEL,
+      max_tokens: 4096,
+      system:
+        "Sei un assistente esperto di veicoli (auto e moto) che aiuta gli utenti a trovare risorse utili online. " +
+        "Usa lo strumento di ricerca web per trovare risultati REALI e pertinenti nelle seguenti categorie: " +
+        "forum dedicati al modello/motore, manuali o PDF di manutenzione/uso, video YouTube utili (tutorial, riparazioni, revisioni), " +
+        "e schemi tecnici o viste esplose dei componenti (motore, carrozzeria, assetto, impianto frenante). " +
+        "Rispondi in italiano. Alla fine della risposta, includi SEMPRE un blocco ```json``` con un array di oggetti " +
+        '{"categoria": "forum|manuale_pdf|video|schema_tecnico|altro", "titolo": "...", "url": "...", "descrizione": "..."} ' +
+        "con al massimo 12 risultati, solo URL realmente trovati tramite la ricerca (mai inventati).",
+      messages: [
+        {
+          role: "user",
+          content: `${vehicleContext}\nRicerca: ${query}`.trim(),
+        },
+      ],
+      tools: [
+        {
+          type: "web_search_20250305",
+          name: "web_search",
+          max_uses: 6,
+        } as any,
+      ],
+    });
+
+    const textBlocks = message.content.filter((b) => b.type === "text") as Array<{ type: "text"; text: string }>;
+    const fullText = textBlocks.map((b) => b.text).join("\n");
+    const results = extractJson(fullText);
+
+    await supabase.from("search_results").insert({
+      user_id: user.id,
+      vehicle_id: vehicleId || null,
+      query,
+      results,
+    });
+
+    return NextResponse.json({
+      query,
+      results,
+      summary: fullText.replace(/```json[\s\S]*?```/, "").trim(),
+    });
+  } catch (err) {
+    console.error("Errore ricerca IA:", err);
+    return NextResponse.json({ error: "Errore durante la ricerca. Riprova più tardi." }, { status: 500 });
+  }
 }
