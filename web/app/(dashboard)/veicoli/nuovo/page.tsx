@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { DEFAULT_SECTIONS, type VehicleType } from "@/lib/types";
+import { DEFAULT_SECTIONS, type EngineVariant, type VehicleType } from "@/lib/types";
 import { getEngineVariants, getMakes, getModels } from "@/lib/vehicleData";
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -21,12 +21,50 @@ export default function NewVehiclePage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const [dynamicVariants, setDynamicVariants] = useState<EngineVariant[] | null>(null);
+  const [loadingVariants, setLoadingVariants] = useState(false);
+
   const makes = useMemo(() => getMakes(type), [type]);
   const models = useMemo(() => (make ? getModels(type, make) : []), [type, make]);
-  const variants = useMemo(
+  const staticVariants = useMemo(
     () => (make && model ? getEngineVariants(type, make, model) : null),
     [type, make, model]
   );
+
+  // Se il modello non e' tra quelli curati a mano, chiedi all'agente IA di cercare le
+  // motorizzazioni reali (con cache condivisa lato server: dalla seconda richiesta in poi
+  // per lo stesso modello e' istantaneo per chiunque).
+  useEffect(() => {
+    setDynamicVariants(null);
+
+    if (!make || !model || staticVariants) return;
+
+    let cancelled = false;
+    setLoadingVariants(true);
+
+    fetch("/api/agent/engine-variants", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, make, model }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        setDynamicVariants(data.variants?.length ? data.variants : null);
+      })
+      .catch(() => {
+        if (!cancelled) setDynamicVariants(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingVariants(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [type, make, model, staticVariants]);
+
+  const variants = staticVariants || dynamicVariants;
   const selectedVariant = variants?.find((v) => v.label === engineCode) || null;
   const yearOptions = useMemo(() => {
     if (!selectedVariant) return [];
@@ -186,7 +224,9 @@ export default function NewVehiclePage() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="label" htmlFor="engineCode">Motorizzazione</label>
-            {variants ? (
+            {loadingVariants ? (
+              <p className="input flex items-center text-graphite-500">🔎 Cerco le motorizzazioni…</p>
+            ) : variants ? (
               <select
                 id="engineCode"
                 required
@@ -215,7 +255,7 @@ export default function NewVehiclePage() {
                 />
                 <p className="mt-1 text-xs text-graphite-500">
                   {model
-                    ? "Motorizzazioni non precaricate per questo modello: inseriscila manualmente."
+                    ? "Non ho trovato motorizzazioni precise per questo modello: inseriscila manualmente."
                     : "Scegli prima marca e modello."}
                 </p>
               </>
