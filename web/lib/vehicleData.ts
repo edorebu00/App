@@ -8,39 +8,40 @@ import type { EngineVariant, VehicleType } from "./types";
 export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
   auto: {
     Abarth: ["500", "500C", "595", "595C", "695", "124 Spider", "Punto Evo"],
-    "Alfa Romeo": ["Giulia", "Giulietta", "Stelvio", "Tonale", "Junior", "MiTo", "159", "147", "Brera", "GT"],
+    "Alfa Romeo": ["Giulia", "Giulietta", "Stelvio", "Tonale", "Junior", "MiTo", "159", "156", "166", "147", "33", "Brera", "Spider", "GTV", "GT"],
+    Alpine: ["A110"],
     Audi: ["A1", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q4 e-tron", "Q5", "Q7", "Q8", "Q8 e-tron", "e-tron GT", "TT"],
     BMW: ["Serie 1", "Serie 2", "Serie 3", "Serie 4", "Serie 5", "Serie 7", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "Z4", "i3", "i4", "iX"],
     BYD: ["Atto 3", "Seal", "Dolphin", "Seal U"],
     Chevrolet: ["Aveo", "Spark", "Captiva"],
-    Citroën: ["C1", "C3", "C3 Aircross", "C4", "C4 Picasso", "C5 Aircross", "C5 X", "Berlingo", "Jumpy", "DS3", "DS4"],
+    Citroën: ["C1", "Saxo", "C3", "C3 Aircross", "C4", "C4 Cactus", "C4 Picasso", "C5 Aircross", "C5 X", "Xsara", "Xantia", "Berlingo", "Jumpy", "DS3", "DS4"],
     Cupra: ["Formentor", "Leon", "Born", "Ateca"],
     Dacia: ["Sandero", "Duster", "Jogger", "Spring"],
     "DS Automobiles": ["DS 3", "DS 4", "DS 7", "DS 9"],
-    Fiat: ["Panda", "500", "600", "500X", "500L", "Tipo", "Punto", "Bravo", "Croma", "Multipla", "Ducato", "Doblo", "Qubo", "Sedici"],
-    Ford: ["Fiesta", "Focus", "Puma", "Kuga", "EcoSport", "Mondeo", "C-Max", "Ka", "Ranger", "Galaxy", "Transit"],
+    Fiat: ["Panda", "500", "600", "500X", "500L", "Tipo", "Punto", "Uno", "Bravo", "Stilo", "Marea", "Coupé", "Barchetta", "Croma", "Multipla", "Ducato", "Doblo", "Qubo", "Sedici"],
+    Ford: ["Fiesta", "Focus", "Puma", "Kuga", "EcoSport", "Mondeo", "Sierra", "Scorpio", "Cougar", "C-Max", "Ka", "Ranger", "Galaxy", "Transit"],
     GWM: ["Ora Funky Cat"],
-    Honda: ["Civic", "Jazz", "CR-V", "HR-V", "ZR-V", "Accord", "e"],
+    Honda: ["Civic", "Jazz", "CR-V", "HR-V", "ZR-V", "Accord", "Prelude", "Integra", "S2000", "e"],
     Hyundai: ["i10", "i20", "i30", "i40", "Bayon", "Kona", "Tucson", "Santa Fe", "Staria", "Ioniq"],
     Isuzu: ["D-Max"],
     Jaguar: ["XE", "XF", "F-Pace", "E-Pace", "I-Pace"],
     Jeep: ["Renegade", "Compass", "Cherokee", "Grand Cherokee", "Avenger", "Wrangler", "Gladiator"],
     Kia: ["Picanto", "Rio", "Ceed", "Xceed", "Sportage", "Niro", "Stonic", "Sorento", "EV6", "EV9"],
     Lamborghini: ["Huracán", "Aventador", "Urus"],
-    Lancia: ["Ypsilon", "Delta", "Musa", "Thesis"],
+    Lancia: ["Ypsilon", "Delta", "Musa", "Thesis", "Kappa", "Thema", "Dedra", "Beta", "Fulvia"],
     "Land Rover": ["Defender", "Discovery", "Discovery Sport", "Range Rover", "Range Rover Evoque", "Range Rover Sport"],
     Lexus: ["UX", "NX", "RX"],
     Maserati: ["Ghibli", "Quattroporte", "Levante", "Grecale", "GranTurismo"],
-    Mazda: ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-60", "MX-5", "MX-30"],
+    Mazda: ["Mazda2", "Mazda3", "Mazda6", "626", "RX-8", "CX-3", "CX-30", "CX-5", "CX-60", "MX-5", "MX-30"],
     "Mercedes-Benz": ["Classe A", "Classe B", "Classe C", "Classe E", "Classe S", "Classe V", "CLA", "GLA", "GLB", "GLC", "GLE", "EQA", "EQB", "EQC", "EQE", "EQS", "Sprinter", "Vito"],
     MG: ["ZS", "HS", "MG4", "MG3"],
     Mini: ["Cooper", "Countryman", "Clubman", "Cabrio"],
     Mitsubishi: ["Space Star", "ASX", "Eclipse Cross", "Outlander", "L200"],
-    Nissan: ["Micra", "Note", "Juke", "Qashqai", "X-Trail", "Ariya", "Navara", "Leaf"],
+    Nissan: ["Micra", "Note", "Primera", "Juke", "Qashqai", "X-Trail", "350Z", "GT-R", "Ariya", "Navara", "Leaf"],
     Opel: ["Corsa", "Astra", "Insignia", "Mokka", "Crossland", "Grandland", "Zafira", "Combo"],
-    Peugeot: ["108", "208", "308", "408", "508", "2008", "3008", "5008", "Partner", "Rifter"],
+    Peugeot: ["108", "208", "306", "308", "406", "408", "508", "RCZ", "2008", "3008", "5008", "Partner", "Rifter"],
     Porsche: ["911", "718 Cayman", "718 Boxster", "Panamera", "Macan", "Cayenne", "Taycan"],
-    Renault: ["Clio", "Captur", "Megane", "Kadjar", "Scenic", "Espace", "Trafic", "Twingo", "Zoe", "Austral"],
+    Renault: ["Clio", "Captur", "Megane", "Kadjar", "Scenic", "Espace", "Laguna", "Trafic", "Twingo", "Twizy", "Zoe", "Austral"],
     Seat: ["Mii", "Ibiza", "Leon", "Arona", "Ateca", "Tarraco"],
     Škoda: ["Fabia", "Scala", "Octavia", "Kamiq", "Karoq", "Kodiaq", "Enyaq", "Superb"],
     Smart: ["Fortwo", "Forfour"],
@@ -48,8 +49,8 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
     Subaru: ["Impreza", "Forester", "XV", "Outback"],
     Suzuki: ["Swift", "Vitara", "S-Cross", "Ignis", "Jimny"],
     Tesla: ["Model 3", "Model S", "Model X", "Model Y"],
-    Toyota: ["Aygo", "Yaris", "Corolla", "C-HR", "RAV4", "Highlander", "Camry", "Auris", "Prius", "Hilux", "Land Cruiser"],
-    Volkswagen: ["Polo", "Golf", "Passat", "Arteon", "Tiguan", "T-Roc", "T-Cross", "Touareg", "Caddy", "Multivan", "Up!", "ID.3", "ID.4"],
+    Toyota: ["Aygo", "Yaris", "Corolla", "Celica", "Supra", "MR2", "C-HR", "RAV4", "Avensis", "Highlander", "Camry", "Auris", "Prius", "Hilux", "Land Cruiser"],
+    Volkswagen: ["Polo", "Golf", "Scirocco", "Beetle", "Jetta", "Passat", "Arteon", "Sharan", "Tiguan", "T-Roc", "T-Cross", "Touareg", "Caddy", "Multivan", "Up!", "ID.3", "ID.4"],
     Volvo: ["V40", "V60", "V90", "XC40", "XC60", "XC90", "EX30", "EC40"],
   },
   moto: {
@@ -233,6 +234,33 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.9 JTD 150cv", yearFrom: 2003, yearTo: 2010 },
         { label: "3.2 V6 240cv", yearFrom: 2004, yearTo: 2010 },
       ],
+      "156": [
+        { label: "1.8 T.Spark 144cv", yearFrom: 1997, yearTo: 2005 },
+        { label: "1.9 JTD 115cv", yearFrom: 1997, yearTo: 2005 },
+        { label: "2.5 V6 190cv", yearFrom: 1997, yearTo: 2005 },
+      ],
+      "166": [
+        { label: "2.4 JTD 150cv", yearFrom: 1998, yearTo: 2007 },
+        { label: "3.0 V6 226cv", yearFrom: 1998, yearTo: 2007 },
+      ],
+      "33": [
+        { label: "1.5 QV 105cv", yearFrom: 1983, yearTo: 1994 },
+        { label: "1.7 16v 132cv", yearFrom: 1990, yearTo: 1994 },
+      ],
+      GTV: [
+        { label: "2.0 T.Spark 150cv", yearFrom: 1995, yearTo: 2005 },
+        { label: "3.2 V6 240cv", yearFrom: 2003, yearTo: 2005 },
+      ],
+      Spider: [
+        { label: "2.0 T.Spark 150cv", yearFrom: 1995, yearTo: 2005 },
+        { label: "3.2 V6 240cv", yearFrom: 2003, yearTo: 2005 },
+      ],
+    },
+    Alpine: {
+      A110: [
+        { label: "1.8 Turbo 252cv", yearFrom: 2017, yearTo: null },
+        { label: "1.8 Turbo S 300cv", yearFrom: 2019, yearTo: null },
+      ],
     },
     Audi: {
       A1: [
@@ -395,6 +423,22 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.0 VTi 68cv", yearFrom: 2014, yearTo: 2021 },
         { label: "1.2 PureTech 82cv", yearFrom: 2014, yearTo: 2021 },
       ],
+      Saxo: [
+        { label: "1.1i 60cv", yearFrom: 1996, yearTo: 2003 },
+        { label: "1.6 16v VTS 118cv", yearFrom: 1996, yearTo: 2003 },
+      ],
+      Xsara: [
+        { label: "1.6i 90cv", yearFrom: 1997, yearTo: 2004 },
+        { label: "2.0 HDi 90cv", yearFrom: 1998, yearTo: 2004 },
+      ],
+      Xantia: [
+        { label: "1.8i 110cv", yearFrom: 1993, yearTo: 2001 },
+        { label: "2.0 HDi 90cv", yearFrom: 1998, yearTo: 2001 },
+      ],
+      "C4 Cactus": [
+        { label: "1.2 PureTech 82cv", yearFrom: 2014, yearTo: 2020 },
+        { label: "1.5 BlueHDi 100cv", yearFrom: 2018, yearTo: 2020 },
+      ],
       C3: [
         { label: "1.2 PureTech 83cv", yearFrom: 2016, yearTo: null },
         { label: "1.2 PureTech 110cv", yearFrom: 2016, yearTo: null },
@@ -520,6 +564,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.3 MultiJet 95cv", yearFrom: 2016, yearTo: null },
         { label: "1.6 MultiJet 130cv", yearFrom: 2016, yearTo: null },
       ],
+      Uno: [
+        { label: "1.0 45cv", yearFrom: 1983, yearTo: 1995 },
+        { label: "1.4 Turbo i.e. 118cv", yearFrom: 1985, yearTo: 1995 },
+      ],
       Punto: [
         { label: "1.2 8v 69cv", yearFrom: 2012, yearTo: 2018 },
         { label: "1.3 MultiJet 75cv", yearFrom: 2012, yearTo: 2018 },
@@ -530,6 +578,19 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.6 MultiJet 105cv", yearFrom: 2007, yearTo: 2014 },
         { label: "2.0 MultiJet 165cv", yearFrom: 2007, yearTo: 2014 },
       ],
+      Stilo: [
+        { label: "1.6 16v 103cv", yearFrom: 2001, yearTo: 2007 },
+        { label: "1.9 JTD 115cv", yearFrom: 2001, yearTo: 2007 },
+      ],
+      Marea: [
+        { label: "1.6 16v 103cv", yearFrom: 1996, yearTo: 2007 },
+        { label: "1.9 JTD 105cv", yearFrom: 1996, yearTo: 2007 },
+      ],
+      "Coupé": [
+        { label: "2.0 20v 147cv", yearFrom: 1993, yearTo: 2000 },
+        { label: "2.0 20v Turbo 220cv", yearFrom: 1996, yearTo: 2000 },
+      ],
+      Barchetta: [{ label: "1.8 16v 130cv", yearFrom: 1995, yearTo: 2005 }],
       Croma: [
         { label: "1.9 Multijet 150cv", yearFrom: 2005, yearTo: 2011 },
         { label: "2.2 16v 147cv", yearFrom: 2005, yearTo: 2011 },
@@ -589,6 +650,15 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.0 EcoBoost 125cv", yearFrom: 2010, yearTo: 2019 },
         { label: "1.5 TDCi 120cv", yearFrom: 2010, yearTo: 2019 },
       ],
+      Sierra: [
+        { label: "2.0i 120cv", yearFrom: 1982, yearTo: 1993 },
+        { label: "Cosworth 2.0 Turbo 204cv", yearFrom: 1986, yearTo: 1992 },
+      ],
+      Scorpio: [
+        { label: "2.0i 120cv", yearFrom: 1985, yearTo: 1998 },
+        { label: "2.9 24v 195cv", yearFrom: 1994, yearTo: 1998 },
+      ],
+      Cougar: [{ label: "2.5 V6 170cv", yearFrom: 1998, yearTo: 2002 }],
       Ka: [
         { label: "1.2 Ti-VCT 70cv", yearFrom: 2016, yearTo: 2021 },
         { label: "1.2 Ti-VCT 85cv", yearFrom: 2016, yearTo: 2021 },
@@ -627,6 +697,9 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "2.0 e:HEV Hybrid 215cv", yearFrom: 2018, yearTo: 2022 },
       ],
       "ZR-V": [{ label: "2.0 e:HEV Hybrid 184cv", yearFrom: 2023, yearTo: null }],
+      Prelude: [{ label: "2.2 VTEC 185cv", yearFrom: 1996, yearTo: 2001 }],
+      Integra: [{ label: "1.8 VTEC Type R 190cv", yearFrom: 1995, yearTo: 2001 }],
+      S2000: [{ label: "2.0 VTEC 240cv", yearFrom: 1999, yearTo: 2009 }],
       e: [{ label: "Elettrica 136cv", yearFrom: 2020, yearTo: 2024 }],
     },
     Hyundai: {
@@ -788,6 +861,20 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "2.4 20v 170cv", yearFrom: 2002, yearTo: 2009 },
         { label: "2.4 JTD 150cv", yearFrom: 2002, yearTo: 2009 },
       ],
+      Kappa: [
+        { label: "2.0 20v 155cv", yearFrom: 1994, yearTo: 2001 },
+        { label: "2.4 JTD 125cv", yearFrom: 1994, yearTo: 2001 },
+      ],
+      Thema: [
+        { label: "2.0 Turbo 16v 155cv", yearFrom: 1984, yearTo: 1994 },
+        { label: "2.8 V6 168cv", yearFrom: 2011, yearTo: 2014 },
+      ],
+      Dedra: [
+        { label: "1.8 16v 113cv", yearFrom: 1989, yearTo: 1999 },
+        { label: "2.0 Turbo 165cv", yearFrom: 1989, yearTo: 1999 },
+      ],
+      Beta: [{ label: "1.6 90cv", yearFrom: 1972, yearTo: 1984 }],
+      Fulvia: [{ label: "1.3 Rallye 90cv", yearFrom: 1965, yearTo: 1976 }],
     },
     "Land Rover": {
       Defender: [
@@ -846,6 +933,11 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.5 Skyactiv-G 90cv", yearFrom: 2015, yearTo: null },
         { label: "1.5 Skyactiv-G 115cv", yearFrom: 2015, yearTo: null },
       ],
+      "626": [
+        { label: "2.0i 115cv", yearFrom: 1997, yearTo: 2002 },
+        { label: "2.0 TD 101cv", yearFrom: 1997, yearTo: 2002 },
+      ],
+      "RX-8": [{ label: "1.3 Rotativo 231cv", yearFrom: 2003, yearTo: 2012 }],
       Mazda3: [
         { label: "2.0 Skyactiv-G 122cv", yearFrom: 2019, yearTo: null },
         { label: "2.0 e-Skyactiv X 180cv", yearFrom: 2019, yearTo: null },
@@ -983,6 +1075,15 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.0 IG-T 92cv", yearFrom: 2017, yearTo: null },
         { label: "0.9 IG-T 90cv", yearFrom: 2017, yearTo: null },
       ],
+      Primera: [
+        { label: "1.8 16v 116cv", yearFrom: 1996, yearTo: 2007 },
+        { label: "2.2 Di 126cv", yearFrom: 1999, yearTo: 2007 },
+      ],
+      "350Z": [{ label: "3.5 V6 280cv", yearFrom: 2003, yearTo: 2009 }],
+      "GT-R": [
+        { label: "3.8 V6 Biturbo 480cv", yearFrom: 2007, yearTo: null },
+        { label: "Nismo 3.8 V6 600cv", yearFrom: 2014, yearTo: null },
+      ],
       Note: [
         { label: "1.5 dCi 90cv", yearFrom: 2013, yearTo: 2016 },
         { label: "1.2 80cv", yearFrom: 2013, yearTo: 2016 },
@@ -1042,6 +1143,18 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       "108": [
         { label: "1.0 VTi 68cv", yearFrom: 2014, yearTo: 2021 },
         { label: "1.2 PureTech 82cv", yearFrom: 2014, yearTo: 2021 },
+      ],
+      "306": [
+        { label: "1.8 16v 101cv", yearFrom: 1993, yearTo: 2002 },
+        { label: "2.0 HDi 90cv", yearFrom: 1998, yearTo: 2002 },
+      ],
+      "406": [
+        { label: "2.0 16v 135cv", yearFrom: 1995, yearTo: 2004 },
+        { label: "2.0 HDi 110cv", yearFrom: 1999, yearTo: 2004 },
+      ],
+      RCZ: [
+        { label: "1.6 THP 156cv", yearFrom: 2010, yearTo: 2015 },
+        { label: "1.6 THP R 270cv", yearFrom: 2014, yearTo: 2015 },
       ],
       "208": [
         { label: "1.2 PureTech 75cv", yearFrom: 2019, yearTo: null },
@@ -1146,7 +1259,12 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.8 TCe 225cv", yearFrom: 2015, yearTo: 2023 },
         { label: "1.6 dCi 160cv", yearFrom: 2015, yearTo: 2023 },
       ],
+      Laguna: [
+        { label: "2.0 16v 140cv", yearFrom: 2007, yearTo: 2015 },
+        { label: "2.0 dCi 150cv", yearFrom: 2007, yearTo: 2015 },
+      ],
       Trafic: [{ label: "2.0 dCi 145cv", yearFrom: 2014, yearTo: null }],
+      Twizy: [{ label: "Elettrica 17cv", yearFrom: 2012, yearTo: null }],
       Zoe: [
         { label: "Elettrica 108cv", yearFrom: 2012, yearTo: 2024 },
         { label: "Elettrica 135cv", yearFrom: 2019, yearTo: 2024 },
@@ -1275,6 +1393,19 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
     },
     Toyota: {
       Aygo: [{ label: "1.0 VVT-i 72cv", yearFrom: 2014, yearTo: 2022 }],
+      Celica: [
+        { label: "1.8 VVTL-i 192cv", yearFrom: 1999, yearTo: 2006 },
+        { label: "2.0 GT-Four 239cv", yearFrom: 1994, yearTo: 1999 },
+      ],
+      Supra: [
+        { label: "3.0 Turbo 340cv", yearFrom: 2019, yearTo: null },
+        { label: "2.0 Turbo 258cv", yearFrom: 2019, yearTo: null },
+      ],
+      MR2: [{ label: "2.0 16v Turbo 245cv", yearFrom: 1989, yearTo: 1999 }],
+      Avensis: [
+        { label: "1.8 VVT-i 147cv", yearFrom: 2009, yearTo: 2018 },
+        { label: "2.0 D-4D 143cv", yearFrom: 2009, yearTo: 2018 },
+      ],
       Yaris: [
         { label: "1.0 72cv", yearFrom: 2020, yearTo: null },
         { label: "1.5 Hybrid 116cv", yearFrom: 2020, yearTo: null },
@@ -1322,6 +1453,22 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.6 TDI 105cv", yearFrom: 2012, yearTo: 2019 },
         { label: "2.0 TDI 150cv", yearFrom: 2012, yearTo: null },
         { label: "2.0 TSI GTI 245cv", yearFrom: 2013, yearTo: null },
+      ],
+      Scirocco: [
+        { label: "1.4 TSI 122cv", yearFrom: 2008, yearTo: 2017 },
+        { label: "2.0 TSI R 280cv", yearFrom: 2009, yearTo: 2017 },
+      ],
+      Beetle: [
+        { label: "1.2 TSI 105cv", yearFrom: 2011, yearTo: 2019 },
+        { label: "2.0 TSI 220cv", yearFrom: 2011, yearTo: 2019 },
+      ],
+      Jetta: [
+        { label: "1.4 TSI 125cv", yearFrom: 2011, yearTo: 2018 },
+        { label: "2.0 TDI 150cv", yearFrom: 2011, yearTo: 2018 },
+      ],
+      Sharan: [
+        { label: "2.0 TDI 150cv", yearFrom: 2010, yearTo: 2022 },
+        { label: "2.0 TSI 220cv", yearFrom: 2010, yearTo: 2022 },
       ],
       Passat: [
         { label: "2.0 TDI 150cv", yearFrom: 2014, yearTo: null },
