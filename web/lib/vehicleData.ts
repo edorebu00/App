@@ -8,49 +8,49 @@ import type { EngineVariant, VehicleType } from "./types";
 export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
   auto: {
     Abarth: ["500", "500C", "595", "595C", "695", "124 Spider", "Punto Evo"],
-    "Alfa Romeo": ["Giulia", "Giulietta", "Stelvio", "Tonale", "MiTo", "159", "147", "Brera", "GT"],
-    Audi: ["A1", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q4 e-tron", "Q5", "Q7", "Q8", "TT"],
-    BMW: ["Serie 1", "Serie 2", "Serie 3", "Serie 4", "Serie 5", "Serie 7", "X1", "X2", "X3", "X4", "X5", "X6", "Z4", "i3", "i4"],
+    "Alfa Romeo": ["Giulia", "Giulietta", "Stelvio", "Tonale", "Junior", "MiTo", "159", "147", "Brera", "GT"],
+    Audi: ["A1", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q4 e-tron", "Q5", "Q7", "Q8", "Q8 e-tron", "e-tron GT", "TT"],
+    BMW: ["Serie 1", "Serie 2", "Serie 3", "Serie 4", "Serie 5", "Serie 7", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "Z4", "i3", "i4", "iX"],
     BYD: ["Atto 3", "Seal", "Dolphin", "Seal U"],
     Chevrolet: ["Aveo", "Spark", "Captiva"],
-    Citroën: ["C1", "C3", "C3 Aircross", "C4", "C4 Picasso", "C5 Aircross", "Berlingo", "DS3", "DS4"],
+    Citroën: ["C1", "C3", "C3 Aircross", "C4", "C4 Picasso", "C5 Aircross", "C5 X", "Berlingo", "Jumpy", "DS3", "DS4"],
     Cupra: ["Formentor", "Leon", "Born", "Ateca"],
     Dacia: ["Sandero", "Duster", "Jogger", "Spring"],
     "DS Automobiles": ["DS 3", "DS 4", "DS 7", "DS 9"],
-    Fiat: ["Panda", "500", "500X", "500L", "Tipo", "Punto", "Bravo", "Ducato", "Doblo", "Qubo", "Sedici"],
-    Ford: ["Fiesta", "Focus", "Puma", "Kuga", "EcoSport", "Mondeo", "C-Max", "Ka", "Transit"],
+    Fiat: ["Panda", "500", "600", "500X", "500L", "Tipo", "Punto", "Bravo", "Croma", "Multipla", "Ducato", "Doblo", "Qubo", "Sedici"],
+    Ford: ["Fiesta", "Focus", "Puma", "Kuga", "EcoSport", "Mondeo", "C-Max", "Ka", "Ranger", "Galaxy", "Transit"],
     GWM: ["Ora Funky Cat"],
-    Honda: ["Civic", "Jazz", "CR-V", "HR-V", "Accord"],
-    Hyundai: ["i10", "i20", "i30", "Kona", "Tucson", "Santa Fe", "Ioniq"],
+    Honda: ["Civic", "Jazz", "CR-V", "HR-V", "ZR-V", "Accord", "e"],
+    Hyundai: ["i10", "i20", "i30", "i40", "Bayon", "Kona", "Tucson", "Santa Fe", "Staria", "Ioniq"],
     Isuzu: ["D-Max"],
     Jaguar: ["XE", "XF", "F-Pace", "E-Pace", "I-Pace"],
-    Jeep: ["Renegade", "Compass", "Cherokee", "Grand Cherokee", "Avenger", "Wrangler"],
-    Kia: ["Picanto", "Rio", "Ceed", "Sportage", "Niro", "Stonic", "Sorento"],
+    Jeep: ["Renegade", "Compass", "Cherokee", "Grand Cherokee", "Avenger", "Wrangler", "Gladiator"],
+    Kia: ["Picanto", "Rio", "Ceed", "Xceed", "Sportage", "Niro", "Stonic", "Sorento", "EV6", "EV9"],
     Lamborghini: ["Huracán", "Aventador", "Urus"],
     Lancia: ["Ypsilon", "Delta", "Musa", "Thesis"],
     "Land Rover": ["Defender", "Discovery", "Discovery Sport", "Range Rover", "Range Rover Evoque", "Range Rover Sport"],
     Lexus: ["UX", "NX", "RX"],
     Maserati: ["Ghibli", "Quattroporte", "Levante", "Grecale", "GranTurismo"],
-    Mazda: ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "MX-5"],
-    "Mercedes-Benz": ["Classe A", "Classe B", "Classe C", "Classe E", "Classe S", "CLA", "GLA", "GLB", "GLC", "GLE", "Sprinter", "Vito"],
+    Mazda: ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-60", "MX-5", "MX-30"],
+    "Mercedes-Benz": ["Classe A", "Classe B", "Classe C", "Classe E", "Classe S", "Classe V", "CLA", "GLA", "GLB", "GLC", "GLE", "EQA", "EQB", "EQC", "EQE", "EQS", "Sprinter", "Vito"],
     MG: ["ZS", "HS", "MG4", "MG3"],
     Mini: ["Cooper", "Countryman", "Clubman", "Cabrio"],
     Mitsubishi: ["Space Star", "ASX", "Eclipse Cross", "Outlander", "L200"],
-    Nissan: ["Micra", "Note", "Juke", "Qashqai", "X-Trail", "Leaf"],
-    Opel: ["Corsa", "Astra", "Insignia", "Mokka", "Crossland", "Grandland"],
-    Peugeot: ["108", "208", "308", "2008", "3008", "5008", "Partner"],
+    Nissan: ["Micra", "Note", "Juke", "Qashqai", "X-Trail", "Ariya", "Navara", "Leaf"],
+    Opel: ["Corsa", "Astra", "Insignia", "Mokka", "Crossland", "Grandland", "Zafira", "Combo"],
+    Peugeot: ["108", "208", "308", "408", "508", "2008", "3008", "5008", "Partner", "Rifter"],
     Porsche: ["911", "718 Cayman", "718 Boxster", "Panamera", "Macan", "Cayenne", "Taycan"],
-    Renault: ["Clio", "Captur", "Megane", "Kadjar", "Scenic", "Twingo", "Austral"],
-    Seat: ["Ibiza", "Leon", "Arona", "Ateca", "Tarraco"],
-    Škoda: ["Fabia", "Octavia", "Kamiq", "Karoq", "Kodiaq", "Superb"],
+    Renault: ["Clio", "Captur", "Megane", "Kadjar", "Scenic", "Espace", "Trafic", "Twingo", "Zoe", "Austral"],
+    Seat: ["Mii", "Ibiza", "Leon", "Arona", "Ateca", "Tarraco"],
+    Škoda: ["Fabia", "Scala", "Octavia", "Kamiq", "Karoq", "Kodiaq", "Enyaq", "Superb"],
     Smart: ["Fortwo", "Forfour"],
     SsangYong: ["Tivoli", "Korando", "Rexton"],
     Subaru: ["Impreza", "Forester", "XV", "Outback"],
     Suzuki: ["Swift", "Vitara", "S-Cross", "Ignis", "Jimny"],
     Tesla: ["Model 3", "Model S", "Model X", "Model Y"],
-    Toyota: ["Aygo", "Yaris", "Corolla", "C-HR", "RAV4", "Auris", "Prius", "Hilux"],
-    Volkswagen: ["Polo", "Golf", "Passat", "Tiguan", "T-Roc", "T-Cross", "Touareg", "Up!", "ID.3", "ID.4"],
-    Volvo: ["V40", "V60", "V90", "XC40", "XC60", "XC90"],
+    Toyota: ["Aygo", "Yaris", "Corolla", "C-HR", "RAV4", "Highlander", "Camry", "Auris", "Prius", "Hilux", "Land Cruiser"],
+    Volkswagen: ["Polo", "Golf", "Passat", "Arteon", "Tiguan", "T-Roc", "T-Cross", "Touareg", "Caddy", "Multivan", "Up!", "ID.3", "ID.4"],
+    Volvo: ["V40", "V60", "V90", "XC40", "XC60", "XC90", "EX30", "EC40"],
   },
   moto: {
     Aprilia: ["RS 660", "Tuono 660", "RSV4", "Tuareg 660", "SR GT", "Shiver 900"],
@@ -190,6 +190,11 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "2.2 Diesel 190cv", yearFrom: 2016, yearTo: null },
         { label: "2.9 V6 Bi-Turbo Quadrifoglio 510cv", yearFrom: 2016, yearTo: null },
       ],
+      Junior: [
+        { label: "1.2 Hybrid 136cv", yearFrom: 2024, yearTo: null },
+        { label: "Elettrica 156cv", yearFrom: 2024, yearTo: null },
+        { label: "Elettrica Veloce 280cv", yearFrom: 2024, yearTo: null },
+      ],
       Giulietta: [
         { label: "1.4 MultiAir 120cv", yearFrom: 2010, yearTo: 2020 },
         { label: "1.6 JTDm 120cv", yearFrom: 2010, yearTo: 2020 },
@@ -294,6 +299,14 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "2.0 TDI 184cv", yearFrom: 2014, yearTo: 2023 },
         { label: "TTS 2.0 TFSI 310cv", yearFrom: 2014, yearTo: 2023 },
       ],
+      "e-tron GT": [
+        { label: "Elettrica 476cv", yearFrom: 2021, yearTo: null },
+        { label: "RS e-tron GT 646cv", yearFrom: 2021, yearTo: null },
+      ],
+      "Q8 e-tron": [
+        { label: "Elettrica 50 340cv", yearFrom: 2023, yearTo: null },
+        { label: "Elettrica 55 408cv", yearFrom: 2023, yearTo: null },
+      ],
     },
     BMW: {
       "Serie 1": [
@@ -368,6 +381,14 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "eDrive40 340cv", yearFrom: 2021, yearTo: null },
         { label: "M50 544cv", yearFrom: 2021, yearTo: null },
       ],
+      X7: [
+        { label: "30d 3.0 286cv", yearFrom: 2019, yearTo: null },
+        { label: "M60i 4.4 530cv", yearFrom: 2022, yearTo: null },
+      ],
+      iX: [
+        { label: "xDrive40 326cv", yearFrom: 2021, yearTo: null },
+        { label: "xDrive50 523cv", yearFrom: 2021, yearTo: null },
+      ],
     },
     Citroën: {
       C1: [
@@ -397,6 +418,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.5 BlueHDi 130cv", yearFrom: 2018, yearTo: null },
         { label: "Hybrid Plug-in 225cv", yearFrom: 2020, yearTo: null },
       ],
+      "C5 X": [{ label: "1.6 Hybrid 225cv", yearFrom: 2022, yearTo: null }],
+      Jumpy: [{ label: "2.0 BlueHDi 120cv", yearFrom: 2016, yearTo: null }],
       Berlingo: [
         { label: "1.5 BlueHDi 100cv", yearFrom: 2018, yearTo: null },
         { label: "1.2 PureTech 110cv", yearFrom: 2018, yearTo: null },
@@ -479,6 +502,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "0.9 TwinAir 85cv", yearFrom: 2010, yearTo: 2019 },
         { label: "1.3 MultiJet 95cv", yearFrom: 2007, yearTo: 2016 },
       ],
+      "600": [
+        { label: "Elettrica 154cv", yearFrom: 2023, yearTo: null },
+        { label: "1.2 Hybrid 100cv", yearFrom: 2024, yearTo: null },
+      ],
       "500X": [
         { label: "1.0 T3 120cv", yearFrom: 2018, yearTo: null },
         { label: "1.3 FireFly 150cv", yearFrom: 2018, yearTo: null },
@@ -502,6 +529,14 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.4 T-Jet 120cv", yearFrom: 2007, yearTo: 2014 },
         { label: "1.6 MultiJet 105cv", yearFrom: 2007, yearTo: 2014 },
         { label: "2.0 MultiJet 165cv", yearFrom: 2007, yearTo: 2014 },
+      ],
+      Croma: [
+        { label: "1.9 Multijet 150cv", yearFrom: 2005, yearTo: 2011 },
+        { label: "2.2 16v 147cv", yearFrom: 2005, yearTo: 2011 },
+      ],
+      Multipla: [
+        { label: "1.9 JTD 110cv", yearFrom: 1998, yearTo: 2010 },
+        { label: "1.6 16v 103cv", yearFrom: 1998, yearTo: 2010 },
       ],
       Ducato: [
         { label: "2.3 MultiJet 120cv", yearFrom: 2014, yearTo: null },
@@ -558,6 +593,11 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.2 Ti-VCT 70cv", yearFrom: 2016, yearTo: 2021 },
         { label: "1.2 Ti-VCT 85cv", yearFrom: 2016, yearTo: 2021 },
       ],
+      Ranger: [
+        { label: "2.0 EcoBlue 170cv", yearFrom: 2019, yearTo: null },
+        { label: "3.0 EcoBlue Raptor 240cv", yearFrom: 2022, yearTo: null },
+      ],
+      Galaxy: [{ label: "2.0 EcoBlue 150cv", yearFrom: 2015, yearTo: null }],
       Transit: [
         { label: "2.0 EcoBlue 130cv", yearFrom: 2019, yearTo: null },
         { label: "2.0 EcoBlue 170cv", yearFrom: 2019, yearTo: null },
@@ -586,6 +626,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.5 VTEC Turbo 192cv", yearFrom: 2018, yearTo: 2022 },
         { label: "2.0 e:HEV Hybrid 215cv", yearFrom: 2018, yearTo: 2022 },
       ],
+      "ZR-V": [{ label: "2.0 e:HEV Hybrid 184cv", yearFrom: 2023, yearTo: null }],
+      e: [{ label: "Elettrica 136cv", yearFrom: 2020, yearTo: 2024 }],
     },
     Hyundai: {
       i10: [
@@ -619,6 +661,9 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Hybrid 141cv", yearFrom: 2016, yearTo: 2022 },
         { label: "Elettrica 136cv", yearFrom: 2016, yearTo: 2022 },
       ],
+      i40: [{ label: "1.7 CRDi 136cv", yearFrom: 2011, yearTo: 2019 }],
+      Bayon: [{ label: "1.0 T-GDI 100cv", yearFrom: 2021, yearTo: null }],
+      Staria: [{ label: "2.2 CRDi 177cv", yearFrom: 2021, yearTo: null }],
     },
     Jaguar: {
       XE: [
@@ -665,6 +710,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "2.0 Turbo 272cv", yearFrom: 2018, yearTo: null },
         { label: "4xe Plug-in Hybrid 380cv", yearFrom: 2021, yearTo: null },
       ],
+      Gladiator: [{ label: "3.6 Pentastar 285cv", yearFrom: 2019, yearTo: null }],
     },
     Kia: {
       Picanto: [
@@ -695,6 +741,18 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       Sorento: [
         { label: "2.2 CRDi 200cv", yearFrom: 2020, yearTo: null },
         { label: "1.6 T-GDI Plug-in Hybrid 265cv", yearFrom: 2020, yearTo: null },
+      ],
+      Xceed: [
+        { label: "1.0 T-GDI 120cv", yearFrom: 2019, yearTo: null },
+        { label: "1.6 CRDi 136cv", yearFrom: 2019, yearTo: null },
+      ],
+      EV6: [
+        { label: "Elettrica 229cv", yearFrom: 2021, yearTo: null },
+        { label: "GT 585cv", yearFrom: 2022, yearTo: null },
+      ],
+      EV9: [
+        { label: "Elettrica 204cv", yearFrom: 2023, yearTo: null },
+        { label: "GT-Line 384cv", yearFrom: 2023, yearTo: null },
       ],
     },
     Lamborghini: {
@@ -812,6 +870,11 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.5 Skyactiv-G 132cv", yearFrom: 2015, yearTo: null },
         { label: "2.0 Skyactiv-G 184cv", yearFrom: 2015, yearTo: null },
       ],
+      "CX-60": [
+        { label: "3.3 e-Skyactiv D 200cv", yearFrom: 2022, yearTo: null },
+        { label: "Plug-in Hybrid 327cv", yearFrom: 2022, yearTo: null },
+      ],
+      "MX-30": [{ label: "Elettrica 145cv", yearFrom: 2020, yearTo: null }],
     },
     "Mercedes-Benz": {
       "Classe A": [
@@ -866,6 +929,15 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "2.0 CDI 116cv", yearFrom: 2014, yearTo: null },
         { label: "2.0 CDI 163cv", yearFrom: 2014, yearTo: null },
       ],
+      "Classe V": [
+        { label: "220d 163cv", yearFrom: 2014, yearTo: null },
+        { label: "300d 239cv", yearFrom: 2019, yearTo: null },
+      ],
+      EQA: [{ label: "250 190cv", yearFrom: 2021, yearTo: null }],
+      EQB: [{ label: "300 228cv", yearFrom: 2021, yearTo: null }],
+      EQC: [{ label: "400 4Matic 408cv", yearFrom: 2019, yearTo: null }],
+      EQE: [{ label: "350 292cv", yearFrom: 2022, yearTo: null }],
+      EQS: [{ label: "450+ 333cv", yearFrom: 2021, yearTo: null }],
     },
     Mini: {
       Cooper: [
@@ -931,6 +1003,11 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Elettrica 150cv", yearFrom: 2018, yearTo: null },
         { label: "Elettrica e+ 217cv", yearFrom: 2019, yearTo: null },
       ],
+      Ariya: [
+        { label: "Elettrica 63kWh 218cv", yearFrom: 2022, yearTo: null },
+        { label: "Elettrica e-4ORCE 306cv", yearFrom: 2022, yearTo: null },
+      ],
+      Navara: [{ label: "2.3 dCi 190cv", yearFrom: 2015, yearTo: null }],
     },
     Opel: {
       Corsa: [
@@ -958,6 +1035,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.2 Turbo 130cv", yearFrom: 2017, yearTo: null },
         { label: "Hybrid Plug-in 224cv", yearFrom: 2019, yearTo: null },
       ],
+      Zafira: [{ label: "1.6 CDTI 136cv", yearFrom: 2011, yearTo: 2019 }],
+      Combo: [{ label: "1.5 Diesel 100cv", yearFrom: 2018, yearTo: null }],
     },
     Peugeot: {
       "108": [
@@ -990,6 +1069,15 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       Partner: [
         { label: "1.5 BlueHDi 100cv", yearFrom: 2018, yearTo: null },
         { label: "Elettrica e-Partner 136cv", yearFrom: 2021, yearTo: null },
+      ],
+      Rifter: [{ label: "1.5 BlueHDi 100cv", yearFrom: 2018, yearTo: null }],
+      "408": [
+        { label: "1.2 PureTech 130cv", yearFrom: 2022, yearTo: null },
+        { label: "Hybrid 225cv", yearFrom: 2022, yearTo: null },
+      ],
+      "508": [
+        { label: "1.6 PureTech 225cv", yearFrom: 2018, yearTo: null },
+        { label: "2.0 BlueHDi 160cv", yearFrom: 2018, yearTo: null },
       ],
     },
     Porsche: {
@@ -1054,8 +1142,21 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.3 TCe 140cv", yearFrom: 2022, yearTo: null },
         { label: "E-Tech Full Hybrid 200cv", yearFrom: 2022, yearTo: null },
       ],
+      Espace: [
+        { label: "1.8 TCe 225cv", yearFrom: 2015, yearTo: 2023 },
+        { label: "1.6 dCi 160cv", yearFrom: 2015, yearTo: 2023 },
+      ],
+      Trafic: [{ label: "2.0 dCi 145cv", yearFrom: 2014, yearTo: null }],
+      Zoe: [
+        { label: "Elettrica 108cv", yearFrom: 2012, yearTo: 2024 },
+        { label: "Elettrica 135cv", yearFrom: 2019, yearTo: 2024 },
+      ],
     },
     Seat: {
+      Mii: [
+        { label: "1.0 60cv", yearFrom: 2012, yearTo: 2022 },
+        { label: "Elettrica e-Mii 83cv", yearFrom: 2019, yearTo: 2022 },
+      ],
       Ibiza: [
         { label: "1.0 TSI 95cv", yearFrom: 2017, yearTo: null },
         { label: "1.5 TSI 150cv FR", yearFrom: 2017, yearTo: null },
@@ -1078,6 +1179,14 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       ],
     },
     Škoda: {
+      Scala: [
+        { label: "1.0 TSI 116cv", yearFrom: 2019, yearTo: null },
+        { label: "1.5 TSI 150cv", yearFrom: 2019, yearTo: null },
+      ],
+      Enyaq: [
+        { label: "Elettrica 60 179cv", yearFrom: 2021, yearTo: null },
+        { label: "Elettrica RS 299cv", yearFrom: 2021, yearTo: null },
+      ],
       Fabia: [
         { label: "1.0 TSI 95cv", yearFrom: 2021, yearTo: null },
         { label: "1.0 TSI 110cv", yearFrom: 2021, yearTo: null },
@@ -1198,6 +1307,9 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "2.4 D-4D 150cv", yearFrom: 2015, yearTo: null },
         { label: "2.8 D-4D 204cv", yearFrom: 2020, yearTo: null },
       ],
+      Highlander: [{ label: "2.5 Hybrid 248cv", yearFrom: 2020, yearTo: null }],
+      Camry: [{ label: "2.5 Hybrid 218cv", yearFrom: 2019, yearTo: null }],
+      "Land Cruiser": [{ label: "2.8 D-4D 204cv", yearFrom: 2018, yearTo: null }],
     },
     Volkswagen: {
       Polo: [
@@ -1232,6 +1344,16 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       Touareg: [
         { label: "3.0 TDI 231cv", yearFrom: 2018, yearTo: null },
         { label: "3.0 TSI 340cv", yearFrom: 2018, yearTo: null },
+      ],
+      Arteon: [
+        { label: "2.0 TDI 190cv", yearFrom: 2017, yearTo: null },
+        { label: "2.0 TSI R 320cv", yearFrom: 2020, yearTo: null },
+      ],
+      Caddy: [{ label: "2.0 TDI 122cv", yearFrom: 2020, yearTo: null }],
+      Multivan: [
+        { label: "1.5 TSI 136cv", yearFrom: 2021, yearTo: null },
+        { label: "2.0 TDI 150cv", yearFrom: 2021, yearTo: null },
+        { label: "eHybrid 218cv", yearFrom: 2021, yearTo: null },
       ],
       "Up!": [
         { label: "1.0 60cv", yearFrom: 2016, yearTo: null },
@@ -1270,6 +1392,14 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       XC90: [
         { label: "B5 2.0 235cv", yearFrom: 2014, yearTo: null },
         { label: "T8 Plug-in Hybrid 390cv", yearFrom: 2014, yearTo: null },
+      ],
+      EX30: [
+        { label: "Elettrica Single Motor 272cv", yearFrom: 2023, yearTo: null },
+        { label: "Twin Motor 428cv", yearFrom: 2023, yearTo: null },
+      ],
+      EC40: [
+        { label: "Elettrica 231cv", yearFrom: 2023, yearTo: null },
+        { label: "Twin Motor 402cv", yearFrom: 2023, yearTo: null },
       ],
     },
   },
