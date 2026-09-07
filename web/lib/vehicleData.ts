@@ -31,7 +31,7 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
     DR: ["DR1", "DR3", "DR4", "DR4.0", "DR5", "DR5.0", "DR6", "DR6.0", "DR Evo5", "DR F35", "DR Zero"],
     "DS Automobiles": ["DS 3", "DS 4", "DS 7", "DS 9"],
     Ferrari: ["California", "458", "488", "F8", "Portofino", "Roma", "F430", "360", "SF90", "F12 Berlinetta", "GTC4Lusso"],
-    Fiat: ["Panda", "500", "600", "500X", "500L", "Tipo", "Punto", "Uno", "Ritmo", "126", "127", "131", "Cinquecento", "Seicento", "Idea", "Bravo", "Stilo", "Marea", "Coupé", "Barchetta", "Croma", "Multipla", "Ducato", "Doblo", "Fiorino", "Qubo", "Sedici"],
+    Fiat: ["Panda", "Grande Panda", "Topolino", "Grizzly", "Grizzly Fastback", "500", "600", "500X", "500L", "Tipo", "Punto", "Uno", "Ritmo", "126", "127", "131", "Cinquecento", "Seicento", "Idea", "Bravo", "Stilo", "Marea", "Coupé", "Barchetta", "Croma", "Multipla", "Ducato", "Doblo", "Fiorino", "Qubo", "Ulysse", "Sedici"],
     Ford: ["Fiesta", "Focus", "Puma", "Kuga", "EcoSport", "Explorer", "Mondeo", "Sierra", "Scorpio", "Cougar", "Escort", "Mustang", "C-Max", "S-Max", "Ka", "Ranger", "Galaxy", "Transit"],
     Genesis: ["G70", "GV70"],
     GWM: ["Ora Funky Cat", "Hover", "Hover 5", "Steed"],
@@ -960,6 +960,26 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       Sedici: [
         { label: "1.6 107cv", yearFrom: 2006, yearTo: 2014 },
         { label: "1.9 MultiJet 120cv", yearFrom: 2006, yearTo: 2014 },
+      ],
+      "Grande Panda": [
+        { label: "1.2 Turbo Benzina 100cv", yearFrom: 2024, yearTo: null },
+        { label: "Hybrid 110cv", yearFrom: 2024, yearTo: null },
+        { label: "Elettrica 113cv", yearFrom: 2024, yearTo: null },
+      ],
+      Topolino: [{ label: "Elettrica quadriciclo 3cv (45 km/h)", yearFrom: 2023, yearTo: null }],
+      Grizzly: [
+        { label: "1.2 Turbo Benzina 100cv", yearFrom: 2026, yearTo: null },
+        { label: "Hybrid 110cv", yearFrom: 2026, yearTo: null },
+        { label: "Elettrica", yearFrom: 2026, yearTo: null },
+      ],
+      "Grizzly Fastback": [
+        { label: "1.2 Turbo Benzina 100cv", yearFrom: 2026, yearTo: null },
+        { label: "Hybrid 110cv", yearFrom: 2026, yearTo: null },
+        { label: "Elettrica", yearFrom: 2026, yearTo: null },
+      ],
+      Ulysse: [
+        { label: "2.0 MultiJet 180cv", yearFrom: 2022, yearTo: null },
+        { label: "E-Ulysse Elettrica 136cv", yearFrom: 2022, yearTo: null },
       ],
     },
     Ford: {
