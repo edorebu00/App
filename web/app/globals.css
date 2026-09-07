@@ -121,44 +121,50 @@ h3 {
   transform: translateX(100%);
 }
 
-/* Veicolo che attraversa lo schermo da sinistra a destra (conferma inserimento).
-   Piu' fotogrammi chiave = movimento percepito come piu' fluido, con un leggero
-   "rimbalzo" da sospensioni (translateY) e una sfumatura in ingresso/uscita che
-   simula il motion blur, invece di un semplice slide lineare. */
+/* Palcoscenico con prospettiva: da' profondita' (asse Z) al passaggio del veicolo,
+   invece di un semplice scorrimento piatto sull'asse X. */
+.scene-3d {
+  perspective: 1000px;
+}
+
+/* Veicolo che attraversa lo schermo da sinistra a destra (conferma inserimento),
+   con una traiettoria in profondita': arriva da lontano (piccolo, translateZ negativo),
+   passa vicino alla camera al centro (ingrandito, translateZ positivo, "hero moment")
+   e si allontana di nuovo verso destra, con una leggera imbardata (rotateY) che
+   accompagna la curva. Il motion blur in ingresso/uscita rinforza la sensazione di velocita'. */
 @keyframes drive-across {
   0% {
-    transform: translateX(-30vw) translateY(-50%);
+    transform: translateX(-35vw) translateY(-50%) translateZ(-280px) rotateY(-16deg);
     opacity: 0;
-    filter: blur(3px);
+    filter: blur(4px);
   }
   10% {
     opacity: 1;
+    filter: blur(1px);
+  }
+  30% {
+    transform: translateX(0vw) translateY(-50%) translateZ(-60px) rotateY(-6deg);
     filter: blur(0);
   }
-  22% {
-    transform: translateX(5vw) translateY(calc(-50% - 3px));
+  50% {
+    transform: translateX(38vw) translateY(calc(-50% - 5px)) translateZ(60px) rotateY(0deg);
   }
-  38% {
-    transform: translateX(35vw) translateY(-50%);
-  }
-  55% {
-    transform: translateX(60vw) translateY(calc(-50% - 4px));
-  }
-  72% {
-    transform: translateX(85vw) translateY(-50%);
+  70% {
+    transform: translateX(75vw) translateY(-50%) translateZ(-40px) rotateY(6deg);
   }
   90% {
     opacity: 1;
-    filter: blur(0);
+    filter: blur(1px);
   }
   100% {
-    transform: translateX(120vw) translateY(-50%);
+    transform: translateX(122vw) translateY(-50%) translateZ(-280px) rotateY(16deg);
     opacity: 0;
-    filter: blur(3px);
+    filter: blur(4px);
   }
 }
 .animate-drive-across {
   animation: drive-across 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-style: preserve-3d;
   will-change: transform, opacity, filter;
 }
 

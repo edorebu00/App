@@ -60,7 +60,7 @@ export default function VehicleAddedOverlay({
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-graphite-900/95 backdrop-blur-sm">
       <div className="flag-stripe w-full" />
 
-      <div className="relative flex w-full flex-1 items-center justify-center overflow-hidden">
+      <div className="scene-3d relative flex w-full flex-1 items-center justify-center overflow-hidden">
         {/* Linee di velocita' su due livelli per un effetto di profondita' */}
         <div
           className="absolute inset-x-0 top-[calc(50%+22px)] h-0.5 opacity-20 animate-speed-lines-fast"
