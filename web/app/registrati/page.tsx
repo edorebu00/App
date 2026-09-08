@@ -38,10 +38,12 @@ export default function RegisterPage() {
 
   if (done) {
     return (
-      <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="card max-w-sm text-center">
-          <h1 className="mb-2 text-xl font-semibold text-brand-400">Controlla la tua email</h1>
-          <p className="text-sm text-graphite-300">
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+        <div className="hero-spotlight" />
+        <div className="glass-panel relative z-10 max-w-sm p-6 text-center animate-rise-in">
+          <p className="eyebrow-gold justify-center">Un ultimo passo</p>
+          <h1 className="mt-3 text-xl font-semibold text-white">Controlla la tua email</h1>
+          <p className="mt-2 text-sm text-graphite-300">
             Ti abbiamo inviato un link di conferma a <strong>{email}</strong>. Apri il link per attivare
             l&apos;account, poi torna qui per accedere.
           </p>
@@ -54,12 +56,20 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-center text-2xl font-bold text-brand-400">My Vehicle</h1>
-        <p className="mb-6 text-center text-sm text-graphite-400">Crea il tuo account</p>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div className="hero-spotlight" />
 
-        <form onSubmit={handleSubmit} className="card space-y-4">
+      <div className="relative z-10 w-full max-w-sm animate-rise-in">
+        <div className="mb-8 text-center">
+          <p className="eyebrow-gold justify-center">Garage digitale</p>
+          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white">
+            MY <span className="text-brand-500">VEHICLE</span>
+          </h1>
+          <p className="mt-2 text-sm text-graphite-400">Crea il tuo account e inizia a curare la tua collezione.</p>
+          <div className="flag-stripe mx-auto mt-5 w-20 rounded-full" />
+        </div>
+
+        <form onSubmit={handleSubmit} className="glass-panel space-y-4 p-6">
           <div>
             <label className="label" htmlFor="email">Email</label>
             <input
@@ -87,14 +97,14 @@ export default function RegisterPage() {
 
           {error && <p className="text-sm text-red-400">{error}</p>}
 
-          <button type="submit" disabled={loading} className="btn-primary w-full">
+          <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
             {loading ? "Creazione account…" : "Registrati"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-graphite-400">
+        <p className="mt-5 text-center text-sm text-graphite-400">
           Hai già un account?{" "}
-          <Link href="/login" className="font-medium text-brand-600 hover:underline">
+          <Link href="/login" className="font-medium text-gold-500 hover:underline">
             Accedi
           </Link>
         </p>

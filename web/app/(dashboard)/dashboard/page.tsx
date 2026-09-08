@@ -15,19 +15,25 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-graphite-50">I tuoi veicoli</h1>
-          <p className="mt-1 text-sm text-graphite-400">
-            {list.length === 0
-              ? "Aggiungi il tuo primo veicolo per iniziare."
-              : `${list.length} veicol${list.length === 1 ? "o" : "i"} in garage.`}
-          </p>
-          <div className="flag-stripe mt-3 w-16 rounded-full" />
+      <div className="relative mb-8 overflow-hidden rounded-xl border border-graphite-800 bg-graphite-800/40 px-6 py-8">
+        <div className="hero-spotlight" />
+        <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="eyebrow-gold">Il tuo garage</p>
+            <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-white">
+              I tuoi veicoli
+            </h1>
+            <p className="mt-1 text-sm text-graphite-400">
+              {list.length === 0
+                ? "Aggiungi il tuo primo veicolo per iniziare."
+                : `${list.length} veicol${list.length === 1 ? "o" : "i"} in collezione.`}
+            </p>
+            <div className="flag-stripe mt-4 w-16 rounded-full" />
+          </div>
+          <Link href="/veicoli/nuovo" className="btn-primary self-start sm:self-auto">
+            + Aggiungi veicolo
+          </Link>
         </div>
-        <Link href="/veicoli/nuovo" className="btn-primary self-start sm:self-auto">
-          + Aggiungi veicolo
-        </Link>
       </div>
 
       {list.length === 0 ? (

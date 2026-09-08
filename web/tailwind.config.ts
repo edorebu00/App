@@ -32,6 +32,19 @@ const config: Config = {
           900: "#0c0c0e",
         },
         flag: "#f5c400",
+        // Oro premium: accento secondario per il look "concessionaria di lusso"
+        gold: {
+          50: "#2b2205",
+          100: "#3d3007",
+          200: "#5c480b",
+          300: "#7d600e",
+          400: "#f0c94d",
+          500: "#f5c400",
+          600: "#d9ac00",
+          700: "#b38f00",
+          800: "#8a6e00",
+          900: "#5c4900",
+        },
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],

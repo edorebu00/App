@@ -32,12 +32,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-center text-2xl font-bold text-brand-400">My Vehicle</h1>
-        <p className="mb-6 text-center text-sm text-graphite-400">Accedi al tuo garage digitale</p>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div className="hero-spotlight" />
 
-        <form onSubmit={handleSubmit} className="card space-y-4">
+      <div className="relative z-10 w-full max-w-sm animate-rise-in">
+        <div className="mb-8 text-center">
+          <p className="eyebrow-gold justify-center">Garage digitale</p>
+          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white">
+            MY <span className="text-brand-500">VEHICLE</span>
+          </h1>
+          <p className="mt-2 text-sm text-graphite-400">Il tuo parco auto e moto, curato come in vetrina.</p>
+          <div className="flag-stripe mx-auto mt-5 w-20 rounded-full" />
+        </div>
+
+        <form onSubmit={handleSubmit} className="glass-panel space-y-4 p-6">
           <div>
             <label className="label" htmlFor="email">Email</label>
             <input
@@ -63,14 +71,14 @@ export default function LoginPage() {
 
           {error && <p className="text-sm text-red-400">{error}</p>}
 
-          <button type="submit" disabled={loading} className="btn-primary w-full">
+          <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
             {loading ? "Accesso in corso…" : "Accedi"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-graphite-400">
+        <p className="mt-5 text-center text-sm text-graphite-400">
           Non hai un account?{" "}
-          <Link href="/registrati" className="font-medium text-brand-600 hover:underline">
+          <Link href="/registrati" className="font-medium text-gold-500 hover:underline">
             Registrati
           </Link>
         </p>
