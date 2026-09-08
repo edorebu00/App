@@ -13,9 +13,9 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
     "Alfa Romeo": ["Giulia", "Giulietta", "Stelvio", "Tonale", "Junior", "MiTo", "159", "156", "166", "164", "155", "147", "146", "145", "75", "33", "4C", "Brera", "Spider", "GTV", "GT"],
     Alpine: ["A110"],
     Autobianchi: ["Y10", "A112"],
-    Audi: ["80/90", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q4 e-tron", "Q5", "Q7", "Q8", "Q8 e-tron", "e-tron GT", "R8", "TT"],
+    Audi: ["80/90", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q4 e-tron", "Q5", "Q7", "Q8", "Q8 e-tron", "e-tron GT", "R8", "TT", "RS3", "RS4", "RS5", "RS6", "RS7", "RS Q3", "RS Q8", "TT RS"],
     Bentley: ["Bentayga", "Continental", "Flying Spur", "Mulsanne"],
-    BMW: ["Serie 1", "Serie 2", "Serie 3", "Serie 4", "Serie 5", "Serie 6", "Serie 7", "Serie 8", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "Z1", "Z3", "Z4", "i3", "i4", "i8", "iX", "iX1", "iX3"],
+    BMW: ["Serie 1", "Serie 2", "Serie 3", "Serie 4", "Serie 5", "Serie 6", "Serie 7", "Serie 8", "M2", "M3", "M4", "M5", "M8", "X1", "X2", "X3", "X3 M", "X4", "X4 M", "X5", "X5 M", "X6", "X6 M", "X7", "Z1", "Z3", "Z4", "Z4 M", "i3", "i4", "i8", "iX", "iX1", "iX3"],
     BYD: ["Atto 3", "Seal", "Dolphin", "Seal U"],
     Cadillac: ["Escalade"],
     Casalini: ["M20"],
@@ -630,6 +630,42 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Elettrica 50 340cv", yearFrom: 2023, yearTo: null },
         { label: "Elettrica 55 408cv", yearFrom: 2023, yearTo: null },
       ],
+      RS3: [
+        { label: "2.5 TFSI 367cv", yearFrom: 2017, yearTo: 2020 },
+        { label: "2.5 TFSI 400cv", yearFrom: 2021, yearTo: null },
+      ],
+      RS4: [
+        { label: "Avant 4.2 V8 420cv", yearFrom: 2005, yearTo: 2008 },
+        { label: "Avant 4.2 V8 450cv", yearFrom: 2012, yearTo: 2015 },
+        { label: "Avant 2.9 V6 Turbo 450cv", yearFrom: 2017, yearTo: null },
+      ],
+      RS5: [
+        { label: "Coupé 4.2 V8 450cv", yearFrom: 2010, yearTo: 2015 },
+        { label: "Coupé 2.9 V6 Turbo 450cv", yearFrom: 2017, yearTo: null },
+        { label: "Sportback 2.9 V6 Turbo 450cv", yearFrom: 2018, yearTo: null },
+      ],
+      RS6: [
+        { label: "Avant 4.2 V8 Twin Turbo 580cv", yearFrom: 2013, yearTo: 2018 },
+        { label: "Avant 4.0 V8 Twin Turbo 600cv", yearFrom: 2019, yearTo: null },
+        { label: "Avant Performance 4.0 V8 Twin Turbo 630cv", yearFrom: 2022, yearTo: null },
+      ],
+      RS7: [
+        { label: "4.0 V8 Twin Turbo 560cv", yearFrom: 2013, yearTo: 2018 },
+        { label: "4.0 V8 Twin Turbo 600cv", yearFrom: 2019, yearTo: null },
+        { label: "Performance 4.0 V8 Twin Turbo 630cv", yearFrom: 2022, yearTo: null },
+      ],
+      "RS Q3": [
+        { label: "2.5 TFSI 400cv", yearFrom: 2019, yearTo: null },
+        { label: "Sportback 2.5 TFSI 400cv", yearFrom: 2019, yearTo: null },
+      ],
+      "RS Q8": [
+        { label: "4.0 V8 Twin Turbo 600cv", yearFrom: 2020, yearTo: null },
+        { label: "Performance 4.0 V8 Twin Turbo 631cv", yearFrom: 2023, yearTo: null },
+      ],
+      "TT RS": [
+        { label: "2.5 TFSI 400cv", yearFrom: 2016, yearTo: 2023 },
+        { label: "2.5 TFSI 401cv", yearFrom: 2019, yearTo: 2023 },
+      ],
     },
     BMW: {
       "Serie 1": [
@@ -675,6 +711,61 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "840d 3.0 320cv", yearFrom: 2018, yearTo: null },
         { label: "M850i 4.4 V8 530cv", yearFrom: 2018, yearTo: null },
       ],
+      M2: [
+        { label: "3.0 Turbo 370cv", yearFrom: 2016, yearTo: 2018 },
+        { label: "Competition 3.0 Turbo 410cv", yearFrom: 2018, yearTo: 2021 },
+        { label: "CS 3.0 Turbo 450cv", yearFrom: 2020, yearTo: 2021 },
+        { label: "3.0 Turbo 460cv", yearFrom: 2023, yearTo: null },
+      ],
+      M3: [
+        { label: "4.0 V8 420cv", yearFrom: 2007, yearTo: 2013 },
+        { label: "3.0 Turbo 431cv", yearFrom: 2014, yearTo: 2018 },
+        { label: "Competition 3.0 Turbo 450cv", yearFrom: 2016, yearTo: 2018 },
+        { label: "3.0 Turbo 480cv", yearFrom: 2021, yearTo: null },
+        { label: "Competition 3.0 Turbo 510cv", yearFrom: 2021, yearTo: null },
+        { label: "Touring Competition 3.0 Turbo 510cv", yearFrom: 2022, yearTo: null },
+      ],
+      M4: [
+        { label: "3.0 Turbo 431cv", yearFrom: 2014, yearTo: 2020 },
+        { label: "Competition 3.0 Turbo 450cv", yearFrom: 2016, yearTo: 2020 },
+        { label: "CS 3.0 Turbo 460cv", yearFrom: 2017, yearTo: 2018 },
+        { label: "3.0 Turbo 480cv", yearFrom: 2021, yearTo: null },
+        { label: "Competition 3.0 Turbo 510cv", yearFrom: 2021, yearTo: null },
+        { label: "CSL 3.0 Turbo 550cv", yearFrom: 2022, yearTo: 2023 },
+      ],
+      M5: [
+        { label: "5.0 V8 400cv", yearFrom: 1998, yearTo: 2003 },
+        { label: "5.0 V10 507cv", yearFrom: 2005, yearTo: 2010 },
+        { label: "4.4 V8 Turbo 560cv", yearFrom: 2011, yearTo: 2016 },
+        { label: "Competition 4.4 V8 Turbo 600cv", yearFrom: 2014, yearTo: 2016 },
+        { label: "4.4 V8 Turbo 600cv", yearFrom: 2018, yearTo: 2023 },
+        { label: "Competition 4.4 V8 Turbo 625cv", yearFrom: 2018, yearTo: 2023 },
+        { label: "Ibrida 4.4 V8 Turbo 727cv", yearFrom: 2024, yearTo: null },
+      ],
+      M8: [
+        { label: "4.4 V8 Turbo 600cv", yearFrom: 2019, yearTo: null },
+        { label: "Competition 4.4 V8 Turbo 625cv", yearFrom: 2019, yearTo: null },
+        { label: "Gran Coupé 4.4 V8 Turbo 600cv", yearFrom: 2019, yearTo: null },
+      ],
+      "X3 M": [
+        { label: "3.0 Turbo 480cv", yearFrom: 2019, yearTo: 2024 },
+        { label: "Competition 3.0 Turbo 510cv", yearFrom: 2019, yearTo: 2024 },
+      ],
+      "X4 M": [
+        { label: "3.0 Turbo 480cv", yearFrom: 2019, yearTo: 2024 },
+        { label: "Competition 3.0 Turbo 510cv", yearFrom: 2019, yearTo: 2024 },
+      ],
+      "X5 M": [
+        { label: "4.4 V8 Turbo 575cv", yearFrom: 2015, yearTo: 2018 },
+        { label: "4.4 V8 Turbo 600cv", yearFrom: 2020, yearTo: null },
+        { label: "Competition 4.4 V8 Turbo 625cv", yearFrom: 2020, yearTo: null },
+      ],
+      "X6 M": [
+        { label: "4.4 V8 Turbo 575cv", yearFrom: 2015, yearTo: 2018 },
+        { label: "4.4 V8 Turbo 600cv", yearFrom: 2020, yearTo: null },
+        { label: "Competition 4.4 V8 Turbo 625cv", yearFrom: 2020, yearTo: null },
+      ],
+      "Z4 M": [{ label: "3.2 343cv", yearFrom: 2006, yearTo: 2008 }],
       Z1: [{ label: "2.5 170cv", yearFrom: 1988, yearTo: 1991 }],
       Z3: [
         { label: "1.9 140cv", yearFrom: 1995, yearTo: 2002 },
