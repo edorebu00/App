@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import TrackCarousel from "@/components/TrackCarousel";
 import VehicleCard from "@/components/VehicleCard";
 import type { Vehicle } from "@/lib/types";
 
@@ -19,9 +18,9 @@ export default async function DashboardPage() {
         <div className="hero-spotlight" />
         <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="eyebrow-gold">Il tuo garage</p>
+            <p className="eyebrow-gold">La tua collezione</p>
             <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-white">
-              I tuoi veicoli
+              Il mio garage
             </h1>
             <p className="mt-1 text-sm text-graphite-400">
               {list.length === 0
@@ -52,8 +51,6 @@ export default async function DashboardPage() {
           ))}
         </div>
       )}
-
-      <TrackCarousel />
     </div>
   );
 }

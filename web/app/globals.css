@@ -296,6 +296,11 @@ h3 {
   transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
   transform-style: preserve-3d;
 }
+/* Variante per griglie statiche (es. indice circuiti): riempie la cella invece
+   della larghezza fissa pensata per il carosello scorrevole. */
+.track-card-grid {
+  width: 100%;
+}
 .track-card-inner {
   aspect-ratio: 5 / 3;
 }

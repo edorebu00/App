@@ -7,7 +7,9 @@ interface CookieToSet {
   options?: CookieOptions;
 }
 
-const PUBLIC_PATHS = ["/login", "/registrati", "/auth/callback"];
+// "/" è pubblica ma deve combaciare esattamente: con startsWith matcherebbe ogni path.
+const PUBLIC_EXACT_PATHS = ["/"];
+const PUBLIC_PREFIX_PATHS = ["/login", "/registrati", "/auth/callback", "/circuiti"];
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -33,7 +35,9 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isPublic = PUBLIC_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
+  const isPublic =
+    PUBLIC_EXACT_PATHS.includes(request.nextUrl.pathname) ||
+    PUBLIC_PREFIX_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
