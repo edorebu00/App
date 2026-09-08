@@ -16,11 +16,6 @@ h3 {
   @apply rounded-lg border border-graphite-700 border-l-4 border-l-brand-600 bg-graphite-800 p-5 shadow-lg shadow-black/20;
 }
 
-/* Card cliccabili (es. veicoli in dashboard): un piccolo sollevamento al passaggio del mouse */
-.card-interactive {
-  @apply transition-all duration-200 ease-out hover:-translate-y-1 hover:border-brand-600 hover:shadow-xl hover:shadow-brand-900/30;
-}
-
 .btn-primary {
   @apply inline-flex items-center justify-center rounded-md bg-brand-600 px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide text-white shadow shadow-brand-900/40 transition hover:bg-brand-700 disabled:opacity-50;
 }
@@ -58,6 +53,35 @@ h3 {
   filter: blur(10px);
   pointer-events: none;
   z-index: 0;
+}
+
+/* Bagliore cinematografico a doppio tono (rosso + oro), per sezioni hero a pagina
+   intera (login, dashboard): richiama i faretti da concessionaria di lusso. */
+.hero-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(60% 50% at 50% 0%, rgba(245, 196, 0, 0.16), transparent 70%),
+    radial-gradient(45% 55% at 50% 15%, rgba(255, 45, 26, 0.22), transparent 70%);
+}
+
+/* Pannello "vetro smerigliato": card premium translucida con sfocatura dello sfondo. */
+.glass-panel {
+  @apply rounded-xl border border-graphite-700/80 bg-graphite-800/60 shadow-2xl shadow-black/40 backdrop-blur-md;
+}
+
+/* Etichetta piccola in maiuscolo, oro: firma "da concessionaria di lusso" sopra i titoli. */
+.eyebrow-gold {
+  @apply inline-flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold-500;
+}
+.eyebrow-gold::before {
+  content: "";
+  width: 1.25rem;
+  height: 2px;
+  background: currentColor;
+  display: inline-block;
 }
 
 /* Griglia con ingresso "a cascata" (es. elenco veicoli in dashboard) */
@@ -329,8 +353,8 @@ h3 {
   .track-card:focus-within {
     transform: none !important;
   }
-  .card-interactive:hover,
-  .card-interactive:focus-within {
+  .hover\:-translate-y-1:hover,
+  .group:hover .group-hover\:scale-110 {
     transform: none !important;
     transition: none !important;
   }
