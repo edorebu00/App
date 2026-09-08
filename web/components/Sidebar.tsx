@@ -28,7 +28,9 @@ export default function Sidebar({ vehicles }: { vehicles: Vehicle[] }) {
   return (
     <aside className="w-full shrink-0 border-graphite-700 md:w-60 md:border-r">
       <nav className="space-y-1 py-6 pr-4">
-        <NavLink href="/dashboard">🏠 Home</NavLink>
+        <NavLink href="/">🏠 Home</NavLink>
+        <NavLink href="/dashboard">🚗 Il mio garage</NavLink>
+        <NavLink href="/circuiti">🏁 Circuiti</NavLink>
         <NavLink href="/ricerca">🔍 Ricerca</NavLink>
 
         <div className="pt-4">
