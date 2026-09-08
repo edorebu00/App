@@ -1,12 +1,31 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient, CLAUDE_MODEL } from "@/lib/anthropic";
+import { getOpenAIClient, hasOpenAIFallback, OPENAI_MODEL } from "@/lib/openai";
 
 export const maxDuration = 90;
 
 // Budget di caratteri per il contesto documentale iniettato nel prompt (MVP senza embeddings/vector DB)
 const MAX_CONTEXT_CHARS = 250_000;
 const HISTORY_LIMIT = 20;
+
+type ChatHistoryItem = { role: "user" | "assistant"; content: string };
+
+// Fallback su OpenAI se Anthropic non risponde (timeout, errore 5xx, rate limit), cosi'
+// l'utente non vede un errore. Scatta solo se OPENAI_API_KEY e' configurata.
+async function chatWithOpenAI(systemPrompt: string, history: ChatHistoryItem[], message: string) {
+  const openai = getOpenAIClient();
+  const completion = await openai.chat.completions.create({
+    model: OPENAI_MODEL,
+    max_tokens: 2048,
+    messages: [
+      { role: "system", content: systemPrompt },
+      ...history.map((h) => ({ role: h.role, content: h.content })),
+      { role: "user", content: message },
+    ],
+  });
+  return completion.choices[0]?.message?.content || "Non sono riuscito a generare una risposta.";
+}
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -63,19 +82,28 @@ export async function POST(request: Request) {
         "rispondi con la tua conoscenza generale su auto e moto, in italiano, e suggerisci di caricare il " +
         "libretto d'uso e manutenzione per risposte più precise.";
 
-    const anthropic = getAnthropicClient();
-    const response = await anthropic.messages.create({
-      model: CLAUDE_MODEL,
-      max_tokens: 2048,
-      system: systemPrompt,
-      messages: [
-        ...history.map((h) => ({ role: h.role as "user" | "assistant", content: h.content })),
-        { role: "user" as const, content: message },
-      ],
-    });
+    let reply: string;
+    try {
+      const anthropic = getAnthropicClient();
+      const response = await anthropic.messages.create({
+        model: CLAUDE_MODEL,
+        max_tokens: 2048,
+        system: systemPrompt,
+        messages: [
+          ...history.map((h) => ({ role: h.role as "user" | "assistant", content: h.content })),
+          { role: "user" as const, content: message },
+        ],
+      });
 
-    const textBlock = response.content.find((b) => b.type === "text") as { type: "text"; text: string } | undefined;
-    const reply = textBlock?.text || "Non sono riuscito a generare una risposta.";
+      const textBlock = response.content.find((b) => b.type === "text") as
+        | { type: "text"; text: string }
+        | undefined;
+      reply = textBlock?.text || "Non sono riuscito a generare una risposta.";
+    } catch (primaryErr) {
+      if (!hasOpenAIFallback()) throw primaryErr;
+      console.error("Anthropic non disponibile per la chat, uso il fallback OpenAI:", primaryErr);
+      reply = await chatWithOpenAI(systemPrompt, history as ChatHistoryItem[], message);
+    }
 
     await supabase.from("chat_messages").insert({
       user_id: user.id,
