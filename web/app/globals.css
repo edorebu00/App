@@ -3,7 +3,20 @@
 @tailwind utilities;
 
 body {
-  @apply bg-graphite-900 text-graphite-100;
+  @apply bg-graphite-900 text-graphite-100 antialiased;
+  min-height: 100vh;
+  background-color: #09090b;
+  background-image:
+    radial-gradient(circle at 18% -10%, rgba(255, 45, 26, 0.16), transparent 26rem),
+    radial-gradient(circle at 88% 18%, rgba(245, 196, 0, 0.09), transparent 22rem),
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: auto, auto, 34px 34px, 34px 34px;
+}
+
+::selection {
+  background: rgba(255, 45, 26, 0.8);
+  color: white;
 }
 
 h1,
@@ -13,7 +26,7 @@ h3 {
 }
 
 .card {
-  @apply rounded-lg border border-graphite-700 border-l-4 border-l-brand-600 bg-graphite-800 p-5 shadow-lg shadow-black/20;
+  @apply rounded-xl border border-graphite-700/80 border-l-4 border-l-brand-600 bg-graphite-800/80 p-5 shadow-xl shadow-black/25 backdrop-blur-sm;
 }
 
 /* Saracinesca del box auto (Il mio garage): copre la scheda finche' non viene aperta.
@@ -58,11 +71,11 @@ h3 {
 }
 
 .btn-primary {
-  @apply inline-flex items-center justify-center rounded-md bg-brand-600 px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide text-white shadow shadow-brand-900/40 transition hover:bg-brand-700 disabled:opacity-50;
+  @apply inline-flex items-center justify-center rounded-md bg-brand-600 px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-brand-900/50 transition hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-brand-900/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-graphite-900 disabled:translate-y-0 disabled:opacity-50;
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center rounded-md border border-graphite-600 bg-graphite-700 px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide text-graphite-100 transition hover:bg-graphite-600 disabled:opacity-50;
+  @apply inline-flex items-center justify-center rounded-md border border-graphite-600 bg-graphite-800/80 px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide text-graphite-100 shadow-sm transition hover:-translate-y-0.5 hover:border-graphite-500 hover:bg-graphite-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2 focus-visible:ring-offset-graphite-900 disabled:translate-y-0 disabled:opacity-50;
 }
 
 .input {
@@ -106,6 +119,47 @@ h3 {
   background:
     radial-gradient(60% 50% at 50% 0%, rgba(245, 196, 0, 0.16), transparent 70%),
     radial-gradient(45% 55% at 50% 15%, rgba(255, 45, 26, 0.22), transparent 70%);
+}
+
+/* Texture leggera di fibra di carbonio: porta profondita' senza immagini pesanti. */
+.carbon-panel {
+  position: relative;
+  isolation: isolate;
+  background-color: #111114;
+  background-image:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%),
+    linear-gradient(315deg, rgba(255, 255, 255, 0.018) 25%, transparent 25%);
+  background-size: 8px 8px;
+}
+.carbon-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0.045), transparent 24%, transparent 72%, rgba(255, 45, 26, 0.1));
+}
+
+.showroom-shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(117, 117, 126, 0.4);
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, rgba(38, 38, 44, 0.9), rgba(12, 12, 14, 0.98));
+  box-shadow: 0 24px 70px -28px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.showroom-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 45, 26, 0.75), rgba(245, 196, 0, 0.55), transparent 44%) top / 100% 2px no-repeat,
+    radial-gradient(circle at 88% 6%, rgba(245, 196, 0, 0.18), transparent 22rem);
+}
+
+.metric-chip {
+  @apply rounded-lg border border-graphite-600/60 bg-graphite-900/60 px-3 py-2 backdrop-blur-sm;
 }
 
 /* Pannello "vetro smerigliato": card premium translucida con sfocatura dello sfondo. */

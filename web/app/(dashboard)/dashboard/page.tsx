@@ -14,7 +14,7 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <div className="relative mb-8 overflow-hidden rounded-xl border border-graphite-800 bg-graphite-800/40 px-6 py-8">
+      <div className="showroom-shell mb-8 px-6 py-8 sm:px-8">
         <div className="hero-spotlight" />
         <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -29,9 +29,21 @@ export default async function DashboardPage() {
             </p>
             <div className="flag-stripe mt-4 w-16 rounded-full" />
           </div>
-          <Link href="/veicoli/nuovo" className="btn-primary self-start sm:self-auto">
-            + Aggiungi veicolo
-          </Link>
+          <div className="flex flex-col items-start gap-4 sm:items-end">
+            <div className="flex gap-2">
+              <div className="metric-chip">
+                <p className="font-display text-xl font-bold text-white">{list.length}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite-400">in garage</p>
+              </div>
+              <div className="metric-chip">
+                <p className="font-display text-xl font-bold text-gold-500">24/7</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite-400">pronto</p>
+              </div>
+            </div>
+            <Link href="/veicoli/nuovo" className="btn-primary self-start sm:self-auto">
+              + Aggiungi veicolo
+            </Link>
+          </div>
         </div>
       </div>
 

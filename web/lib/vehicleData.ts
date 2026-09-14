@@ -1,9 +1,10 @@
 import type { EngineVariant, VehicleType } from "./types";
 
 /**
- * Dataset curato di marche/modelli per popolare i menu a tendina del form "Aggiungi veicolo".
- * Non è un catalogo ufficiale/esaustivo di ogni allestimento storico: copre le marche e i modelli
- * più comuni sul mercato italiano.
+ * Dataset curato di marche/modelli per suggerire i valori nel form "Aggiungi veicolo".
+ * Il form usa datalist, non select bloccanti: qualsiasi marca o modello assente dal dataset
+ * puo' comunque essere digitato e salvato. Il catalogo migliora quindi la velocita' di inserimento
+ * senza escludere veicoli storici, rari, d'importazione o appena lanciati.
  */
 export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
   auto: {
@@ -124,12 +125,90 @@ export const VEHICLE_DATA: Record<VehicleType, Record<string, string[]>> = {
   },
 };
 
+/**
+ * Estensioni del catalogo: modelli di grande diffusione, recenti e storici che non
+ * comparivano nel dataset iniziale. Restano separate dai dati delle motorizzazioni:
+ * se non e' presente una variante verificata, il form propone correttamente il campo libero.
+ */
+const CATALOGUE_EXTENSIONS: Partial<Record<VehicleType, Record<string, string[]>>> = {
+  auto: {
+    Abarth: ["124 Rally", "Grande Punto Abarth", "Punto Abarth"],
+    "Alfa Romeo": ["6", "8C Competizione", "Alfasud", "Arna", "Montreal", "RZ", "SZ"],
+    "Aston Martin": ["DB12", "DB7", "DB9", "Lagonda", "Valhalla", "Valkyrie", "Vantage", "Virage"],
+    Audi: ["100", "200", "A4 allroad", "A6 allroad", "Coupé", "Q6 e-tron", "RS e-tron GT", "S1", "S3", "S4", "S5", "S6", "S7", "S8", "SQ2", "SQ5", "SQ6 e-tron", "SQ7", "SQ8", "TT Roadster"],
+    BAIC: ["Beijing X35", "Beijing X55", "BJ40", "BJ60"],
+    Bentley: ["Arnage", "Brooklands", "Turbo R"],
+    BMW: ["2002", "Serie 2 Active Tourer", "Serie 2 Gran Coupé", "Serie 4 Gran Coupé", "Serie 5 Touring", "Serie 6 Gran Turismo", "Serie 8 Gran Coupé", "i5", "i7", "iX2", "M1", "X7", "XM"],
+    BYD: ["Atto 2", "Dolphin Surf", "Han", "Sealion 7", "Tang"],
+    Cadillac: ["ATS", "CT4", "CT5", "CTS", "DeVille", "ELR", "Lyriq", "SRX", "XT4", "XT5", "XT6"],
+    Chevrolet: ["Blazer", "Bolt", "Epica", "Malibu", "Tacuma", "Trailblazer", "Volt"],
+    Chrysler: ["Delta", "Grand Voyager", "Neon", "Voyager"],
+    Citroën: ["AX", "BX", "C3 Pluriel", "C4 X", "C-Crosser", "C-Elysée", "C-Zero", "DS5", "Dyane", "GS", "Visa"],
+    Cupra: ["Raval", "Tavascan"],
+    Dacia: ["Bigster", "Duster III", "Sandero Stepway"],
+    Daihatsu: ["Charade", "Rocky", "Taft", "Wildcat"],
+    DeLorean: ["DMC-12"],
+    DFSK: ["E5", "Glory 500", "Glory 580", "Seres 3"],
+    Dodge: ["Challenger", "Charger", "Durango", "Ram"],
+    Dongfeng: ["Box", "Fengon 500", "Shine", "Voyah Free"],
+    "DS Automobiles": ["DS 3 Crossback", "DS 4 Crossback", "DS 7 Crossback"],
+    EBRO: ["S400", "S700", "S800"],
+    EVO: ["3", "4", "5", "6", "7", "Cross 4", "Spazio"],
+    Ferrari: ["12Cilindri", "296 GTB", "296 GTS", "328", "348", "400", "412", "550 Maranello", "575M Maranello", "599 GTB", "612 Scaglietti", "812 Superfast", "Daytona SP3", "Enzo", "LaFerrari", "Purosangue", "Testarossa"],
+    Fiat: ["124", "130", "132", "500e", "600e", "850", "850 Spider", "Argenta", "Campagnola", "Duna", "Freemont", "Fullback", "Grande Punto", "Mobi", "Palio", "Regata", "Talento", "Tempra", "Toro", "Viaggio"],
+    Ford: ["Bronco", "Capri", "Edge", "F-150", "Maverick", "Mustang Mach-E", "Probe", "Puma Gen-E", "Taunus", "Tourneo Connect", "Tourneo Courier", "Tourneo Custom", "Transit Connect", "Transit Courier", "Transit Custom"],
+    Genesis: ["G80", "G90", "GV60", "GV80"],
+    GMC: ["Acadia", "Canyon", "Sierra", "Yukon"],
+    Honda: ["CR-Z", "e:Ny1", "Element", "Legend", "NSX", "Passport", "Stream"],
+    Hyundai: ["Accent", "Elantra", "i20 N", "i30 N", "Inster", "Ioniq 9", "Nexo", "Sonata", "Tucson"],
+    Ineos: ["Grenadier", "Quartermaster"],
+    Isuzu: ["Trooper", "VehiCROSS"],
+    Jaguar: ["E-Type", "I-Type", "Mark 2", "XJ220", "XJS"],
+    Jeep: ["CJ", "Liberty", "Wagoneer", "Willys"],
+    Kia: ["EV3", "EV4", "EV5", "EV9", "Joice", "K4", "Magentis", "PV5", "Pregio", "Sedona"],
+    Lancia: ["Appia", "Aurelia", "Delta Integrale", "Flaminia", "Gamma", "Montecarlo", "Phedra", "Prisma", "Stratos", "Trevi", "Voyager", "Y10"],
+    Leapmotor: ["C10", "T03"],
+    Lexus: ["CT", "ES", "GS", "LBX", "LFA", "RZ", "SC"],
+    "Lynk & Co": ["01", "02", "03", "06", "08"],
+    Maserati: ["222", "3200 GT", "Biturbo", "GranCabrio", "Karif", "MC12", "Merak", "Shamal", "Spyder"],
+    Mazda: ["121", "323", "MPV", "MX-3", "MX-6", "RX-7", "Tribute", "Xedos 6", "Xedos 9"],
+    "Mercedes-Benz": ["Citan", "Classe T", "CLE", "EQT", "G 63", "GLK", "ML", "R", "SL", "SLC", "SLK", "Vaneo", "X-Class"],
+    MG: ["Cyberster", "Marvel R", "MG5", "MGS5 EV", "TF", "ZR", "ZS EV", "ZT"],
+    Mini: ["Aceman", "Coupe", "Electric", "Roadster"],
+    Mitsubishi: ["3000 GT", "Carisma", "Grandis", "i-MiEV", "L300", "L400", "Sigma", "Starion"],
+    Nissan: ["Almera", "Cube", "GT-R Nismo", "Interstar", "Laurel", "Maxima", "Skyline", "Sunny", "Townstar", "Vanette"],
+    NIO: ["EL6", "EL7", "ET5", "ET7"],
+    Opel: ["Ascona", "Campo", "Commodore", "GT", "Kadett", "Monterey", "Omega", "Senator", "Signum", "Sintra"],
+    Peugeot: ["104", "309", "4007", "4008", "605", "607", "806", "e-3008", "e-5008", "Expert", "Rifter", "Tepee"],
+    Porsche: ["356", "718 Spyder", "Boxster", "Carrera GT", "Cayman", "Mission R", "Taycan Cross Turismo"],
+    Renault: ["11", "14", "18", "20", "21", "25", "30", "Avantime", "Fuego", "Rafale", "R5 E-Tech", "Safrane", "Symbioz", "Vel Satis", "Wind"],
+    "Rolls Royce": ["Cullinan", "Dawn", "Ghost", "Spectre"],
+    Seat: ["Cordoba", "Exeo", "Malaga", "Marbella", "Ronda", "Toledo"],
+    Seres: ["3", "5"],
+    Škoda: ["Elroq", "Favorit", "Felicia", "Forman", "Kushaq", "Slavia"],
+    Smart: ["#1", "#3", "Roadster"],
+    Subaru: ["Ascent", "Baja", "Justy", "Solterra", "SVX", "Tribeca"],
+    Suzuki: ["Across", "Celerio", "Kizashi", "Liana", "S-Presso", "Samurai", "Swace", "Wagon R+", "e Vitara"],
+    Tesla: ["Cybertruck", "Roadster"],
+    Toyota: ["bZ4X", "Carina", "Century", "Crown", "GR Corolla", "GR Yaris", "Previa", "Proace", "Proace City", "Starlet", "Urban Cruiser", "bZ3"],
+    Volkswagen: ["ID. Buzz", "ID.5", "ID.7", "ID.7 Tourer", "LT", "T-Cross", "T5", "T6", "T7", "Vento", "Virtus"],
+    Volvo: ["140", "460", "480", "740", "760", "850", "940", "960", "C40", "EX40", "EX90", "ES90", "V40 Cross Country"],
+    XPeng: ["G6", "G9", "P7"],
+    Zeekr: ["001", "7X", "X"],
+  },
+};
+
 export function getMakes(type: VehicleType): string[] {
-  return Object.keys(VEHICLE_DATA[type]).sort((a, b) => a.localeCompare(b));
+  const extensions = CATALOGUE_EXTENSIONS[type] || {};
+  return Array.from(new Set([...Object.keys(VEHICLE_DATA[type]), ...Object.keys(extensions)])).sort((a, b) =>
+    a.localeCompare(b)
+  );
 }
 
 export function getModels(type: VehicleType, make: string): string[] {
-  return VEHICLE_DATA[type][make] || [];
+  const base = VEHICLE_DATA[type][make] || [];
+  const extensions = CATALOGUE_EXTENSIONS[type]?.[make] || [];
+  return Array.from(new Set([...base, ...extensions])).sort((a, b) => a.localeCompare(b));
 }
 
 /**

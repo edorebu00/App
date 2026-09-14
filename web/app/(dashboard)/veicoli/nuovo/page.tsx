@@ -126,7 +126,7 @@ export default function NewVehiclePage() {
       <div className="relative z-10 mb-6 text-center">
         <h1 className="text-3xl font-bold text-white">🏁 Aggiungi veicolo</h1>
         <p className="mt-1 text-sm text-graphite-400">
-          Scegli marca, modello e motorizzazione: al resto pensa l&apos;agente IA.
+          Cerca nel catalogo oppure inserisci liberamente marca e modello: al resto pensa l&apos;agente IA.
         </p>
         <div className="flag-stripe mx-auto mt-4 w-24 rounded-full" />
       </div>
@@ -153,47 +153,54 @@ export default function NewVehiclePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="label" htmlFor="make">Marca</label>
-            <select
-              id="make"
-              required
-              className="input"
-              value={make}
-              onChange={(e) => handleMakeChange(e.target.value)}
-            >
-              <option value="" disabled>
-                Seleziona marca…
-              </option>
-              {makes.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="label" htmlFor="make">Marca</label>
+              <input
+                id="make"
+                required
+                className="input"
+                value={make}
+                onChange={(e) => handleMakeChange(e.target.value)}
+                list="vehicle-makes"
+                placeholder="Cerca o scrivi la marca…"
+                autoComplete="organization"
+              />
+              <datalist id="vehicle-makes">
+                {makes.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </datalist>
+            </div>
+            <div>
+              <label className="label" htmlFor="model">Modello</label>
+              <input
+                id="model"
+                required
+                className="input"
+                value={model}
+                onChange={(e) => handleModelChange(e.target.value)}
+                list="vehicle-models"
+                placeholder={make ? "Cerca o scrivi il modello…" : "Inserisci prima la marca"}
+                disabled={!make}
+                autoComplete="off"
+              />
+              <datalist id="vehicle-models">
+                {models.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </datalist>
+              {make && models.length === 0 && (
+                <p className="mt-1 text-xs text-gold-500">
+                  Marca non ancora nel catalogo: puoi inserire il modello manualmente.
+                </p>
+              )}
+            </div>
           </div>
-          <div>
-            <label className="label" htmlFor="model">Modello</label>
-            <select
-              id="model"
-              required
-              className="input"
-              value={model}
-              disabled={!make}
-              onChange={(e) => handleModelChange(e.target.value)}
-            >
-              <option value="" disabled>
-                {make ? "Seleziona modello…" : "Scegli prima la marca"}
-              </option>
-              {models.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -227,8 +234,8 @@ export default function NewVehiclePage() {
                 />
                 <p className="mt-1 text-xs text-graphite-500">
                   {model
-                    ? "Motorizzazioni non precaricate per questo modello: inseriscila manualmente."
-                    : "Scegli prima marca e modello."}
+                    ? "Modello o motorizzazione non nel catalogo: inseriscila manualmente."
+                    : "Inserisci prima marca e modello."}
                 </p>
               </>
             )}

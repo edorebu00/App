@@ -31,17 +31,17 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         }
       }}
       aria-label={`Apri la scheda di ${vehicle.make} ${vehicle.model}`}
-      className={`group relative block cursor-pointer overflow-hidden rounded-xl border border-graphite-700 bg-graphite-900 shadow-lg shadow-black/30 transition-shadow duration-300 hover:shadow-2xl hover:shadow-black/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 ${
+      className={`group relative block cursor-pointer overflow-hidden rounded-xl border border-graphite-700 bg-graphite-900 shadow-lg shadow-black/30 transition duration-300 hover:-translate-y-1 hover:border-graphite-500 hover:shadow-2xl hover:shadow-black/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 ${
         opening ? "garage-bay-open" : ""
       }`}
     >
       {/* Interno del box: la scheda del veicolo, rivelata quando la saracinesca si apre */}
-      <div className="relative flex h-32 items-center justify-center overflow-hidden bg-gradient-to-br from-graphite-700 via-graphite-800 to-graphite-900">
+      <div className="carbon-panel relative flex h-36 items-center justify-center overflow-hidden bg-gradient-to-br from-graphite-700 via-graphite-800 to-graphite-900">
         <div
           className="absolute inset-0 opacity-40"
           style={{ background: "radial-gradient(closest-side, rgba(255,45,26,0.35), transparent 75%)" }}
         />
-        <span className="relative z-10 text-5xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
+        <span className="relative z-10 text-5xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] transition duration-300 group-hover:scale-110 group-hover:-rotate-3">
           {vehicle.type === "moto" ? "🏍️" : "🚗"}
         </span>
         <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-graphite-900/70 px-2 py-0.5 text-xs font-medium text-brand-400 backdrop-blur-sm">
