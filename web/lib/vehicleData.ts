@@ -1,3 +1,4 @@
+import { CATALOGUE_SWEEP } from "./catalogueSweep";
 import type { EngineVariant, VehicleType } from "./types";
 
 /**
@@ -281,15 +282,16 @@ const CATALOGUE_EXTENSIONS: Partial<Record<VehicleType, Record<string, string[]>
 
 export function getMakes(type: VehicleType): string[] {
   const extensions = CATALOGUE_EXTENSIONS[type] || {};
-  return Array.from(new Set([...Object.keys(VEHICLE_DATA[type]), ...Object.keys(extensions)])).sort((a, b) =>
-    a.localeCompare(b)
-  );
+  return Array.from(
+    new Set([...Object.keys(VEHICLE_DATA[type]), ...Object.keys(extensions), ...Object.keys(CATALOGUE_SWEEP[type])])
+  ).sort((a, b) => a.localeCompare(b));
 }
 
 export function getModels(type: VehicleType, make: string): string[] {
   const base = VEHICLE_DATA[type][make] || [];
   const extensions = CATALOGUE_EXTENSIONS[type]?.[make] || [];
-  return Array.from(new Set([...base, ...extensions])).sort((a, b) => a.localeCompare(b));
+  const sweep = CATALOGUE_SWEEP[type][make] || [];
+  return Array.from(new Set([...base, ...extensions, ...sweep])).sort((a, b) => a.localeCompare(b));
 }
 
 /**
