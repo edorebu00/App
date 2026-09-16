@@ -1,20 +1,99 @@
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
+import type Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient, CLAUDE_MODEL } from "@/lib/anthropic";
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_SEARCH_MODEL } from "@/lib/openai";
 import { LOCALE_LANGUAGE_NAME, resolveLocale } from "@/i18n/locales";
 import type { SearchPayload } from "@/lib/types";
 
-// La ricerca fa alcune chiamate allo strumento web_search piu' la generazione delle
-// specifiche per sezione: teniamo un margine oltre alla durata attesa (~20-40s), il piano
-// Hobby di Vercel supporta funzioni fino a 300s.
-export const maxDuration = 120;
+// La ricerca fa alcune chiamate allo strumento web_search piu' l'eventuale retry: teniamo un
+// margine oltre alla durata attesa (~20-50s per tentativo), il piano Hobby di Vercel supporta
+// funzioni fino a 300s.
+export const maxDuration = 180;
 
-// Ritorna null se il blocco JSON non c'e' o non e' valido, cosi' chi chiama puo' distinguere
-// "l'IA ha risposto ma non ha trovato nulla" (array vuoti, ok) da "la risposta e' incompleta/rotta"
-// (es. troncata per max_tokens), che va segnalata come errore invece di sembrare un risultato vuoto.
-function extractPayload(text: string): SearchPayload | null {
+const MAX_RISORSE = 10;
+
+/**
+ * Tool "fittizio" (non eseguito da noi: e' il modo per chiedere a Claude un output
+ * strutturato validato contro uno schema, invece di fargli scrivere un blocco ```json```
+ * dentro un testo libero che poi dobbiamo estrarre con una regex. Elimina la classe di errori
+ * piu' comune ("JSON troncato o malformato non estraibile dalla risposta").
+ */
+const SUBMIT_FINDINGS_TOOL: Anthropic.Tool = {
+  name: "submit_findings",
+  description:
+    "Invia il risultato finale della ricerca. Chiamalo come ULTIMO passo, una sola volta, dopo aver fatto " +
+    "le ricerche web necessarie: non scrivere il risultato come testo, usa sempre e solo questo strumento.",
+  input_schema: {
+    type: "object",
+    properties: {
+      summary: {
+        type: "string",
+        description: "Riepilogo testuale di massimo 2-3 frasi, nella lingua richiesta dal sistema.",
+      },
+      risorse: {
+        type: "array",
+        maxItems: MAX_RISORSE,
+        description: `Al massimo ${MAX_RISORSE} risorse, solo URL realmente trovati tramite la ricerca web (mai inventati).`,
+        items: {
+          type: "object",
+          properties: {
+            categoria: {
+              type: "string",
+              enum: ["forum", "manuale_pdf", "video", "schema_tecnico", "pezzo_ricambio", "catalogo_ricambi", "piano_manutenzione", "altro"],
+            },
+            sezione: {
+              type: "string",
+              enum: ["motore", "carrozzeria", "assetto", "impianto_frenante", "trasmissione", "elettronica", "generale"],
+            },
+            titolo: { type: "string" },
+            url: { type: "string" },
+            descrizione: { type: "string" },
+          },
+          required: ["categoria", "titolo", "url", "descrizione"],
+        },
+      },
+      specifiche: {
+        type: "object",
+        description:
+          "Specifiche tecniche per sezione. 'motore' e' obbligatorio (3-6 voci). Le altre sezioni solo se " +
+          "non rallentano la risposta: meglio ometterle che ritardare la chiamata a questo strumento.",
+        properties: {
+          motore: { type: "object", additionalProperties: { type: "string" } },
+          carrozzeria: { type: "object", additionalProperties: { type: "string" } },
+          assetto: { type: "object", additionalProperties: { type: "string" } },
+          impianto_frenante: { type: "object", additionalProperties: { type: "string" } },
+          trasmissione: { type: "object", additionalProperties: { type: "string" } },
+        },
+      },
+    },
+    required: ["summary", "risorse", "specifiche"],
+  },
+};
+
+/** Estrae il risultato dal blocco tool_use di submit_findings (nessun parsing di testo libero). */
+function extractFindingsFromToolUse(
+  content: Anthropic.ContentBlock[]
+): { payload: SearchPayload; summary: string } | null {
+  const toolUse = [...content].reverse().find(
+    (b): b is Anthropic.ToolUseBlock => b.type === "tool_use" && b.name === "submit_findings"
+  );
+  if (!toolUse || typeof toolUse.input !== "object" || toolUse.input === null) return null;
+
+  const input = toolUse.input as Record<string, unknown>;
+  return {
+    payload: {
+      risorse: Array.isArray(input.risorse) ? (input.risorse as SearchPayload["risorse"]) : [],
+      specifiche: typeof input.specifiche === "object" && input.specifiche ? (input.specifiche as SearchPayload["specifiche"]) : {},
+    },
+    summary: typeof input.summary === "string" ? input.summary : "",
+  };
+}
+
+// Fallback testuale (regex su blocco ```json```), usato solo dal percorso OpenAI: la Responses
+// API di OpenAI qui non e' collegata allo stesso meccanismo di tool strutturato di Anthropic.
+function extractPayloadFromText(text: string): SearchPayload | null {
   const match = text.match(/```json\s*([\s\S]*?)```/) || text.match(/(\{[\s\S]*\})/);
   if (!match) return null;
   try {
@@ -36,7 +115,8 @@ function buildSearchSystemPrompt(language: string) {
   "a mano. Usa lo strumento di ricerca web per trovare forum dedicati, manuali/PDF di manutenzione, video " +
   "YouTube (tutorial/riparazioni/revisioni), schemi tecnici/viste esplose, e negozi/cataloghi di pezzi di " +
   "ricambio pertinenti al modello e alla motorizzazione indicati. L'utente è in attesa: sii efficiente, fai " +
-  "al massimo 4-5 ricerche mirate (non ripetere ricerche simili) e vai dritto al risultato senza divagare.\n\n" +
+  "al massimo 3-4 ricerche mirate (non ripetere ricerche simili) e vai dritto al risultato senza divagare. " +
+  "La velocita' e il completare la risposta contano piu' della completezza assoluta.\n\n" +
   "DUE RICERCHE SONO PRIORITARIE e vanno fatte quasi sempre (salvo che il veicolo sia troppo generico/raro): " +
   "1) la pagina del catalogo ricambi di AUTODOC (dominio auto-doc.it per l'Italia, CON il trattino — NON " +
   "autodoc.it senza trattino, che è un'azienda diversa e non centrata; per altri paesi il dominio è " +
@@ -48,49 +128,65 @@ function buildSearchSystemPrompt(language: string) {
   "AutoDoc per quella marca/modello invece di ometterla del tutto.\n\n" +
   "REGOLA IMPORTANTE su \"sezione\": per OGNI risultato scegli la sezione più specifica possibile tra " +
   "motore, carrozzeria, assetto, impianto_frenante, trasmissione, elettronica. Usa 'generale' SOLO come " +
-  "ultima risorsa se davvero non è riconducibile a nessuna di queste (es. un forum generale sul marchio). " +
-  "Distribuisci i risultati: non mettere tutto in una sola sezione, cerca di coprire più sezioni possibili " +
-  "(motore e impianto_frenante hanno quasi sempre pezzi di ricambio e documentazione dedicati).\n\n" +
-  "REGOLA IMPORTANTE su \"specifiche\": è OBBLIGATORIO valorizzare 'motore' e, quando pertinente, anche " +
-  "'carrozzeria', 'assetto', 'impianto_frenante', 'trasmissione' con 3-6 voci ciascuna, usando la ricerca " +
-  "web E la tua conoscenza generale del modello/motorizzazione indicati. Se non trovi un dato preciso al " +
-  "100%, fornisci comunque il valore tipico/più diffuso per quella motorizzazione (es. potenza dichiarata " +
-  "dal costruttore, tipo di sospensioni di serie per quel modello) invece di lasciare la sezione vuota: " +
-  "è preferibile un'informazione indicativa utile piuttosto che nessuna informazione. Non inventare però " +
-  "numeri specifici e mai visti per un veicolo generico: se il modello è troppo raro o sconosciuto per " +
-  "avere dati plausibili, in quel caso ometti solo quella singola voce.\n\n" +
-  `Rispondi SEMPRE in ${language} (sia il riepilogo testuale sia i valori testuali dentro il JSON, es. "titolo", ` +
-  `"descrizione", i nomi delle caratteristiche in "specifiche"), con un riepilogo testuale di massimo 2-3 frasi, ` +
-  "poi termina SEMPRE con un blocco ```json``` " +
-  "contenente UN SOLO oggetto con questa forma esatta:\n" +
-  '{"risorse": [{"categoria": "forum|manuale_pdf|video|schema_tecnico|pezzo_ricambio|catalogo_ricambi|piano_manutenzione|altro", ' +
-  '"sezione": "motore|carrozzeria|assetto|impianto_frenante|trasmissione|elettronica|generale", ' +
-  '"titolo": "...", "url": "...", "descrizione": "..."}], ' +
-  '"specifiche": {"motore": {"Cilindrata": "1998 cc", "Potenza": "150 CV"}, "carrozzeria": {...}, ' +
-  '"assetto": {...}, "impianto_frenante": {...}, "trasmissione": {...}}}\n' +
-  "Massimo 15 elementi in \"risorse\", solo URL realmente trovati tramite la ricerca (mai inventati). " +
-  'I valori delle chiavi fisse "categoria" e "sezione" restano SEMPRE nei codici inglesi/italiani elencati sopra ' +
-  "(non tradurli), cosi' l'app puo' continuare a interpretarli correttamente."
+  "ultima risorsa se davvero non è riconducibile a nessuna di queste (es. un forum generale sul marchio).\n\n" +
+  "REGOLA IMPORTANTE su \"specifiche\": è OBBLIGATORIO valorizzare SOLO 'motore', con 3-6 voci, usando la " +
+  "ricerca web E la tua conoscenza generale del modello/motorizzazione indicati (se non trovi un dato preciso " +
+  "al 100%, va bene il valore tipico/più diffuso per quella motorizzazione). Le altre sezioni " +
+  "('carrozzeria', 'assetto', 'impianto_frenante', 'trasmissione') sono un bonus: valorizzale SOLO se hai " +
+  "già i dati a portata di mano senza fare ricerche aggiuntive — è molto meglio chiamare subito lo strumento " +
+  "con 'motore' compilato e le altre sezioni vuote, piuttosto che ritardare o troncare la risposta per " +
+  "inseguire la completezza. Non inventare mai numeri specifici per un veicolo troppo raro o sconosciuto: " +
+  "in quel caso ometti solo quella singola voce.\n\n" +
+  `Rispondi SEMPRE in ${language} (sia il riepilogo sia i valori testuali dentro lo strumento, es. "titolo", ` +
+  `"descrizione", i nomi delle caratteristiche in "specifiche"). Quando hai finito le ricerche, chiama SUBITO ` +
+  "lo strumento \"submit_findings\" con il risultato: non scrivere mai il risultato come testo o come blocco " +
+  "di codice, usa sempre e solo quello strumento, una sola volta. " +
+  'I valori delle chiavi fisse "categoria" e "sezione" restano SEMPRE nei codici elencati sopra (mai tradotti), ' +
+  "cosi' l'app puo' continuare a interpretarli correttamente."
   );
 }
 
-// Fallback su OpenAI se Anthropic non risponde (timeout, errore 5xx, rate limit). Usa lo
-// stesso identico system prompt (compreso il formato del blocco ```json``` finale), cosi'
-// extractPayload() funziona invariato indipendentemente da quale provider ha risposto.
-// Scatta solo se OPENAI_API_KEY e' configurata; nota: non e' verificato punto per punto
-// contro l'API OpenAI dal vivo (nessuna chiave disponibile in fase di sviluppo) — se il
-// formato della risposta non tornasse come atteso, va rivisto qui.
+// Fallback su OpenAI se Anthropic non risponde affatto (rete/5xx/rate limit) o se anche con un
+// retry non produce un risultato strutturato utilizzabile. Usa lo stesso system prompt (compreso
+// il promemoria sul blocco ```json```, ancora valido come istruzione di riserva per un modello
+// che non supporta i tool nello stesso modo) e il parsing testuale legacy.
 async function searchWithOpenAI(systemPrompt: string, userContent: string): Promise<string> {
   const openai = getOpenAIClient();
   const response = await openai.responses.create({
     model: OPENAI_SEARCH_MODEL,
     tools: [{ type: "web_search_preview" }],
     input: [
-      { role: "system", content: systemPrompt },
+      { role: "system", content: `${systemPrompt}\n\nTermina la risposta con un blocco \`\`\`json\`\`\` contenente un oggetto {"summary": "...", "risorse": [...], "specifiche": {...}}.` },
       { role: "user", content: userContent },
     ],
   });
   return response.output_text || "";
+}
+
+/** Un tentativo di ricerca con Anthropic: ricerca web + output strutturato via submit_findings. */
+async function callAnthropicSearch(userContent: string, systemPrompt: string) {
+  const anthropic = getAnthropicClient();
+  const message = await anthropic.messages.create({
+    model: CLAUDE_MODEL,
+    max_tokens: 8000,
+    system: systemPrompt,
+    messages: [{ role: "user", content: userContent }],
+    tools: [
+      {
+        type: "web_search_20250305",
+        name: "web_search",
+        max_uses: 4,
+      } as any,
+      SUBMIT_FINDINGS_TOOL,
+    ],
+  });
+
+  const found = extractFindingsFromToolUse(message.content);
+  return {
+    payload: found?.payload ?? null,
+    summary: found?.summary ?? "",
+    stopReason: message.stop_reason ?? undefined,
+  };
 }
 
 export async function POST(request: Request) {
@@ -135,40 +231,53 @@ export async function POST(request: Request) {
   const userContent = `${vehicleContext}\nRicerca: ${query}`.trim();
 
   try {
-    let fullText: string;
+    let payload: SearchPayload | null = null;
+    let summary = "";
     let stopReason: string | undefined;
+    let anthropicThrew = false;
+
     try {
-      const anthropic = getAnthropicClient();
+      const first = await callAnthropicSearch(userContent, searchSystemPrompt);
+      payload = first.payload;
+      summary = first.summary;
+      stopReason = first.stopReason;
 
-      const message = await anthropic.messages.create({
-        model: CLAUDE_MODEL,
-        max_tokens: 5500,
-        system: searchSystemPrompt,
-        messages: [{ role: "user", content: userContent }],
-        tools: [
-          {
-            type: "web_search_20250305",
-            name: "web_search",
-            max_uses: 5,
-          } as any,
-        ],
-      });
-
-      const textBlocks = message.content.filter((b) => b.type === "text") as Array<{ type: "text"; text: string }>;
-      fullText = textBlocks.map((b) => b.text).join("\n");
-      stopReason = message.stop_reason ?? undefined;
+      // Un solo retry automatico, piu' snello: copre il caso piu' comune di errore (risposta
+      // troncata prima di chiamare submit_findings) senza far aspettare l'utente per un secondo
+      // tentativo identico al primo.
+      if (!payload) {
+        console.warn(
+          `Ricerca IA: nessun risultato strutturato al primo tentativo (stop_reason=${stopReason}), riprovo in modo piu' snello...`
+        );
+        const retry = await callAnthropicSearch(
+          `${userContent}\n\n(Il tentativo precedente si e' interrotto prima di completare. Sii piu' conciso: ` +
+            'massimo 5 risorse e specifiche solo per "motore", poi chiama SUBITO submit_findings.)',
+          searchSystemPrompt
+        );
+        payload = retry.payload;
+        summary = retry.summary;
+        stopReason = retry.stopReason;
+      }
     } catch (primaryErr) {
+      anthropicThrew = true;
+      console.error("Anthropic non disponibile per la ricerca:", primaryErr);
       if (!hasOpenAIFallback()) throw primaryErr;
-      console.error("Anthropic non disponibile per la ricerca, uso il fallback OpenAI:", primaryErr);
-      fullText = await searchWithOpenAI(searchSystemPrompt, userContent);
     }
-    const payload = extractPayload(fullText);
+
+    // Fallback su OpenAI sia se Anthropic ha lanciato un errore, sia se ha risposto ma senza
+    // produrre un risultato strutturato utilizzabile (prima non scattava in questo secondo caso).
+    if (!payload && hasOpenAIFallback() && (anthropicThrew || stopReason !== undefined)) {
+      console.warn("Uso il fallback OpenAI per la ricerca.");
+      const fullText = await searchWithOpenAI(searchSystemPrompt, userContent);
+      const openaiPayload = extractPayloadFromText(fullText);
+      if (openaiPayload) {
+        payload = openaiPayload;
+        summary = fullText.replace(/```json[\s\S]*?```/, "").trim();
+      }
+    }
 
     if (!payload) {
-      console.error(
-        `Ricerca IA: JSON non estraibile dalla risposta (stop_reason=${stopReason}). ` +
-          `Testo (primi 500 caratteri): ${fullText.slice(0, 500)}`
-      );
+      console.error(`Ricerca IA: nessun risultato utilizzabile dopo retry/fallback (stop_reason=${stopReason}).`);
       return NextResponse.json(
         {
           error: stopReason === "max_tokens" ? tErr("searchTruncated") : tErr("searchNoUsableResult"),
@@ -188,7 +297,7 @@ export async function POST(request: Request) {
       query,
       risorse: payload.risorse,
       specifiche: payload.specifiche,
-      summary: fullText.replace(/```json[\s\S]*?```/, "").trim(),
+      summary,
     });
   } catch (err) {
     console.error("Errore ricerca IA:", err);
