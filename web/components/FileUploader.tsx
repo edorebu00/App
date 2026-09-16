@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 export default function FileUploader({ vehicleId }: { vehicleId: string }) {
   const supabase = createClient();
   const router = useRouter();
+  const t = useTranslations("fileUploader");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,7 +24,7 @@ export default function FileUploader({ vehicleId }: { vehicleId: string }) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      setError("Sessione scaduta, effettua di nuovo l'accesso.");
+      setError(t("sessionExpired"));
       setUploading(false);
       return;
     }
@@ -51,7 +53,7 @@ export default function FileUploader({ vehicleId }: { vehicleId: string }) {
       .single();
 
     if (insertError || !doc) {
-      setError(insertError?.message || "Errore durante il salvataggio del documento.");
+      setError(insertError?.message || t("saveError"));
       setUploading(false);
       return;
     }
@@ -71,11 +73,11 @@ export default function FileUploader({ vehicleId }: { vehicleId: string }) {
   return (
     <div>
       <label className="btn-primary inline-flex cursor-pointer">
-        {uploading ? "Caricamento…" : "📤 Carica file"}
+        {uploading ? t("uploading") : t("uploadButton")}
         <input type="file" accept=".pdf,.txt" className="hidden" onChange={handleUpload} />
       </label>
-      <p className="mt-1 text-xs text-graphite-500">Formati supportati per la lettura IA: PDF, TXT.</p>
-      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+      <p className="mt-1 text-xs text-graphite-400">{t("supportedFormats")}</p>
+      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
     </div>
   );
 }

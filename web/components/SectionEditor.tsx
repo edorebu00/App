@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import type { ResourceLink, SectionImage, VehicleSection } from "@/lib/types";
+import type { ResourceLink, SectionImage, SectionKey, VehicleSection } from "@/lib/types";
 
 interface Props {
   section: VehicleSection;
@@ -17,7 +18,12 @@ interface Props {
 
 export default function SectionEditor({ section, images: initialImages, specs, resources, searchPending }: Props) {
   const supabase = createClient();
+  const t = useTranslations("sectionEditor");
+  const tSections = useTranslations("sections");
   const hasOwnData = Object.keys(section.data || {}).length > 0 || !!section.notes || initialImages.length > 0;
+
+  const sectionKey = section.section_key as SectionKey;
+  const label = tSections.has(sectionKey) ? tSections(sectionKey) : section.label;
 
   const [fields, setFields] = useState<Array<[string, string]>>(
     Object.entries(section.data || {}).length ? Object.entries(section.data) : [["", ""]]
@@ -96,19 +102,19 @@ export default function SectionEditor({ section, images: initialImages, specs, r
 
   return (
     <div className="card">
-      <h2 className="mb-4 font-display text-lg font-semibold text-graphite-50">{section.label}</h2>
+      <h2 className="mb-4 font-display text-lg font-semibold text-graphite-900">{label}</h2>
 
       <div className="glass-panel mb-5 p-4">
-        <p className="eyebrow-gold mb-3">Dati trovati online</p>
+        <p className="eyebrow mb-3">{t("foundOnlineEyebrow")}</p>
 
         {hasWebData ? (
           <>
             {specs && Object.keys(specs).length > 0 && (
               <dl className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {Object.entries(specs).map(([k, v]) => (
-                  <div key={k} className="rounded-lg border border-graphite-700 bg-graphite-900/60 px-3 py-2">
-                    <dt className="text-[11px] uppercase tracking-wide text-graphite-500">{k}</dt>
-                    <dd className="mt-0.5 text-sm font-medium text-graphite-100">{v}</dd>
+                  <div key={k} className="rounded-lg border border-graphite-200 bg-white px-3 py-2">
+                    <dt className="text-[11px] uppercase tracking-wide text-graphite-400">{k}</dt>
+                    <dd className="mt-0.5 text-sm font-medium text-graphite-900">{v}</dd>
                   </div>
                 ))}
               </dl>
@@ -125,7 +131,7 @@ export default function SectionEditor({ section, images: initialImages, specs, r
                       href={r.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gold-500 hover:underline"
+                      className="text-brand-600 hover:underline"
                     >
                       {r.titolo}
                     </a>
@@ -135,14 +141,13 @@ export default function SectionEditor({ section, images: initialImages, specs, r
             )}
           </>
         ) : searchPending ? (
-          <p className="flex items-center gap-2 text-sm text-graphite-400">
-            <span className="spinner text-gold-500" aria-hidden />
-            Ricerca in corso…
+          <p className="flex items-center gap-2 text-sm text-graphite-500">
+            <span className="spinner text-brand-600" aria-hidden />
+            {t("searchPending")}
           </p>
         ) : (
-          <p className="text-sm text-graphite-500">
-            Nessuna informazione trovata ancora per questa sezione. Usa &quot;Cerca informazioni online&quot; /
-            &quot;Aggiorna&quot; qui sopra.
+          <p className="text-sm text-graphite-400">
+            {t("noWebDataYet")}
           </p>
         )}
       </div>
@@ -150,9 +155,9 @@ export default function SectionEditor({ section, images: initialImages, specs, r
       <button
         type="button"
         onClick={() => setShowOwnData((s) => !s)}
-        className="text-sm font-medium text-graphite-400 hover:text-graphite-200"
+        className="text-sm font-medium text-graphite-500 hover:text-graphite-800"
       >
-        {showOwnData ? "− Nascondi" : "+ Aggiungi"} dati personalizzati <span className="text-graphite-600">(opzionale)</span>
+        {showOwnData ? t("hideAdd") : t("showAdd")} {t("customDataLabel")} <span className="text-graphite-400">{t("optional")}</span>
       </button>
 
       {showOwnData && (
@@ -162,13 +167,13 @@ export default function SectionEditor({ section, images: initialImages, specs, r
               <div key={index} className="flex gap-2">
                 <input
                   className="input flex-1"
-                  placeholder="Caratteristica (es. Cilindrata)"
+                  placeholder={t("characteristicPlaceholder")}
                   value={key}
                   onChange={(e) => updateField(index, e.target.value, value)}
                 />
                 <input
                   className="input flex-1"
-                  placeholder="Valore (es. 1998 cc)"
+                  placeholder={t("valuePlaceholder")}
                   value={value}
                   onChange={(e) => updateField(index, key, e.target.value)}
                 />
@@ -176,55 +181,54 @@ export default function SectionEditor({ section, images: initialImages, specs, r
                   type="button"
                   onClick={() => removeField(index)}
                   className="btn-secondary px-3"
-                  aria-label="Rimuovi"
+                  aria-label={t("removeAria")}
                 >
                   ✕
                 </button>
               </div>
             ))}
-            <button type="button" onClick={addField} className="text-sm font-medium text-gold-500 hover:underline">
-              + Aggiungi caratteristica
+            <button type="button" onClick={addField} className="text-sm font-medium text-brand-600 hover:underline">
+              {t("addCharacteristic")}
             </button>
           </div>
 
           <div className="mt-4">
-            <label className="label">Note</label>
+            <label className="label">{t("notesLabel")}</label>
             <textarea
               className="input min-h-[80px]"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Interventi effettuati, promemoria, dettagli particolari…"
+              placeholder={t("notesPlaceholder")}
             />
           </div>
 
           <div className="mt-4 flex items-center gap-3">
             <button onClick={handleSave} disabled={saving} className="btn-primary">
-              {saving ? "Salvataggio…" : "Salva sezione"}
+              {saving ? t("saving") : t("save")}
             </button>
-            {saved && <span className="text-sm text-green-400">Salvato ✓</span>}
+            {saved && <span className="text-sm text-green-600">{t("saved")}</span>}
           </div>
 
-          <div className="mt-6 border-t border-graphite-800 pt-4">
+          <div className="mt-6 border-t border-graphite-200 pt-4">
             <div className="mb-2 flex items-center justify-between">
-              <label className="label mb-0">Schemi ed esplosi caricati da te</label>
+              <label className="label mb-0">{t("uploadedSchemesLabel")}</label>
               <label className="btn-secondary cursor-pointer text-xs">
-                {uploading ? "Caricamento…" : "Carica immagine"}
+                {uploading ? t("uploading") : t("uploadImage")}
                 <input type="file" accept="image/*,.pdf" className="hidden" onChange={handleImageUpload} />
               </label>
             </div>
 
             {images.length === 0 ? (
-              <p className="text-sm text-graphite-500">
-                Nessuno schema caricato. Guarda la tab &quot;Documenti&quot; qui sopra per quelli trovati online,
-                oppure caricane uno tuo.
+              <p className="text-sm text-graphite-400">
+                {t("noSchemes")}
               </p>
             ) : (
               <ul className="space-y-1 text-sm">
                 {images.map((img) => (
-                  <li key={img.id} className="flex items-center justify-between rounded-lg bg-graphite-700 px-3 py-2">
-                    <span className="truncate text-graphite-300">{img.caption || "Immagine"}</span>
-                    <span className="text-xs text-graphite-500">
-                      {img.source === "upload" ? "Caricata" : "Dal web"}
+                  <li key={img.id} className="flex items-center justify-between rounded-lg bg-graphite-50 px-3 py-2">
+                    <span className="truncate text-graphite-700">{img.caption || t("imageFallback")}</span>
+                    <span className="text-xs text-graphite-400">
+                      {img.source === "upload" ? t("uploadedTag") : t("webTag")}
                     </span>
                   </li>
                 ))}

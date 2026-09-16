@@ -1,17 +1,29 @@
+"use client";
+
 import Link from "next/link";
 import LogoutButton from "./LogoutButton";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useScrolled } from "@/lib/useScrolled";
 
 export default function NavBar() {
+  const scrolled = useScrolled();
+
   return (
-    <header className="border-b border-graphite-700/80 bg-graphite-900/85 shadow-lg shadow-black/20 backdrop-blur-xl">
+    <header
+      className={`sticky top-0 z-40 border-b bg-white/90 backdrop-blur-xl transition-shadow duration-300 ${
+        scrolled ? "border-graphite-200 shadow-sm shadow-graphite-900/5" : "border-transparent"
+      }`}
+    >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-2 font-display text-xl font-bold uppercase tracking-[0.08em] text-white">
-          <span className="grid h-8 w-8 place-items-center rounded bg-brand-600 text-base shadow-lg shadow-brand-900/50">M</span>
-          <span><span className="text-brand-500">My</span>Vehicle</span>
+        <Link href="/" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-graphite-900">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-base text-white shadow-sm shadow-brand-600/30">M</span>
+          <span>My<span className="text-brand-600">Vehicle</span></span>
         </Link>
-        <LogoutButton />
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <LogoutButton />
+        </div>
       </div>
-      <div className="flag-stripe" />
     </header>
   );
 }

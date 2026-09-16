@@ -1,0 +1,347 @@
+{
+  "meta": {
+    "title": "My Vehicle",
+    "description": "Manage and get to know your vehicles: engine, bodywork, suspension, braking system and more."
+  },
+  "brand": {
+    "name": "MyVehicle",
+    "eyebrow": "Digital garage"
+  },
+  "nav": {
+    "home": "Home",
+    "garage": "My garage",
+    "circuits": "Circuits",
+    "search": "Search",
+    "myVehicles": "My vehicles",
+    "noVehicles": "No vehicles added yet.",
+    "addVehicle": "+ Add vehicle",
+    "logout": "Log out"
+  },
+  "publicHeader": {
+    "login": "Log in",
+    "register": "Sign up",
+    "myGarage": "My garage",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
+  },
+  "home": {
+    "eyebrow": "Welcome",
+    "titleLine1": "Your garage,",
+    "titleLine2": "finally",
+    "titleAccent": "in order.",
+    "subtitle": "Manage your car and motorcycle collection with technical sheets, documents and an AI assistant always on hand — and discover the story of the world's most legendary circuits.",
+    "ctaStart": "Get started",
+    "ctaCircuits": "Explore the circuits",
+    "disciplinesEyebrow": "The world of racing",
+    "disciplinesTitle": "Disciplines, in brief",
+    "disciplines": {
+      "f1": { "title": "Formula 1", "text": "The technological pinnacle of open-wheel racing: aerodynamics, power and race strategy on permanent and street circuits." },
+      "endurance": { "title": "Endurance", "text": "Long-distance races like the 24 Hours of Le Mans, where reliability and team management matter as much as raw lap time." },
+      "rally": { "title": "Rally", "text": "Pure speed on closed public roads, gravel and snow: the driver races the clock more than the other competitors." },
+      "motogp": { "title": "MotoGP", "text": "The fastest prototype motorcycles in the world, where a few millimetres of lean angle separate victory from a crash." }
+    },
+    "ctaBottomTitle": "Ready to get your garage in order?",
+    "ctaBottomText": "Add your cars and motorcycles, find documents and manuals, and keep everything under control.",
+    "ctaBottomButton": "Create your garage"
+  },
+  "circuitsSection": {
+    "eyebrow": "Motorsport",
+    "carouselTitle": "The most legendary circuits",
+    "carouselSubtitle": "Pick one to discover its history and links to upcoming races.",
+    "prev": "Back",
+    "next": "Forward",
+    "indexTitle": "The most legendary circuits",
+    "indexSubtitle": "History, iconic corners and links to official sites to stay up to date on upcoming races.",
+    "backToAll": "← All circuits",
+    "historyTitle": "History",
+    "upcomingTitle": "Upcoming races",
+    "upcomingText": "Calendars change every season: for up-to-date dates on the next races at this circuit, check the official site.",
+    "officialSite": "Go to the official site ↗"
+  },
+  "factLabels": {
+    "inaugurated": "Opened",
+    "firstEdition": "First edition",
+    "length": "Length",
+    "iconicCurve": "Iconic corner",
+    "nickname": "Nickname",
+    "iconicStretch": "Iconic stretch",
+    "grandPrix": "Grand Prix",
+    "iconicRace": "Iconic race"
+  },
+  "circuitsData": {
+    "monza": {
+      "name": "Autodromo Nazionale di Monza",
+      "country": "Italy",
+      "tagline": "The Temple of Speed",
+      "history": [
+        "Built in 1922 inside Monza Park, it is one of the oldest permanent circuits in the world and has hosted the Italian Grand Prix since the very dawn of motorsport.",
+        "The current layout alternates lightning-fast straights with technical chicanes, with the Parabolica as the final, iconic corner before the finish line. The low drag required makes it one of the highest average-speed tracks on the calendar."
+      ],
+      "facts": [
+        { "labelKey": "inaugurated", "value": "1922" },
+        { "labelKey": "length", "value": "~5.79 km" },
+        { "labelKey": "iconicCurve", "value": "Parabolica" },
+        { "labelKey": "grandPrix", "value": "Italy (F1)" }
+      ]
+    },
+    "spa-francorchamps": {
+      "name": "Circuit de Spa-Francorchamps",
+      "country": "Belgium",
+      "tagline": "Amid the hills of the Ardennes",
+      "history": [
+        "Opened in 1921 on public roads between the villages of Francorchamps, Stavelot and Malmedy, it is one of the longest and most respected circuits in world motorsport, set deep in the Ardennes forest.",
+        "It's famous for Eau Rouge-Raidillon, the uphill sequence of corners linking the valley floor to the rest of the track, and for weather that often changes dramatically from one sector to the next."
+      ],
+      "facts": [
+        { "labelKey": "inaugurated", "value": "1921" },
+        { "labelKey": "length", "value": "~7.00 km" },
+        { "labelKey": "iconicCurve", "value": "Eau Rouge-Raidillon" },
+        { "labelKey": "grandPrix", "value": "Belgium (F1)" }
+      ]
+    },
+    "silverstone": {
+      "name": "Silverstone Circuit",
+      "country": "United Kingdom",
+      "tagline": "The cradle of Formula 1",
+      "history": [
+        "Built on a former RAF airfield, Silverstone hosted the first Grand Prix of the newly founded Formula 1 World Championship in 1950.",
+        "The track is famous for the high-speed sequence of Maggotts, Becketts and Chapel, one of the most demanding corner combinations on the calendar for balance and aerodynamics."
+      ],
+      "facts": [
+        { "labelKey": "inaugurated", "value": "1948" },
+        { "labelKey": "length", "value": "~5.89 km" },
+        { "labelKey": "iconicCurve", "value": "Maggotts-Becketts" },
+        { "labelKey": "grandPrix", "value": "Great Britain (F1)" }
+      ]
+    },
+    "nurburgring-nordschleife": {
+      "name": "Nürburgring Nordschleife",
+      "country": "Germany",
+      "tagline": "The Green Hell",
+      "history": [
+        "Opened in 1927 amid the hills of the Eifel, the old Nordschleife track winds for about 20 km through elevation changes, blind corners and constantly shifting grip, earning it the nickname 'Grüne Hölle' (Green Hell), coined by Jackie Stewart.",
+        "After Niki Lauda's severe crash in 1976, Formula 1 abandoned the long track in favour of the shorter GP-Strecke, but the Nordschleife remains a legendary proving ground for the automotive industry and for endurance races like the 24 Hours of Nürburgring."
+      ],
+      "facts": [
+        { "labelKey": "inaugurated", "value": "1927" },
+        { "labelKey": "length", "value": "~20.8 km" },
+        { "labelKey": "nickname", "value": "Grüne Hölle" },
+        { "labelKey": "iconicRace", "value": "24h Nürburgring" }
+      ]
+    },
+    "le-mans": {
+      "name": "Circuit de la Sarthe",
+      "country": "France",
+      "tagline": "Home of the 24 Hours of Le Mans",
+      "history": [
+        "The Circuit de la Sarthe combines a permanent track with long stretches of public roads closed to traffic, and has been the stage for the 24 Hours of Le Mans since 1923, the most prestigious endurance race in the world.",
+        "It's famous for the Ligne Droite des Hunaudières (the Mulsanne Straight), once taken flat out before two chicanes were introduced in the 1990s for safety reasons."
+      ],
+      "facts": [
+        { "labelKey": "firstEdition", "value": "1923" },
+        { "labelKey": "length", "value": "~13.6 km" },
+        { "labelKey": "iconicStretch", "value": "Mulsanne Straight" },
+        { "labelKey": "iconicRace", "value": "24 Hours of Le Mans" }
+      ]
+    },
+    "suzuka": {
+      "name": "Suzuka Circuit",
+      "country": "Japan",
+      "tagline": "The calendar's only figure-eight track",
+      "history": [
+        "Designed by Dutch engineer John Hugenholtz and opened in 1962 as a Honda test track, Suzuka is famous for its figure-eight layout, with an overpass that makes the track cross over itself.",
+        "Corners like 130R and Spoon Curve demand pinpoint precision, and for years the circuit hosted the Japanese Grand Prix at a pivotal point of the Formula 1 season."
+      ],
+      "facts": [
+        { "labelKey": "inaugurated", "value": "1962" },
+        { "labelKey": "length", "value": "~5.8 km" },
+        { "labelKey": "iconicCurve", "value": "130R" },
+        { "labelKey": "grandPrix", "value": "Japan (F1)" }
+      ]
+    }
+  },
+  "auth": {
+    "tagline": "Your car and motorcycle fleet, always under control.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "loginSubmit": "Log in",
+    "loginSubmitLoading": "Logging in…",
+    "loginSuccess": "Logged in, taking you to your garage…",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Sign up",
+    "invalidCredentials": "Incorrect email or password.",
+    "registerTagline": "Create your account and start curating your collection.",
+    "registerSubmit": "Sign up",
+    "registerSubmitLoading": "Creating account…",
+    "minChars": "At least 6 characters.",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Log in",
+    "confirmEmailEyebrow": "One last step",
+    "confirmEmailTitle": "Check your email",
+    "confirmEmailText": "We sent a confirmation link to <b>{email}</b>. Open the link to activate your account, then come back here to log in.",
+    "goToLogin": "Go to login"
+  },
+  "dashboard": {
+    "eyebrow": "Your collection",
+    "title": "My garage",
+    "subtitleEmpty": "Add your first vehicle to get started.",
+    "subtitleCount": "{count, plural, one {# vehicle in your collection.} other {# vehicles in your collection.}}",
+    "metricInGarage": "in garage",
+    "metricReady": "ready",
+    "addVehicle": "+ Add vehicle",
+    "emptyTitle": "You haven't added any vehicles yet.",
+    "emptyCta": "Add your first vehicle"
+  },
+  "vehicleCard": {
+    "auto": "Car",
+    "moto": "Motorcycle",
+    "engineLabel": "Engine",
+    "plateLabel": "Plate",
+    "openSheet": "Open sheet"
+  },
+  "vehicleNew": {
+    "eyebrow": "New arrival",
+    "title": "🏁 Add vehicle",
+    "subtitle": "Search the catalogue or freely enter make and model: the AI agent takes care of the rest.",
+    "typeLabel": "Type",
+    "auto": "Car",
+    "moto": "Motorcycle",
+    "makeLabel": "Make",
+    "makePlaceholder": "Search or type the make…",
+    "modelLabel": "Model",
+    "modelPlaceholderWithMake": "Search or type the model…",
+    "modelPlaceholderNoMake": "Enter the make first",
+    "makeNotInCatalogue": "Make not yet in the catalogue: you can enter the model manually.",
+    "engineLabel": "Engine",
+    "engineSelectPlaceholder": "Select engine…",
+    "enginePlaceholderFree": "e.g. 1.6 MultiJet, K20A…",
+    "modelNotInCatalogue": "Model or engine not in the catalogue: enter it manually.",
+    "enterMakeModelFirst": "Enter make and model first.",
+    "yearLabel": "Year",
+    "yearSelectPlaceholder": "Select year…",
+    "yearSelectDisabled": "Choose the engine first",
+    "plateLabel": "Plate (optional)",
+    "submit": "🏁 Save vehicle",
+    "submitLoading": "Saving…",
+    "sessionExpired": "Session expired, please log in again.",
+    "genericError": "Error while creating the vehicle."
+  },
+  "vehicleAdded": {
+    "text": "Vehicle added! We're looking for the first info online…"
+  },
+  "vehicleDetail": {
+    "auto": "🚗 Car",
+    "moto": "🏍️ Motorcycle",
+    "engineLabel": "Engine",
+    "plateLabel": "Plate",
+    "documentsAndChat": "📤 Documents and chat",
+    "deleteVehicle": "🗑️ Delete vehicle",
+    "deleting": "Deleting…",
+    "deleteConfirm": "Permanently delete \"{label}\"? Uploaded documents, images and chat history will also be removed. This action cannot be undone.",
+    "deleteError": "Error while deleting: {message}"
+  },
+  "vehicleTabs": {
+    "autodocTitle": "Parts on AutoDoc",
+    "maintenanceTitle": "Official maintenance schedule",
+    "searchingLong": "The AI agent is searching for information online… this usually takes about half a minute.",
+    "noInfoYet": "No information found yet for this vehicle.",
+    "searchOnline": "🔍 Search information online",
+    "foundInfoDefault": "Information found online for this vehicle.",
+    "closeSearch": "Close",
+    "searchMore": "Search more",
+    "update": "🔄 Refresh",
+    "searchPlaceholder": "Model, engine, or what to search for…",
+    "search": "Search",
+    "errorGeneric": "Error while searching.",
+    "errorContact": "Could not reach the search service. Please try again later."
+  },
+  "sections": {
+    "motore": "Engine",
+    "carrozzeria": "Bodywork",
+    "assetto": "Suspension and setup",
+    "impianto_frenante": "Braking system",
+    "trasmissione": "Transmission",
+    "elettronica": "Electronics and wiring",
+    "generale": "General"
+  },
+  "sectionEditor": {
+    "foundOnlineEyebrow": "Data found online",
+    "searchPending": "Searching…",
+    "noWebDataYet": "No information found yet for this section. Use \"Search information online\" / \"Refresh\" above.",
+    "showAdd": "+ Add",
+    "hideAdd": "− Hide",
+    "customDataLabel": "custom data",
+    "optional": "(optional)",
+    "characteristicPlaceholder": "Characteristic (e.g. Displacement)",
+    "valuePlaceholder": "Value (e.g. 1998 cc)",
+    "removeAria": "Remove",
+    "addCharacteristic": "+ Add characteristic",
+    "notesLabel": "Notes",
+    "notesPlaceholder": "Work done, reminders, special details…",
+    "save": "Save section",
+    "saving": "Saving…",
+    "saved": "Saved ✓",
+    "uploadedSchemesLabel": "Diagrams you've uploaded",
+    "uploadImage": "Upload image",
+    "uploading": "Uploading…",
+    "noSchemes": "No diagram uploaded. Check the \"Documents\" tab above for ones found online, or upload your own.",
+    "uploadedTag": "Uploaded",
+    "webTag": "From the web",
+    "imageFallback": "Image"
+  },
+  "documentsPage": {
+    "backTo": "← Back to {name}",
+    "title": "Documents and AI assistant"
+  },
+  "fileUploader": {
+    "uploadButton": "📤 Upload file",
+    "uploading": "Uploading…",
+    "supportedFormats": "Formats supported for AI reading: PDF, TXT.",
+    "sessionExpired": "Session expired, please log in again.",
+    "saveError": "Error while saving the document."
+  },
+  "documentList": {
+    "noFiles": "No files uploaded for this vehicle.",
+    "ready": "✓ Ready for AI chat",
+    "processing": "Processing…",
+    "notProcessed": "Not processed: {error}",
+    "download": "⬇️ Download"
+  },
+  "chat": {
+    "title": "🤖 AI assistant",
+    "empty": "Ask a question about your vehicle: the assistant will answer using the uploaded documents.",
+    "thinking": "The assistant is typing…",
+    "placeholder": "Type a question…",
+    "send": "Send",
+    "errorGeneric": "Error while generating the assistant's reply.",
+    "errorContact": "Could not reach the assistant. Please try again later."
+  },
+  "search": {
+    "eyebrow": "AI agent",
+    "title": "Search online resources",
+    "subtitle": "Search forums, PDF manuals, videos and spare parts for any vehicle or topic, not necessarily linked to one of your saved vehicles.",
+    "placeholder": "Model, engine code, or anything you want to search for…",
+    "searchButton": "Search",
+    "searching": "Searching…",
+    "errorGeneric": "Error while searching.",
+    "errorContact": "Could not reach the search service. Please try again later.",
+    "searchingResources": "The AI agent is searching for resources online…"
+  },
+  "apiErrors": {
+    "notAuthenticated": "Not authenticated.",
+    "emptyMessage": "The message cannot be empty.",
+    "chatError": "Error while generating the reply. Please try again later.",
+    "searchQueryTooShort": "Specify a model or engine code to search for.",
+    "searchNoUsableResult": "The search did not produce a usable result. Please try again.",
+    "searchTruncated": "The search produced too many results and was interrupted. Try a more specific search.",
+    "searchError": "Error while searching. Please try again later."
+  },
+  "resourceCategory": {
+    "tabDocuments": "📄 Documents",
+    "tabForum": "💬 Forum",
+    "tabVideo": "🎥 Video",
+    "emptyDocuments": "No documents found online for this vehicle.",
+    "emptyForum": "No forums found online for this vehicle.",
+    "emptyVideo": "No videos found online for this vehicle."
+  }
+}

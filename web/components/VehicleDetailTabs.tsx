@@ -2,20 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import SectionEditor from "./SectionEditor";
 import ResourceCategoryView from "./ResourceCategoryView";
 import type { ResourceLink, SectionImage, SectionKey, SectionSpecs, VehicleSection } from "@/lib/types";
 
 type ResourceTabId = "documenti" | "forum" | "video";
-const RESOURCE_TABS: Array<{ id: ResourceTabId; label: string; categorie: ResourceLink["categoria"][] }> = [
-  {
-    id: "documenti",
-    label: "📄 Documenti",
-    categorie: ["manuale_pdf", "schema_tecnico", "pezzo_ricambio", "catalogo_ricambi", "piano_manutenzione"],
-  },
-  { id: "forum", label: "💬 Forum", categorie: ["forum"] },
-  { id: "video", label: "🎥 Video", categorie: ["video"] },
-];
 
 export default function VehicleDetailTabs({
   vehicleId,
@@ -35,6 +27,17 @@ export default function VehicleDetailTabs({
   autoSearch: boolean;
 }) {
   const router = useRouter();
+  const t = useTranslations("vehicleTabs");
+  const tSections = useTranslations("sections");
+  const tRes = useTranslations("resourceCategory");
+  const locale = useLocale();
+
+  const RESOURCE_TABS: Array<{ id: ResourceTabId; label: string; categorie: ResourceLink["categoria"][] }> = [
+    { id: "documenti", label: tRes("tabDocuments"), categorie: ["manuale_pdf", "schema_tecnico", "pezzo_ricambio", "catalogo_ricambi", "piano_manutenzione"] },
+    { id: "forum", label: tRes("tabForum"), categorie: ["forum"] },
+    { id: "video", label: tRes("tabVideo"), categorie: ["video"] },
+  ];
+
   const [activeId, setActiveId] = useState<string>(sections[0]?.id || "documenti");
   const [query, setQuery] = useState(defaultQuery);
   const [results, setResults] = useState<ResourceLink[]>(initialResults);
@@ -54,12 +57,12 @@ export default function VehicleDetailTabs({
       const res = await fetch("/api/agent/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: q, vehicleId }),
+        body: JSON.stringify({ query: q, vehicleId, locale }),
       });
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Errore durante la ricerca.");
+        setError(data.error || t("errorGeneric"));
       } else {
         setResults(data.risorse || []);
         setSpecs(data.specifiche || {});
@@ -67,7 +70,7 @@ export default function VehicleDetailTabs({
         setHasSearchedOnce(true);
       }
     } catch {
-      setError("Impossibile contattare il servizio di ricerca. Riprova più tardi.");
+      setError(t("errorContact"));
     } finally {
       setLoading(false);
     }
@@ -86,36 +89,41 @@ export default function VehicleDetailTabs({
   const autodocLink = results.find((r) => r.categoria === "catalogo_ricambi");
   const maintenanceLink = results.find((r) => r.categoria === "piano_manutenzione");
 
+  function sectionLabel(s: VehicleSection) {
+    const key = s.section_key as SectionKey;
+    return tSections.has(key) ? tSections(key) : s.label;
+  }
+
   return (
     <div>
       {(autodocLink || maintenanceLink) && (
         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {autodocLink && (
             <a href={autodocLink.url} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-500/10 text-xl">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-100 text-xl">
                 🛒
               </span>
               <span className="min-w-0">
-                <span className="block font-display font-semibold text-graphite-50">Ricambi su AutoDoc</span>
-                <span className="block truncate text-xs text-graphite-400">{autodocLink.titolo}</span>
+                <span className="block font-display font-semibold text-graphite-900">{t("autodocTitle")}</span>
+                <span className="block truncate text-xs text-graphite-500">{autodocLink.titolo}</span>
               </span>
-              <span className="ml-auto shrink-0 text-gold-500 opacity-0 transition group-hover:opacity-100">
+              <span className="ml-auto shrink-0 text-gold-600 opacity-0 transition group-hover:opacity-100">
                 ↗
               </span>
             </a>
           )}
           {maintenanceLink && (
             <a href={maintenanceLink.url} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-500/10 text-xl">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-100 text-xl">
                 🛠️
               </span>
               <span className="min-w-0">
-                <span className="block font-display font-semibold text-graphite-50">
-                  Piano di manutenzione ufficiale
+                <span className="block font-display font-semibold text-graphite-900">
+                  {t("maintenanceTitle")}
                 </span>
-                <span className="block truncate text-xs text-graphite-400">{maintenanceLink.titolo}</span>
+                <span className="block truncate text-xs text-graphite-500">{maintenanceLink.titolo}</span>
               </span>
-              <span className="ml-auto shrink-0 text-gold-500 opacity-0 transition group-hover:opacity-100">
+              <span className="ml-auto shrink-0 text-gold-600 opacity-0 transition group-hover:opacity-100">
                 ↗
               </span>
             </a>
@@ -126,29 +134,29 @@ export default function VehicleDetailTabs({
       {/* Barra di stato/aggiornamento ricerca: sempre visibile, in qualunque tab */}
       <div className="card mb-4">
         {loading ? (
-          <p className="flex items-center gap-2 text-sm text-graphite-300">
-            <span className="spinner text-gold-500" aria-hidden />
-            L&apos;agente IA sta cercando informazioni online… di solito serve mezzo minuto circa.
+          <p className="flex items-center gap-2 text-sm text-graphite-600">
+            <span className="spinner text-brand-600" aria-hidden />
+            {t("searchingLong")}
           </p>
         ) : !hasSearchedOnce ? (
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm text-graphite-400">Nessuna informazione trovata ancora per questo veicolo.</p>
+            <p className="text-sm text-graphite-500">{t("noInfoYet")}</p>
             <button onClick={() => runSearch(query)} className="btn-primary whitespace-nowrap">
-              🔍 Cerca informazioni online
+              {t("searchOnline")}
             </button>
           </div>
         ) : (
           <div>
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm text-graphite-400">
-                {summary ? summary : "Informazioni trovate online per questo veicolo."}
+              <p className="text-sm text-graphite-500">
+                {summary ? summary : t("foundInfoDefault")}
               </p>
               <div className="flex shrink-0 gap-2">
                 <button onClick={() => setShowSearchBox((s) => !s)} className="btn-secondary text-xs">
-                  {showSearchBox ? "Chiudi" : "Cerca altro"}
+                  {showSearchBox ? t("closeSearch") : t("searchMore")}
                 </button>
                 <button onClick={() => runSearch(query)} className="btn-primary text-xs whitespace-nowrap">
-                  🔄 Aggiorna
+                  {t("update")}
                 </button>
               </div>
             </div>
@@ -162,46 +170,46 @@ export default function VehicleDetailTabs({
               >
                 <input
                   className="input"
-                  placeholder="Modello, motorizzazione, o cosa cercare…"
+                  placeholder={t("searchPlaceholder")}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
                 <button type="submit" className="btn-primary whitespace-nowrap">
-                  Cerca
+                  {t("search")}
                 </button>
               </form>
             )}
           </div>
         )}
-        {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-1.5 rounded-xl border border-graphite-800 bg-graphite-800/40 p-1.5">
+      <div className="mb-4 flex flex-wrap gap-1.5 rounded-xl border border-graphite-200 bg-graphite-50 p-1.5">
         {sections.map((s) => (
           <button
             key={s.id}
             onClick={() => setActiveId(s.id)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-150 ${
               activeId === s.id
-                ? "bg-brand-600 text-white shadow shadow-brand-900/40"
-                : "text-graphite-300 hover:bg-graphite-700 hover:text-white"
+                ? "bg-brand-600 text-white shadow-sm shadow-brand-600/25"
+                : "text-graphite-600 hover:bg-white hover:text-graphite-900"
             }`}
           >
-            {s.label}
+            {sectionLabel(s)}
           </button>
         ))}
-        <span className="mx-1 my-auto h-5 w-px bg-graphite-700" />
-        {RESOURCE_TABS.map((t) => (
+        <span className="mx-1 my-auto h-5 w-px bg-graphite-200" />
+        {RESOURCE_TABS.map((rt) => (
           <button
-            key={t.id}
-            onClick={() => setActiveId(t.id)}
+            key={rt.id}
+            onClick={() => setActiveId(rt.id)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-150 ${
-              activeId === t.id
-                ? "bg-brand-600 text-white shadow shadow-brand-900/40"
-                : "text-graphite-300 hover:bg-graphite-700 hover:text-white"
+              activeId === rt.id
+                ? "bg-brand-600 text-white shadow-sm shadow-brand-600/25"
+                : "text-graphite-600 hover:bg-white hover:text-graphite-900"
             }`}
           >
-            {t.label}
+            {rt.label}
           </button>
         ))}
       </div>

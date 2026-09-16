@@ -1,0 +1,347 @@
+{
+  "meta": {
+    "title": "My Vehicle",
+    "description": "Verwalte und lerne deine Fahrzeuge kennen: Motor, Karosserie, Fahrwerk, Bremsanlage und mehr."
+  },
+  "brand": {
+    "name": "MyVehicle",
+    "eyebrow": "Digitale Garage"
+  },
+  "nav": {
+    "home": "Startseite",
+    "garage": "Meine Garage",
+    "circuits": "Rennstrecken",
+    "search": "Suche",
+    "myVehicles": "Meine Fahrzeuge",
+    "noVehicles": "Noch kein Fahrzeug hinzugefügt.",
+    "addVehicle": "+ Fahrzeug hinzufügen",
+    "logout": "Abmelden"
+  },
+  "publicHeader": {
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "myGarage": "Meine Garage",
+    "menuOpen": "Menü öffnen",
+    "menuClose": "Menü schließen"
+  },
+  "home": {
+    "eyebrow": "Willkommen",
+    "titleLine1": "Deine Garage,",
+    "titleLine2": "endlich",
+    "titleAccent": "in Ordnung.",
+    "subtitle": "Verwalte deine Auto- und Motorradsammlung mit technischen Datenblättern, Dokumenten und einem stets verfügbaren KI-Assistenten — und entdecke die Geschichte der legendärsten Rennstrecken der Welt.",
+    "ctaStart": "Jetzt starten",
+    "ctaCircuits": "Rennstrecken entdecken",
+    "disciplinesEyebrow": "Die Welt des Motorsports",
+    "disciplinesTitle": "Disziplinen im Überblick",
+    "disciplines": {
+      "f1": { "title": "Formel 1", "text": "Der technologische Gipfel des Monoposto-Rennsports: Aerodynamik, Leistung und Rennstrategie auf permanenten Strecken und Stadtkursen." },
+      "endurance": { "title": "Langstrecke", "text": "Langstreckenrennen wie die 24 Stunden von Le Mans, bei denen Zuverlässigkeit und Teammanagement genauso zählen wie die schnellste Rundenzeit." },
+      "rally": { "title": "Rallye", "text": "Reine Geschwindigkeit auf gesperrten Straßen, Schotter und Schnee: Der Fahrer kämpft mehr gegen die Uhr als gegen die Konkurrenz." },
+      "motogp": { "title": "MotoGP", "text": "Die schnellsten Prototyp-Motorräder der Welt, bei denen wenige Millimeter Schräglage über Sieg oder Sturz entscheiden." }
+    },
+    "ctaBottomTitle": "Bereit, deine Garage in Ordnung zu bringen?",
+    "ctaBottomText": "Füge deine Autos und Motorräder hinzu, finde Dokumente und Handbücher und behalte alles im Blick.",
+    "ctaBottomButton": "Erstelle deine Garage"
+  },
+  "circuitsSection": {
+    "eyebrow": "Motorsport",
+    "carouselTitle": "Die legendärsten Rennstrecken",
+    "carouselSubtitle": "Wähle eine aus, um ihre Geschichte und die Links zu den anstehenden Rennen zu entdecken.",
+    "prev": "Zurück",
+    "next": "Weiter",
+    "indexTitle": "Die legendärsten Rennstrecken",
+    "indexSubtitle": "Geschichte, ikonische Kurven und Links zu offiziellen Seiten, um über anstehende Rennen auf dem Laufenden zu bleiben.",
+    "backToAll": "← Alle Rennstrecken",
+    "historyTitle": "Geschichte",
+    "upcomingTitle": "Anstehende Rennen",
+    "upcomingText": "Die Kalender ändern sich jede Saison: Aktuelle Termine für die nächsten Rennen auf dieser Strecke findest du auf der offiziellen Website.",
+    "officialSite": "Zur offiziellen Website ↗"
+  },
+  "factLabels": {
+    "inaugurated": "Eröffnet",
+    "firstEdition": "Erste Austragung",
+    "length": "Länge",
+    "iconicCurve": "Ikonische Kurve",
+    "nickname": "Spitzname",
+    "iconicStretch": "Ikonischer Abschnitt",
+    "grandPrix": "Grand Prix",
+    "iconicRace": "Ikonisches Rennen"
+  },
+  "circuitsData": {
+    "monza": {
+      "name": "Autodromo Nazionale di Monza",
+      "country": "Italien",
+      "tagline": "Der Tempel der Geschwindigkeit",
+      "history": [
+        "1922 im Park von Monza erbaut, ist sie eine der ältesten permanenten Rennstrecken der Welt und beherbergt seit den Anfängen des Motorsports den Großen Preis von Italien.",
+        "Das heutige Layout wechselt zwischen blitzschnellen Geraden und technischen Schikanen, mit der Parabolica als letzter, ikonischer Kurve vor der Ziellinie. Der geringe erforderliche Luftwiderstand macht sie zu einer der Strecken mit der höchsten Durchschnittsgeschwindigkeit im Kalender."
+      ],
+      "facts": [
+        { "labelKey": "inaugurated", "value": "1922" },
+        { "labelKey": "length", "value": "~5,79 km" },
+        { "labelKey": "iconicCurve", "value": "Parabolica" },
+        { "labelKey": "grandPrix", "value": "Italien (F1)" }
+      ]
+    },
+    "spa-francorchamps": {
+      "name": "Circuit de Spa-Francorchamps",
+      "country": "Belgien",
+      "tagline": "Mitten in den Ardennen",
+      "history": [
+        "1921 auf öffentlichen Straßen zwischen den Dörfern Francorchamps, Stavelot und Malmedy eröffnet, ist sie eine der längsten und angesehensten Strecken im Motorsport weltweit, eingebettet in die Wälder der Ardennen.",
+        "Berühmt ist sie für Eau Rouge-Raidillon, die bergauf führende Kurvenkombination, die das Tal mit dem Rest der Strecke verbindet, sowie für ein Wetter, das sich von Sektor zu Sektor oft stark ändert."
+      ],
+      "facts": [
+        { "labelKey": "inaugurated", "value": "1921" },
+        { "labelKey": "length", "value": "~7,00 km" },
+        { "labelKey": "iconicCurve", "value": "Eau Rouge-Raidillon" },
+        { "labelKey": "grandPrix", "value": "Belgien (F1)" }
+      ]
+    },
+    "silverstone": {
+      "name": "Silverstone Circuit",
+      "country": "Vereinigtes Königreich",
+      "tagline": "Die Wiege der Formel 1",
+      "history": [
+        "Auf einem ehemaligen RAF-Militärflugplatz errichtet, war Silverstone 1950 Austragungsort des ersten Grand Prix der neu gegründeten Formel-1-Weltmeisterschaft.",
+        "Die Strecke ist berühmt für die schnelle Kurvenfolge Maggotts, Becketts und Chapel, eine der anspruchsvollsten Passagen des Kalenders in Sachen Balance und Aerodynamik."
+      ],
+      "facts": [
+        { "labelKey": "inaugurated", "value": "1948" },
+        { "labelKey": "length", "value": "~5,89 km" },
+        { "labelKey": "iconicCurve", "value": "Maggotts-Becketts" },
+        { "labelKey": "grandPrix", "value": "Großbritannien (F1)" }
+      ]
+    },
+    "nurburgring-nordschleife": {
+      "name": "Nürburgring Nordschleife",
+      "country": "Deutschland",
+      "tagline": "Die Grüne Hölle",
+      "history": [
+        "1927 zwischen den Hügeln der Eifel eröffnet, schlängelt sich die alte Nordschleife über rund 20 km durch Höhenunterschiede, unübersichtliche Kurven und ständig wechselnde Griffigkeit — daher der von Jackie Stewart geprägte Spitzname 'Grüne Hölle'.",
+        "Nach Niki Laudas schwerem Unfall 1976 verließ die Formel 1 die lange Strecke zugunsten der kürzeren GP-Strecke, doch die Nordschleife bleibt ein legendäres Testgelände für die Automobilindustrie und für Langstreckenrennen wie die 24 Stunden Nürburgring."
+      ],
+      "facts": [
+        { "labelKey": "inaugurated", "value": "1927" },
+        { "labelKey": "length", "value": "~20,8 km" },
+        { "labelKey": "nickname", "value": "Grüne Hölle" },
+        { "labelKey": "iconicRace", "value": "24h Nürburgring" }
+      ]
+    },
+    "le-mans": {
+      "name": "Circuit de la Sarthe",
+      "country": "Frankreich",
+      "tagline": "Heimat der 24 Stunden von Le Mans",
+      "history": [
+        "Der Circuit de la Sarthe verbindet eine permanente Strecke mit langen Abschnitten gesperrter öffentlicher Straßen und ist seit 1923 Schauplatz der 24 Stunden von Le Mans, dem prestigeträchtigsten Langstreckenrennen der Welt.",
+        "Berühmt ist er für die Ligne Droite des Hunaudières (die Mulsanne-Gerade), die früher in einem Zug durchfahren wurde, bevor in den 1990er-Jahren aus Sicherheitsgründen zwei Schikanen eingeführt wurden."
+      ],
+      "facts": [
+        { "labelKey": "firstEdition", "value": "1923" },
+        { "labelKey": "length", "value": "~13,6 km" },
+        { "labelKey": "iconicStretch", "value": "Mulsanne-Gerade" },
+        { "labelKey": "iconicRace", "value": "24 Stunden von Le Mans" }
+      ]
+    },
+    "suzuka": {
+      "name": "Suzuka Circuit",
+      "country": "Japan",
+      "tagline": "Die einzige Kreuzungsstrecke im Kalender",
+      "history": [
+        "Entworfen vom niederländischen Ingenieur John Hugenholtz und 1962 als Honda-Teststrecke eröffnet, ist Suzuka für sein achtförmiges Layout bekannt, bei dem sich die Strecke über eine Brücke selbst kreuzt.",
+        "Kurven wie die 130R und die Spoon Curve verlangen millimetergenaue Präzision, und jahrelang war die Strecke Austragungsort des Großen Preises von Japan zu einem entscheidenden Zeitpunkt der Formel-1-Saison."
+      ],
+      "facts": [
+        { "labelKey": "inaugurated", "value": "1962" },
+        { "labelKey": "length", "value": "~5,8 km" },
+        { "labelKey": "iconicCurve", "value": "130R" },
+        { "labelKey": "grandPrix", "value": "Japan (F1)" }
+      ]
+    }
+  },
+  "auth": {
+    "tagline": "Dein Auto- und Motorradbestand, jederzeit im Griff.",
+    "emailLabel": "E-Mail",
+    "passwordLabel": "Passwort",
+    "loginSubmit": "Anmelden",
+    "loginSubmitLoading": "Anmeldung läuft…",
+    "loginSuccess": "Angemeldet, wir bringen dich zu deiner Garage…",
+    "noAccount": "Noch kein Konto?",
+    "registerLink": "Registrieren",
+    "invalidCredentials": "E-Mail oder Passwort falsch.",
+    "registerTagline": "Erstelle dein Konto und beginne, deine Sammlung zu pflegen.",
+    "registerSubmit": "Registrieren",
+    "registerSubmitLoading": "Konto wird erstellt…",
+    "minChars": "Mindestens 6 Zeichen.",
+    "hasAccount": "Hast du schon ein Konto?",
+    "loginLink": "Anmelden",
+    "confirmEmailEyebrow": "Ein letzter Schritt",
+    "confirmEmailTitle": "Überprüfe deine E-Mail",
+    "confirmEmailText": "Wir haben einen Bestätigungslink an <b>{email}</b> gesendet. Öffne den Link, um dein Konto zu aktivieren, und komm dann hierher zurück, um dich anzumelden.",
+    "goToLogin": "Zur Anmeldung"
+  },
+  "dashboard": {
+    "eyebrow": "Deine Sammlung",
+    "title": "Meine Garage",
+    "subtitleEmpty": "Füge dein erstes Fahrzeug hinzu, um loszulegen.",
+    "subtitleCount": "{count, plural, one {# Fahrzeug in deiner Sammlung.} other {# Fahrzeuge in deiner Sammlung.}}",
+    "metricInGarage": "in der Garage",
+    "metricReady": "bereit",
+    "addVehicle": "+ Fahrzeug hinzufügen",
+    "emptyTitle": "Du hast noch kein Fahrzeug hinzugefügt.",
+    "emptyCta": "Erstes Fahrzeug hinzufügen"
+  },
+  "vehicleCard": {
+    "auto": "Auto",
+    "moto": "Motorrad",
+    "engineLabel": "Motor",
+    "plateLabel": "Kennzeichen",
+    "openSheet": "Datenblatt öffnen"
+  },
+  "vehicleNew": {
+    "eyebrow": "Neuzugang",
+    "title": "🏁 Fahrzeug hinzufügen",
+    "subtitle": "Durchsuche den Katalog oder gib Marke und Modell frei ein: um den Rest kümmert sich der KI-Agent.",
+    "typeLabel": "Typ",
+    "auto": "Auto",
+    "moto": "Motorrad",
+    "makeLabel": "Marke",
+    "makePlaceholder": "Marke suchen oder eingeben…",
+    "modelLabel": "Modell",
+    "modelPlaceholderWithMake": "Modell suchen oder eingeben…",
+    "modelPlaceholderNoMake": "Zuerst die Marke eingeben",
+    "makeNotInCatalogue": "Marke noch nicht im Katalog: Du kannst das Modell manuell eingeben.",
+    "engineLabel": "Motorisierung",
+    "engineSelectPlaceholder": "Motorisierung auswählen…",
+    "enginePlaceholderFree": "z. B. 1.6 MultiJet, K20A…",
+    "modelNotInCatalogue": "Modell oder Motorisierung nicht im Katalog: manuell eingeben.",
+    "enterMakeModelFirst": "Zuerst Marke und Modell eingeben.",
+    "yearLabel": "Baujahr",
+    "yearSelectPlaceholder": "Baujahr auswählen…",
+    "yearSelectDisabled": "Zuerst die Motorisierung wählen",
+    "plateLabel": "Kennzeichen (optional)",
+    "submit": "🏁 Fahrzeug speichern",
+    "submitLoading": "Wird gespeichert…",
+    "sessionExpired": "Sitzung abgelaufen, bitte erneut anmelden.",
+    "genericError": "Fehler beim Erstellen des Fahrzeugs."
+  },
+  "vehicleAdded": {
+    "text": "Fahrzeug hinzugefügt! Wir suchen bereits erste Infos online…"
+  },
+  "vehicleDetail": {
+    "auto": "🚗 Auto",
+    "moto": "🏍️ Motorrad",
+    "engineLabel": "Motorisierung",
+    "plateLabel": "Kennzeichen",
+    "documentsAndChat": "📤 Dokumente und Chat",
+    "deleteVehicle": "🗑️ Fahrzeug löschen",
+    "deleting": "Wird gelöscht…",
+    "deleteConfirm": "\"{label}\" endgültig löschen? Hochgeladene Dokumente, Bilder und der Chatverlauf werden ebenfalls entfernt. Dieser Vorgang kann nicht rückgängig gemacht werden.",
+    "deleteError": "Fehler beim Löschen: {message}"
+  },
+  "vehicleTabs": {
+    "autodocTitle": "Ersatzteile auf AutoDoc",
+    "maintenanceTitle": "Offizieller Wartungsplan",
+    "searchingLong": "Der KI-Agent sucht online nach Informationen… das dauert meist etwa eine halbe Minute.",
+    "noInfoYet": "Für dieses Fahrzeug wurden noch keine Informationen gefunden.",
+    "searchOnline": "🔍 Online nach Informationen suchen",
+    "foundInfoDefault": "Online gefundene Informationen für dieses Fahrzeug.",
+    "closeSearch": "Schließen",
+    "searchMore": "Weitersuchen",
+    "update": "🔄 Aktualisieren",
+    "searchPlaceholder": "Modell, Motorisierung oder Suchbegriff…",
+    "search": "Suchen",
+    "errorGeneric": "Fehler bei der Suche.",
+    "errorContact": "Der Suchdienst konnte nicht erreicht werden. Bitte später erneut versuchen."
+  },
+  "sections": {
+    "motore": "Motor",
+    "carrozzeria": "Karosserie",
+    "assetto": "Fahrwerk und Aufhängung",
+    "impianto_frenante": "Bremsanlage",
+    "trasmissione": "Getriebe",
+    "elettronica": "Elektronik und Elektrik",
+    "generale": "Allgemein"
+  },
+  "sectionEditor": {
+    "foundOnlineEyebrow": "Online gefundene Daten",
+    "searchPending": "Suche läuft…",
+    "noWebDataYet": "Für diesen Bereich wurden noch keine Informationen gefunden. Nutze oben \"Online nach Informationen suchen\" / \"Aktualisieren\".",
+    "showAdd": "+ Hinzufügen",
+    "hideAdd": "− Ausblenden",
+    "customDataLabel": "eigene Daten",
+    "optional": "(optional)",
+    "characteristicPlaceholder": "Merkmal (z. B. Hubraum)",
+    "valuePlaceholder": "Wert (z. B. 1998 cc)",
+    "removeAria": "Entfernen",
+    "addCharacteristic": "+ Merkmal hinzufügen",
+    "notesLabel": "Notizen",
+    "notesPlaceholder": "Durchgeführte Arbeiten, Erinnerungen, Besonderheiten…",
+    "save": "Bereich speichern",
+    "saving": "Wird gespeichert…",
+    "saved": "Gespeichert ✓",
+    "uploadedSchemesLabel": "Von dir hochgeladene Schaltpläne",
+    "uploadImage": "Bild hochladen",
+    "uploading": "Wird hochgeladen…",
+    "noSchemes": "Kein Schaltplan hochgeladen. Schau oben im Tab \"Dokumente\" nach online gefundenen, oder lade selbst einen hoch.",
+    "uploadedTag": "Hochgeladen",
+    "webTag": "Aus dem Web",
+    "imageFallback": "Bild"
+  },
+  "documentsPage": {
+    "backTo": "← Zurück zu {name}",
+    "title": "Dokumente und KI-Assistent"
+  },
+  "fileUploader": {
+    "uploadButton": "📤 Datei hochladen",
+    "uploading": "Wird hochgeladen…",
+    "supportedFormats": "Für die KI-Auswertung unterstützte Formate: PDF, TXT.",
+    "sessionExpired": "Sitzung abgelaufen, bitte erneut anmelden.",
+    "saveError": "Fehler beim Speichern des Dokuments."
+  },
+  "documentList": {
+    "noFiles": "Für dieses Fahrzeug wurden keine Dateien hochgeladen.",
+    "ready": "✓ Bereit für den KI-Chat",
+    "processing": "Wird verarbeitet…",
+    "notProcessed": "Nicht verarbeitet: {error}",
+    "download": "⬇️ Herunterladen"
+  },
+  "chat": {
+    "title": "🤖 KI-Assistent",
+    "empty": "Stelle eine Frage zu deinem Fahrzeug: Der Assistent antwortet anhand der hochgeladenen Dokumente.",
+    "thinking": "Der Assistent schreibt…",
+    "placeholder": "Frage eingeben…",
+    "send": "Senden",
+    "errorGeneric": "Fehler beim Generieren der Antwort.",
+    "errorContact": "Der Assistent konnte nicht erreicht werden. Bitte später erneut versuchen."
+  },
+  "search": {
+    "eyebrow": "KI-Agent",
+    "title": "Online-Ressourcen durchsuchen",
+    "subtitle": "Durchsuche Foren, PDF-Handbücher, Videos und Ersatzteile für jedes Fahrzeug oder Thema — unabhängig davon, ob es zu deinen gespeicherten Fahrzeugen gehört.",
+    "placeholder": "Modell, Motorcode oder ein beliebiger Suchbegriff…",
+    "searchButton": "Suchen",
+    "searching": "Suche läuft…",
+    "errorGeneric": "Fehler bei der Suche.",
+    "errorContact": "Der Suchdienst konnte nicht erreicht werden. Bitte später erneut versuchen.",
+    "searchingResources": "Der KI-Agent sucht online nach Ressourcen…"
+  },
+  "apiErrors": {
+    "notAuthenticated": "Nicht angemeldet.",
+    "emptyMessage": "Die Nachricht darf nicht leer sein.",
+    "chatError": "Fehler beim Generieren der Antwort. Bitte später erneut versuchen.",
+    "searchQueryTooShort": "Gib ein Modell oder einen Motorcode zum Suchen an.",
+    "searchNoUsableResult": "Die Suche hat kein verwertbares Ergebnis geliefert. Bitte erneut versuchen.",
+    "searchTruncated": "Die Suche hat zu viele Ergebnisse geliefert und wurde abgebrochen. Versuche eine spezifischere Suche.",
+    "searchError": "Fehler bei der Suche. Bitte später erneut versuchen."
+  },
+  "resourceCategory": {
+    "tabDocuments": "📄 Dokumente",
+    "tabForum": "💬 Forum",
+    "tabVideo": "🎥 Video",
+    "emptyDocuments": "Für dieses Fahrzeug wurden online keine Dokumente gefunden.",
+    "emptyForum": "Für dieses Fahrzeug wurden online keine Foren gefunden.",
+    "emptyVideo": "Für dieses Fahrzeug wurden online keine Videos gefunden."
+  }
+}

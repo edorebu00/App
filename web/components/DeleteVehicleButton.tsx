@@ -2,17 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 export default function DeleteVehicleButton({ vehicleId, label }: { vehicleId: string; label: string }) {
   const router = useRouter();
   const supabase = createClient();
+  const t = useTranslations("vehicleDetail");
   const [deleting, setDeleting] = useState(false);
 
   async function handleDelete() {
-    const confirmed = window.confirm(
-      `Eliminare definitivamente "${label}"? Verranno rimossi anche i documenti caricati, le immagini e la cronologia chat. L'operazione non è reversibile.`
-    );
+    const confirmed = window.confirm(t("deleteConfirm", { label }));
     if (!confirmed) return;
 
     setDeleting(true);
@@ -47,7 +47,7 @@ export default function DeleteVehicleButton({ vehicleId, label }: { vehicleId: s
     const { error } = await supabase.from("vehicles").delete().eq("id", vehicleId);
 
     if (error) {
-      window.alert(`Errore durante l'eliminazione: ${error.message}`);
+      window.alert(t("deleteError", { message: error.message }));
       setDeleting(false);
       return;
     }
@@ -60,9 +60,9 @@ export default function DeleteVehicleButton({ vehicleId, label }: { vehicleId: s
     <button
       onClick={handleDelete}
       disabled={deleting}
-      className="btn-secondary border-red-900 text-red-400 hover:bg-red-950"
+      className="btn-secondary border-red-200 text-red-600 hover:bg-red-50"
     >
-      {deleting ? "Eliminazione…" : "🗑️ Elimina veicolo"}
+      {deleting ? t("deleting") : t("deleteVehicle")}
     </button>
   );
 }

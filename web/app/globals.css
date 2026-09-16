@@ -3,20 +3,13 @@
 @tailwind utilities;
 
 body {
-  @apply bg-graphite-900 text-graphite-100 antialiased;
+  @apply bg-white text-graphite-900 antialiased;
   min-height: 100vh;
-  background-color: #09090b;
-  background-image:
-    radial-gradient(circle at 18% -10%, rgba(255, 45, 26, 0.16), transparent 26rem),
-    radial-gradient(circle at 88% 18%, rgba(245, 196, 0, 0.09), transparent 22rem),
-    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
-  background-size: auto, auto, 34px 34px, 34px 34px;
 }
 
 ::selection {
-  background: rgba(255, 45, 26, 0.8);
-  color: white;
+  background: rgba(79, 70, 229, 0.18);
+  color: #312e81;
 }
 
 h1,
@@ -25,14 +18,15 @@ h3 {
   @apply font-display tracking-tight;
 }
 
+/* Card standard: superficie neutra, bordo sottile, ombra leggera */
 .card {
-  @apply rounded-xl border border-graphite-700/80 border-l-4 border-l-brand-600 bg-graphite-800/80 p-5 shadow-xl shadow-black/25 backdrop-blur-sm;
+  @apply rounded-xl border border-graphite-200 bg-white p-5 shadow-sm shadow-graphite-900/5;
 }
 
-/* Card per link "premium" (es. catalogo ricambi, piano manutenzione): accento oro invece
-   del rosso standard, per distinguerle come scorciatoie di valore verso siti esterni. */
+/* Card per link "di valore" (es. catalogo ricambi, piano manutenzione): accento ambra,
+   per distinguerle come scorciatoie verso siti esterni utili. */
 .card-gold-link {
-  @apply flex items-center gap-3 rounded-xl border border-gold-700/40 bg-gradient-to-br from-graphite-800 to-graphite-900 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-gold-500 hover:shadow-lg hover:shadow-gold-900/20;
+  @apply flex items-center gap-3 rounded-xl border border-gold-200 bg-gold-50/40 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-md hover:shadow-gold-900/5;
 }
 
 /* Anello di caricamento leggero, per gli stati "in corso" dell'agente IA. */
@@ -52,161 +46,59 @@ h3 {
   vertical-align: -0.2em;
 }
 
-/* Saracinesca del box auto (Il mio garage): copre la scheda finche' non viene aperta.
-   Le doghe orizzontali sono un repeating-linear-gradient, la barra superiore richiama
-   il flag-stripe per coerenza col resto del tema. */
-.garage-door {
-  transform-origin: top;
-  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.4s ease 0.15s;
-  background-color: #232327;
-  background-image: repeating-linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.05) 0px,
-      rgba(255, 255, 255, 0.05) 1px,
-      transparent 1px,
-      transparent 11px
-    ),
-    linear-gradient(180deg, #2b2b30, #1a1a1d);
-  box-shadow: inset 0 -10px 18px rgba(0, 0, 0, 0.45);
-  will-change: transform, opacity;
-}
-.garage-door::before {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  height: 5px;
-  background: repeating-linear-gradient(45deg, #f5c400, #f5c400 8px, #0c0c0e 8px, #0c0c0e 16px);
-}
-.garage-door-light {
-  position: absolute;
-  bottom: 10px;
-  width: 7px;
-  height: 7px;
-  border-radius: 9999px;
-  background: #f5c400;
-  box-shadow: 0 0 6px 2px rgba(245, 196, 0, 0.55);
-}
-.garage-bay-open .garage-door {
-  transform: scaleY(0.02);
-  opacity: 0;
-  pointer-events: none;
-}
-
 .btn-primary {
-  @apply inline-flex items-center justify-center rounded-md bg-brand-600 px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-brand-900/50 transition hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-brand-900/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-graphite-900 disabled:translate-y-0 disabled:opacity-50;
+  @apply inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-600/25 transition duration-150 hover:bg-brand-700 hover:shadow-md hover:shadow-brand-600/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100;
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center rounded-md border border-graphite-600 bg-graphite-800/80 px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide text-graphite-100 shadow-sm transition hover:-translate-y-0.5 hover:border-graphite-500 hover:bg-graphite-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2 focus-visible:ring-offset-graphite-900 disabled:translate-y-0 disabled:opacity-50;
+  @apply inline-flex items-center justify-center rounded-lg border border-graphite-300 bg-white px-4 py-2 text-sm font-semibold text-graphite-700 shadow-sm transition duration-150 hover:border-graphite-400 hover:bg-graphite-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100;
 }
 
 .input {
-  @apply w-full rounded-md border border-graphite-600 bg-graphite-900 px-3 py-2 text-sm text-graphite-50 placeholder-graphite-500 focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600;
+  @apply w-full rounded-lg border border-graphite-300 bg-white px-3 py-2 text-sm text-graphite-900 placeholder-graphite-400 transition focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
 }
 
 .label {
-  @apply mb-1 block font-display text-xs font-semibold uppercase tracking-wider text-graphite-400;
+  @apply mb-1 block text-xs font-semibold uppercase tracking-wider text-graphite-500;
 }
 
-/* Striscia a bandiera a scacchi: dettaglio racing per intestazioni/separatori */
-.flag-stripe {
-  height: 6px;
-  background-image: repeating-linear-gradient(
-    45deg,
-    #f5c400,
-    #f5c400 8px,
-    #0c0c0e 8px,
-    #0c0c0e 16px
-  );
+/* Etichetta piccola in maiuscolo: firma sopra i titoli di sezione */
+.eyebrow {
+  @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-600;
 }
-
-/* Bagliore radiale decorativo dietro le card "hero" (es. Aggiungi veicolo) */
-.hero-glow {
-  position: absolute;
-  inset: -10% -10% auto -10%;
-  height: 420px;
-  background: radial-gradient(closest-side, rgba(255, 45, 26, 0.28), transparent 70%);
-  filter: blur(10px);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Bagliore cinematografico a doppio tono (rosso + oro), per sezioni hero a pagina
-   intera (login, dashboard): richiama i faretti da concessionaria di lusso. */
-.hero-spotlight {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    radial-gradient(60% 50% at 50% 0%, rgba(245, 196, 0, 0.16), transparent 70%),
-    radial-gradient(45% 55% at 50% 15%, rgba(255, 45, 26, 0.22), transparent 70%);
-}
-
-/* Texture leggera di fibra di carbonio: porta profondita' senza immagini pesanti. */
-.carbon-panel {
-  position: relative;
-  isolation: isolate;
-  background-color: #111114;
-  background-image:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%),
-    linear-gradient(315deg, rgba(255, 255, 255, 0.018) 25%, transparent 25%);
-  background-size: 8px 8px;
-}
-.carbon-panel::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: linear-gradient(110deg, rgba(255, 255, 255, 0.045), transparent 24%, transparent 72%, rgba(255, 45, 26, 0.1));
-}
-
-.showroom-shell {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(117, 117, 126, 0.4);
-  border-radius: 1.25rem;
-  background: linear-gradient(135deg, rgba(38, 38, 44, 0.9), rgba(12, 12, 14, 0.98));
-  box-shadow: 0 24px 70px -28px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
-.showroom-shell::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(255, 45, 26, 0.75), rgba(245, 196, 0, 0.55), transparent 44%) top / 100% 2px no-repeat,
-    radial-gradient(circle at 88% 6%, rgba(245, 196, 0, 0.18), transparent 22rem);
-}
-
-.metric-chip {
-  @apply rounded-lg border border-graphite-600/60 bg-graphite-900/60 px-3 py-2 backdrop-blur-sm;
-}
-
-/* Pannello "vetro smerigliato": card premium translucida con sfocatura dello sfondo. */
-.glass-panel {
-  @apply rounded-xl border border-graphite-700/80 bg-graphite-800/60 shadow-2xl shadow-black/40 backdrop-blur-md;
-}
-
-/* Etichetta piccola in maiuscolo, oro: firma "da concessionaria di lusso" sopra i titoli. */
-.eyebrow-gold {
-  @apply inline-flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-[0.2em] text-gold-500;
-}
-.eyebrow-gold::before {
+.eyebrow::before {
   content: "";
   width: 1.25rem;
   height: 2px;
   background: currentColor;
   display: inline-block;
+  border-radius: 9999px;
+}
+
+/* Pannello "hero": intestazione di pagina con sfondo sfumato tenue */
+.hero-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  border: 1px solid theme("colors.graphite.200");
+  background: linear-gradient(135deg, theme("colors.brand.50"), #ffffff 55%);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.metric-chip {
+  @apply rounded-lg border border-graphite-200 bg-graphite-50 px-3 py-2;
+}
+
+/* Pannello leggermente distinto dal fondo, per contenuti "annidati" (es. form di login) */
+.glass-panel {
+  @apply rounded-2xl border border-graphite-200 bg-white p-6 shadow-lg shadow-graphite-900/5;
 }
 
 /* Griglia con ingresso "a cascata" (es. elenco veicoli in dashboard) */
 @keyframes stagger-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -235,7 +127,7 @@ h3 {
 @keyframes rise-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -246,142 +138,24 @@ h3 {
   animation: rise-in 0.35s ease-out both;
 }
 
-/* Sweep di luce sui pulsanti primari al passaggio del mouse */
-.btn-primary {
-  position: relative;
-  overflow: hidden;
-}
-.btn-primary::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.35) 50%, transparent 60%);
-  transform: translateX(-100%);
-  transition: transform 0.5s ease;
-}
-.btn-primary:hover::after {
-  transform: translateX(100%);
-}
-
-/* Palcoscenico con prospettiva: da' profondita' (asse Z) al passaggio del veicolo,
-   invece di un semplice scorrimento piatto sull'asse X. */
-.scene-3d {
-  perspective: 1000px;
-}
-
-/* Veicolo che attraversa lo schermo da sinistra a destra (conferma inserimento),
-   con una traiettoria in profondita': arriva da lontano (piccolo, translateZ negativo),
-   passa vicino alla camera al centro (ingrandito, translateZ positivo, "hero moment")
-   e si allontana di nuovo verso destra, con una leggera imbardata (rotateY) che
-   accompagna la curva. Il motion blur in ingresso/uscita rinforza la sensazione di velocita'. */
-@keyframes drive-across {
-  0% {
-    transform: translateX(-35vw) translateY(-50%) translateZ(-280px) rotateY(-16deg);
-    opacity: 0;
-    filter: blur(4px);
-  }
-  10% {
-    opacity: 1;
-    filter: blur(1px);
-  }
-  30% {
-    transform: translateX(0vw) translateY(-50%) translateZ(-60px) rotateY(-6deg);
-    filter: blur(0);
-  }
-  50% {
-    transform: translateX(38vw) translateY(calc(-50% - 5px)) translateZ(60px) rotateY(0deg);
-  }
-  70% {
-    transform: translateX(75vw) translateY(-50%) translateZ(-40px) rotateY(6deg);
-  }
-  90% {
-    opacity: 1;
-    filter: blur(1px);
-  }
-  100% {
-    transform: translateX(122vw) translateY(-50%) translateZ(-280px) rotateY(16deg);
-    opacity: 0;
-    filter: blur(4px);
-  }
-}
-.animate-drive-across {
-  animation: drive-across 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  transform-style: preserve-3d;
-  will-change: transform, opacity, filter;
-}
-
-/* Scia dietro al veicolo: stessa traiettoria, leggermente sfalsata e piu' trasparente.
-   Keyframe dedicato (invece di riusare drive-across) perche' l'opacita' li' sale a 1:
-   qui resta sempre sotto 0.25 cosi' la scia non "lampeggia" opaca come il veicolo. */
-@keyframes drive-across-trail {
-  0% {
-    transform: translateX(-35vw) translateY(-50%) translateZ(-280px) rotateY(-16deg);
-    opacity: 0;
-    filter: blur(4px);
-  }
-  10% {
-    opacity: 0.25;
-    filter: blur(3px);
-  }
-  30% {
-    transform: translateX(0vw) translateY(-50%) translateZ(-60px) rotateY(-6deg);
-  }
-  50% {
-    transform: translateX(38vw) translateY(calc(-50% - 5px)) translateZ(60px) rotateY(0deg);
-  }
-  70% {
-    transform: translateX(75vw) translateY(-50%) translateZ(-40px) rotateY(6deg);
-  }
-  90% {
-    opacity: 0.25;
-    filter: blur(3px);
-  }
-  100% {
-    transform: translateX(122vw) translateY(-50%) translateZ(-280px) rotateY(16deg);
-    opacity: 0;
-    filter: blur(4px);
-  }
-}
-.animate-drive-trail {
-  animation: drive-across-trail 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: 0.06s;
-  will-change: transform, opacity, filter;
-}
-
-@keyframes speed-lines {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: -240px 0;
-  }
-}
-.animate-speed-lines {
-  animation: speed-lines 0.6s linear infinite;
-}
-.animate-speed-lines-fast {
-  animation: speed-lines 0.35s linear infinite;
-}
-
 @keyframes pop-in {
   0% {
     opacity: 0;
-    transform: scale(0.85);
+    transform: scale(0.9);
   }
   60% {
     opacity: 1;
-    transform: scale(1.03);
+    transform: scale(1.02);
   }
   100% {
     transform: scale(1);
   }
 }
 .animate-pop-in {
-  animation: pop-in 0.4s ease-out 0.5s both;
+  animation: pop-in 0.35s ease-out both;
 }
 
-/* Carosello di circuiti in 3D (dashboard): righe scorrevoli con card inclinate
-   a "ventaglio", che si appiattiscono e si sollevano al passaggio del mouse. */
+/* Carosello orizzontale di circuiti (home): card piatte, leggero sollevamento all'hover */
 .track-carousel-fade {
   position: relative;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
@@ -389,11 +163,10 @@ h3 {
 }
 .track-carousel {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.25rem;
   overflow-x: auto;
   scroll-snap-type: x proximity;
-  padding: 1.5rem 1.5rem 2rem;
-  perspective: 1400px;
+  padding: 0.5rem 1.5rem 1.5rem;
 }
 .scrollbar-hide {
   scrollbar-width: none;
@@ -406,13 +179,12 @@ h3 {
   flex: 0 0 auto;
   width: 220px;
   scroll-snap-align: center;
-  border-radius: 0.75rem;
-  border: 1px solid #3f3f46;
-  background: linear-gradient(160deg, #1c1c1f, #0c0c0e);
-  padding: 1rem;
-  box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.6);
-  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-  transform-style: preserve-3d;
+  border-radius: 1rem;
+  border: 1px solid theme("colors.graphite.200");
+  background: #ffffff;
+  padding: 0.875rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 /* Variante per griglie statiche (es. indice circuiti): riempie la cella invece
    della larghezza fissa pensata per il carosello scorrevole. */
@@ -421,53 +193,42 @@ h3 {
 }
 .track-card-inner {
   aspect-ratio: 5 / 3;
-}
-.track-card-tilt-a {
-  transform: rotateY(-14deg) rotateX(3deg);
-}
-.track-card-tilt-b {
-  transform: rotateY(14deg) rotateX(3deg) translateY(10px);
+  border-radius: 0.625rem;
+  overflow: hidden;
+  background: theme("colors.graphite.900");
 }
 .track-card:hover,
 .track-card:focus-within {
-  transform: rotateY(0deg) rotateX(0deg) translateY(-6px) scale(1.04);
-  border-color: #dc2626;
-  box-shadow: 0 20px 34px -14px rgba(220, 38, 38, 0.35);
+  transform: translateY(-4px);
+  border-color: theme("colors.brand.300");
+  box-shadow: 0 12px 24px -12px rgba(79, 70, 229, 0.25);
 }
 
-@media (max-width: 640px) {
-  .track-card-tilt-a,
-  .track-card-tilt-b {
-    transform: none;
+/* Respiro lento dei bagliori sfumati nelle sezioni hero: da' vita allo sfondo senza distrarre.
+   Anima "scale" (proprieta' CSS indipendente da "transform") cosi' non entra in conflitto con le
+   utility Tailwind -translate-x/-translate-y gia' usate per centrare i bagliori. */
+@keyframes drift {
+  0%,
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
+  50% {
+    scale: 1.08;
+    opacity: 0.85;
   }
 }
+.animate-drift {
+  animation: drift 9s ease-in-out infinite;
+}
 
-/* Rispetta la preferenza di riduzione del movimento: niente corsa, solo un fade rapido */
 @media (prefers-reduced-motion: reduce) {
-  .animate-drive-across {
-    animation: none !important;
-    opacity: 1 !important;
-    filter: none !important;
-    left: 50% !important;
-    transform: translateX(-50%) translateY(-50%) !important;
-  }
-  .animate-drive-trail {
-    display: none !important;
-  }
-  .animate-speed-lines,
-  .animate-speed-lines-fast {
-    animation: none !important;
-  }
   .animate-rise-in,
   .animate-pop-in {
     animation-duration: 0.01ms !important;
   }
-  .btn-primary::after {
-    display: none;
-  }
-  .track-card-tilt-a,
-  .track-card-tilt-b {
-    transform: none !important;
+  .animate-drift {
+    animation: none !important;
   }
   .track-card {
     transition-duration: 0.01ms !important;
@@ -476,7 +237,8 @@ h3 {
   .track-card:focus-within {
     transform: none !important;
   }
-  .garage-door {
+  .btn-primary,
+  .btn-secondary {
     transition-duration: 0.01ms !important;
   }
 }

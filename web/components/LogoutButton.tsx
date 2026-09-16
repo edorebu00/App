@@ -1,11 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LogoutButton() {
   const router = useRouter();
   const supabase = createClient();
+  const t = useTranslations("nav");
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -15,7 +17,7 @@ export default function LogoutButton() {
 
   return (
     <button onClick={handleLogout} className="btn-secondary">
-      Esci
+      {t("logout")}
     </button>
   );
 }

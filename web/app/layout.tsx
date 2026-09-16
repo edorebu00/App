@@ -1,22 +1,34 @@
 import type { Metadata } from "next";
-import { Rajdhani } from "next/font/google";
+import { Inter } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import "./globals.css";
 
-const rajdhani = Rajdhani({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-display",
 });
 
-export const metadata: Metadata = {
-  title: "My Vehicle",
-  description: "Gestisci e approfondisci i tuoi veicoli: motore, carrozzeria, assetto, impianto frenante e altro.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="it" className={rajdhani.variable}>
-      <body>{children}</body>
+    <html lang={locale} className={inter.variable}>
+      <body className={inter.className}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }

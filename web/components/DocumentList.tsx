@@ -1,10 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import type { DocumentRow } from "@/lib/types";
 
 export default function DocumentList({ documents }: { documents: DocumentRow[] }) {
   const supabase = createClient();
+  const t = useTranslations("documentList");
 
   async function handleDownload(doc: DocumentRow) {
     const { data, error } = await supabase.storage
@@ -17,7 +19,7 @@ export default function DocumentList({ documents }: { documents: DocumentRow[] }
   }
 
   if (documents.length === 0) {
-    return <p className="text-sm text-graphite-500">Nessun file caricato per questo veicolo.</p>;
+    return <p className="text-sm text-graphite-400">{t("noFiles")}</p>;
   }
 
   return (
@@ -29,31 +31,31 @@ export default function DocumentList({ documents }: { documents: DocumentRow[] }
               📄
             </span>
             <div className="min-w-0">
-              <p className="truncate font-medium text-graphite-200">{doc.file_name}</p>
+              <p className="truncate font-medium text-graphite-800">{doc.file_name}</p>
               <p
                 className={`text-xs ${
                   doc.processed
-                    ? "text-gold-500"
+                    ? "text-green-600"
                     : doc.processing_error
-                      ? "text-red-400"
+                      ? "text-red-600"
                       : "flex items-center gap-1.5 text-graphite-500"
                 }`}
               >
                 {doc.processed ? (
-                  "✓ Pronto per la chat IA"
+                  t("ready")
                 ) : doc.processing_error ? (
-                  `Non elaborato: ${doc.processing_error}`
+                  t("notProcessed", { error: doc.processing_error })
                 ) : (
                   <>
                     <span className="spinner" aria-hidden />
-                    Elaborazione in corso…
+                    {t("processing")}
                   </>
                 )}
               </p>
             </div>
           </div>
           <button onClick={() => handleDownload(doc)} className="btn-secondary shrink-0 text-sm">
-            ⬇️ Scarica
+            {t("download")}
           </button>
         </li>
       ))}
