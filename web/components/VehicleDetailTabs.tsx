@@ -92,30 +92,30 @@ export default function VehicleDetailTabs({
         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {autodocLink && (
             <a href={autodocLink.url} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-500/10 text-xl">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-100 text-xl">
                 🛒
               </span>
               <span className="min-w-0">
-                <span className="block font-display font-semibold text-graphite-50">Ricambi su AutoDoc</span>
-                <span className="block truncate text-xs text-graphite-400">{autodocLink.titolo}</span>
+                <span className="block font-display font-semibold text-graphite-900">Ricambi su AutoDoc</span>
+                <span className="block truncate text-xs text-graphite-500">{autodocLink.titolo}</span>
               </span>
-              <span className="ml-auto shrink-0 text-gold-500 opacity-0 transition group-hover:opacity-100">
+              <span className="ml-auto shrink-0 text-gold-600 opacity-0 transition group-hover:opacity-100">
                 ↗
               </span>
             </a>
           )}
           {maintenanceLink && (
             <a href={maintenanceLink.url} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-500/10 text-xl">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-100 text-xl">
                 🛠️
               </span>
               <span className="min-w-0">
-                <span className="block font-display font-semibold text-graphite-50">
+                <span className="block font-display font-semibold text-graphite-900">
                   Piano di manutenzione ufficiale
                 </span>
-                <span className="block truncate text-xs text-graphite-400">{maintenanceLink.titolo}</span>
+                <span className="block truncate text-xs text-graphite-500">{maintenanceLink.titolo}</span>
               </span>
-              <span className="ml-auto shrink-0 text-gold-500 opacity-0 transition group-hover:opacity-100">
+              <span className="ml-auto shrink-0 text-gold-600 opacity-0 transition group-hover:opacity-100">
                 ↗
               </span>
             </a>
@@ -126,13 +126,13 @@ export default function VehicleDetailTabs({
       {/* Barra di stato/aggiornamento ricerca: sempre visibile, in qualunque tab */}
       <div className="card mb-4">
         {loading ? (
-          <p className="flex items-center gap-2 text-sm text-graphite-300">
-            <span className="spinner text-gold-500" aria-hidden />
+          <p className="flex items-center gap-2 text-sm text-graphite-600">
+            <span className="spinner text-brand-600" aria-hidden />
             L&apos;agente IA sta cercando informazioni online… di solito serve mezzo minuto circa.
           </p>
         ) : !hasSearchedOnce ? (
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm text-graphite-400">Nessuna informazione trovata ancora per questo veicolo.</p>
+            <p className="text-sm text-graphite-500">Nessuna informazione trovata ancora per questo veicolo.</p>
             <button onClick={() => runSearch(query)} className="btn-primary whitespace-nowrap">
               🔍 Cerca informazioni online
             </button>
@@ -140,7 +140,7 @@ export default function VehicleDetailTabs({
         ) : (
           <div>
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm text-graphite-400">
+              <p className="text-sm text-graphite-500">
                 {summary ? summary : "Informazioni trovate online per questo veicolo."}
               </p>
               <div className="flex shrink-0 gap-2">
@@ -173,32 +173,32 @@ export default function VehicleDetailTabs({
             )}
           </div>
         )}
-        {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-1.5 rounded-xl border border-graphite-800 bg-graphite-800/40 p-1.5">
+      <div className="mb-4 flex flex-wrap gap-1.5 rounded-xl border border-graphite-200 bg-graphite-50 p-1.5">
         {sections.map((s) => (
           <button
             key={s.id}
             onClick={() => setActiveId(s.id)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-150 ${
               activeId === s.id
-                ? "bg-brand-600 text-white shadow shadow-brand-900/40"
-                : "text-graphite-300 hover:bg-graphite-700 hover:text-white"
+                ? "bg-brand-600 text-white shadow-sm shadow-brand-600/25"
+                : "text-graphite-600 hover:bg-white hover:text-graphite-900"
             }`}
           >
             {s.label}
           </button>
         ))}
-        <span className="mx-1 my-auto h-5 w-px bg-graphite-700" />
+        <span className="mx-1 my-auto h-5 w-px bg-graphite-200" />
         {RESOURCE_TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setActiveId(t.id)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-150 ${
               activeId === t.id
-                ? "bg-brand-600 text-white shadow shadow-brand-900/40"
-                : "text-graphite-300 hover:bg-graphite-700 hover:text-white"
+                ? "bg-brand-600 text-white shadow-sm shadow-brand-600/25"
+                : "text-graphite-600 hover:bg-white hover:text-graphite-900"
             }`}
           >
             {t.label}

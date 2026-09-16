@@ -9,10 +9,10 @@ export default function CircuitIllustration({ circuit }: { circuit: Circuit }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
     >
-      <path d={circuit.d} stroke="#3f3f46" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={circuit.d} stroke="#334155" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" />
       <path
         d={circuit.d}
-        stroke="#f5c400"
+        stroke="#818cf8"
         strokeWidth="1.5"
         strokeDasharray="6 7"
         strokeLinecap="round"

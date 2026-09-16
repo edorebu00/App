@@ -32,19 +32,17 @@ export default async function VehicleDocumentsPage({ params }: { params: Promise
     <div>
       <Link
         href={`/veicoli/${v.id}`}
-        className="mb-4 inline-block text-sm text-graphite-400 transition hover:text-white"
+        className="mb-4 inline-block text-sm text-graphite-500 transition hover:text-graphite-900"
       >
         ← Torna a {v.make} {v.model}
       </Link>
 
-      <div className="relative mb-8 overflow-hidden rounded-xl border border-graphite-800 bg-graphite-800/40 px-6 py-8">
-        <div className="hero-spotlight" />
+      <div className="hero-panel mb-8 px-6 py-8">
         <div className="relative z-10">
-          <p className="eyebrow-gold">{v.make} {v.model}</p>
-          <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-white">
+          <p className="eyebrow">{v.make} {v.model}</p>
+          <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-graphite-900">
             Documenti e assistente IA
           </h1>
-          <div className="flag-stripe mt-4 w-16 rounded-full" />
         </div>
       </div>
 

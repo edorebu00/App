@@ -17,7 +17,7 @@ export default function DocumentList({ documents }: { documents: DocumentRow[] }
   }
 
   if (documents.length === 0) {
-    return <p className="text-sm text-graphite-500">Nessun file caricato per questo veicolo.</p>;
+    return <p className="text-sm text-graphite-400">Nessun file caricato per questo veicolo.</p>;
   }
 
   return (
@@ -29,13 +29,13 @@ export default function DocumentList({ documents }: { documents: DocumentRow[] }
               📄
             </span>
             <div className="min-w-0">
-              <p className="truncate font-medium text-graphite-200">{doc.file_name}</p>
+              <p className="truncate font-medium text-graphite-800">{doc.file_name}</p>
               <p
                 className={`text-xs ${
                   doc.processed
-                    ? "text-gold-500"
+                    ? "text-green-600"
                     : doc.processing_error
-                      ? "text-red-400"
+                      ? "text-red-600"
                       : "flex items-center gap-1.5 text-graphite-500"
                 }`}
               >

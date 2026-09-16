@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Rajdhani } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const rajdhani = Rajdhani({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-display",
 });
 
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" className={rajdhani.variable}>
-      <body>{children}</body>
+    <html lang="it" className={inter.variable}>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

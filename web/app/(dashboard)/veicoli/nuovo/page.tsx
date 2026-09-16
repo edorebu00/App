@@ -121,18 +121,15 @@ export default function NewVehiclePage() {
 
   return (
     <div className="relative mx-auto max-w-lg">
-      <div className="hero-glow" />
-
-      <div className="relative z-10 mb-6 text-center">
-        <p className="eyebrow-gold justify-center">Nuovo arrivo</p>
-        <h1 className="mt-2 text-3xl font-bold text-white">🏁 Aggiungi veicolo</h1>
-        <p className="mt-1 text-sm text-graphite-400">
+      <div className="mb-6 text-center">
+        <p className="eyebrow justify-center">Nuovo arrivo</p>
+        <h1 className="mt-2 text-3xl font-bold text-graphite-900">🏁 Aggiungi veicolo</h1>
+        <p className="mt-1 text-sm text-graphite-500">
           Cerca nel catalogo oppure inserisci liberamente marca e modello: al resto pensa l&apos;agente IA.
         </p>
-        <div className="flag-stripe mx-auto mt-4 w-24 rounded-full" />
       </div>
 
-      <form onSubmit={handleSubmit} className="card relative z-10 animate-rise-in space-y-4">
+      <form onSubmit={handleSubmit} className="card animate-rise-in space-y-4">
         <div>
           <label className="label">Tipologia</label>
           <div className="flex gap-3">
@@ -143,8 +140,8 @@ export default function NewVehiclePage() {
                 onClick={() => handleTypeChange(t)}
                 className={`flex-1 rounded-lg border px-4 py-3 text-sm font-semibold capitalize transition-all duration-200 ${
                   type === t
-                    ? "scale-[1.02] border-brand-600 bg-brand-50 text-brand-400 shadow-md shadow-brand-900/40"
-                    : "border-graphite-600 text-graphite-300 hover:bg-graphite-700"
+                    ? "scale-[1.02] border-brand-500 bg-brand-50 text-brand-700 shadow-sm"
+                    : "border-graphite-300 text-graphite-600 hover:bg-graphite-50"
                 }`}
               >
                 <span className="mr-1.5">{t === "moto" ? "🏍️" : "🚗"}</span>
@@ -196,7 +193,7 @@ export default function NewVehiclePage() {
                 ))}
               </datalist>
               {make && models.length === 0 && (
-                <p className="mt-1 text-xs text-gold-500">
+                <p className="mt-1 text-xs text-gold-600">
                   Marca non ancora nel catalogo: puoi inserire il modello manualmente.
                 </p>
               )}
@@ -278,7 +275,7 @@ export default function NewVehiclePage() {
           <input id="plate" className="input" value={plate} onChange={(e) => setPlate(e.target.value)} />
         </div>
 
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
         <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
           {loading ? "Salvataggio…" : "🏁 Salva veicolo"}

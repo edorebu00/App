@@ -60,7 +60,7 @@ export default function ChatPanel({
 
   return (
     <div className="card flex h-[520px] flex-col">
-      <p className="eyebrow-gold mb-3">🤖 Assistente IA</p>
+      <p className="eyebrow mb-3">🤖 Assistente IA</p>
       <div className="flex-1 space-y-3 overflow-y-auto">
         {messages.length === 0 && (
           <p className="text-sm text-graphite-500">
@@ -73,7 +73,7 @@ export default function ChatPanel({
               className={`max-w-[80%] whitespace-pre-wrap rounded-lg px-3 py-2 text-sm ${
                 m.role === "user"
                   ? "bg-brand-600 text-white"
-                  : "border border-gold-700/30 bg-graphite-900 text-graphite-200"
+                  : "border border-graphite-200 bg-graphite-50 text-graphite-800"
               }`}
             >
               {m.content}
@@ -82,15 +82,15 @@ export default function ChatPanel({
         ))}
         {loading && (
           <p className="flex items-center gap-2 text-sm text-graphite-500">
-            <span className="spinner text-gold-500" aria-hidden />
+            <span className="spinner text-brand-600" aria-hidden />
             L&apos;assistente sta scrivendo…
           </p>
         )}
       </div>
 
-      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 
-      <form onSubmit={handleSend} className="mt-3 flex gap-2 border-t border-graphite-800 pt-3">
+      <form onSubmit={handleSend} className="mt-3 flex gap-2 border-t border-graphite-200 pt-3">
         <input
           className="input"
           placeholder="Scrivi una domanda…"

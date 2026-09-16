@@ -30,15 +30,15 @@ export default function ResourceCategoryView({
 }) {
   if (loading) {
     return (
-      <p className="flex items-center gap-2 text-sm text-graphite-400">
-        <span className="spinner text-gold-500" aria-hidden />
+      <p className="flex items-center gap-2 text-sm text-graphite-500">
+        <span className="spinner text-brand-600" aria-hidden />
         L&apos;agente IA sta cercando risorse online…
       </p>
     );
   }
 
   if (items.length === 0) {
-    return <p className="text-sm text-graphite-500">{EMPTY_COPY[category]}</p>;
+    return <p className="text-sm text-graphite-400">{EMPTY_COPY[category]}</p>;
   }
 
   return (
@@ -53,11 +53,11 @@ export default function ResourceCategoryView({
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-gold-500 hover:underline"
+              className="font-medium text-brand-600 hover:underline"
             >
               {item.titolo}
             </a>
-            <p className="mt-1 text-sm text-graphite-400">{item.descrizione}</p>
+            <p className="mt-1 text-sm text-graphite-500">{item.descrizione}</p>
           </span>
         </li>
       ))}

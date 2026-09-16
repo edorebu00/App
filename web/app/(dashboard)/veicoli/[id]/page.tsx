@@ -60,19 +60,17 @@ export default async function VehicleDetailPage({
 
   return (
     <div>
-      <div className="relative mb-8 overflow-hidden rounded-xl border border-graphite-800 bg-graphite-800/40 px-6 py-8">
-        <div className="hero-spotlight" />
+      <div className="hero-panel mb-8 px-6 py-8">
         <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="eyebrow-gold">{v.type === "moto" ? "🏍️ Moto" : "🚗 Auto"}</p>
-            <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-white">
+            <p className="eyebrow">{v.type === "moto" ? "🏍️ Moto" : "🚗 Auto"}</p>
+            <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-graphite-900">
               {v.make} {v.model} {v.year ? `(${v.year})` : ""}
             </h1>
-            <p className="mt-1 text-sm text-graphite-400">
+            <p className="mt-1 text-sm text-graphite-500">
               {v.engine_code && <>Motorizzazione: {v.engine_code} · </>}
               {v.plate && <>Targa: {v.plate}</>}
             </p>
-            <div className="flag-stripe mt-4 w-16 rounded-full" />
           </div>
           <div className="flex flex-wrap gap-2">
             <Link href={`/veicoli/${v.id}/documenti`} className="btn-primary">

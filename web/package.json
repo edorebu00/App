@@ -12,6 +12,7 @@
     "@anthropic-ai/sdk": "^0.32.1",
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.45.4",
+    "framer-motion": "^13.3.0",
     "next": "15.5.25",
     "openai": "^7.10.0",
     "pdf-parse": "^1.1.1",

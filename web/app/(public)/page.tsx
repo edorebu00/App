@@ -27,46 +27,39 @@ const DISCIPLINES = [
 export default function HomePage() {
   return (
     <div>
-      <section className="relative overflow-hidden px-4 pb-24 pt-16 text-center sm:pb-28 sm:pt-24">
-        <div className="hero-spotlight" />
-        <div className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-[42rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-500/10 bg-brand-600/5 blur-3xl" />
+      <section className="relative overflow-hidden px-4 pb-20 pt-16 text-center sm:pb-24 sm:pt-24">
+        <div className="animate-drift pointer-events-none absolute left-1/2 top-0 h-96 w-[42rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-brand-100/60 blur-3xl" />
         <div className="relative z-10 mx-auto max-w-3xl">
-          <p className="eyebrow-gold justify-center">Benvenuto</p>
-          <h1 className="mt-4 font-display text-5xl font-bold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
-            Il motorsport.<br />Il tuo garage.<br /><span className="text-brand-500">Un solo posto.</span>
+          <p className="eyebrow justify-center">Benvenuto</p>
+          <h1 className="mt-4 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-graphite-900 sm:text-6xl">
+            Il tuo garage,<br />finalmente <span className="text-brand-600">in ordine.</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-graphite-300">
-            Scopri la storia dei circuiti più leggendari del mondo e gestisci la tua collezione di auto e moto
-            come in una vetrina.
+          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-graphite-500">
+            Gestisci la tua collezione di auto e moto con schede tecniche, documenti e un assistente IA sempre
+            pronto — e scopri la storia dei circuiti più leggendari del mondo.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link href="/registrati" className="btn-primary px-6 py-3 text-base">
-              🏁 Inizia ora
+              Inizia ora
             </Link>
             <Link href="/circuiti" className="btn-secondary px-6 py-3 text-base">
               Esplora i circuiti
             </Link>
           </div>
-          <div className="mx-auto mt-10 flex w-fit items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-graphite-500">
-            <span className="h-px w-10 bg-graphite-600" />
-            Passione · precisione · memoria
-            <span className="h-px w-10 bg-graphite-600" />
-          </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-12">
-        <p className="eyebrow-gold">Il mondo delle corse</p>
-        <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-white">
+        <p className="eyebrow">Il mondo delle corse</p>
+        <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-graphite-900">
           Discipline, in breve
         </h2>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {DISCIPLINES.map((d) => (
-            <div key={d.title} className="card group relative overflow-hidden transition duration-300 hover:-translate-y-1 hover:border-graphite-500">
-              <div className="absolute right-0 top-0 h-16 w-16 -translate-y-8 translate-x-8 rounded-full bg-brand-600/10 blur-xl transition group-hover:bg-brand-600/20" />
-              <p className="relative text-3xl">{d.icon}</p>
-              <h3 className="mt-2 font-display text-base font-semibold text-graphite-50">{d.title}</h3>
-              <p className="mt-1 text-sm text-graphite-400">{d.text}</p>
+            <div key={d.title} className="card group transition duration-300 hover:-translate-y-1 hover:shadow-md">
+              <p className="text-3xl">{d.icon}</p>
+              <h3 className="mt-2 font-display text-base font-semibold text-graphite-900">{d.title}</h3>
+              <p className="mt-1 text-sm text-graphite-500">{d.text}</p>
             </div>
           ))}
         </div>
@@ -77,12 +70,12 @@ export default function HomePage() {
       </section>
 
       <section className="relative overflow-hidden px-4 py-16 text-center">
-        <div className="hero-spotlight" />
+        <div className="animate-drift pointer-events-none absolute left-1/2 top-1/2 h-72 w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-50 blur-3xl" />
         <div className="relative z-10 mx-auto max-w-xl">
-          <h2 className="font-display text-2xl font-bold tracking-tight text-white">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-graphite-900">
             Pronto a mettere in ordine il tuo garage?
           </h2>
-          <p className="mt-2 text-sm text-graphite-400">
+          <p className="mt-2 text-sm text-graphite-500">
             Aggiungi le tue auto e moto, trova documenti e manuali, e tieni tutto sotto controllo.
           </p>
           <Link href="/registrati" className="btn-primary mt-6 inline-flex px-6 py-3 text-base">

@@ -60,7 +60,7 @@ export default function DeleteVehicleButton({ vehicleId, label }: { vehicleId: s
     <button
       onClick={handleDelete}
       disabled={deleting}
-      className="btn-secondary border-red-900 text-red-400 hover:bg-red-950"
+      className="btn-secondary border-red-200 text-red-600 hover:bg-red-50"
     >
       {deleting ? "Eliminazione…" : "🗑️ Elimina veicolo"}
     </button>

@@ -72,13 +72,13 @@ export default function GlobalSearch() {
         </button>
       </form>
 
-      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
-      {!loading && summary && <p className="mt-4 whitespace-pre-wrap text-sm text-graphite-300">{summary}</p>}
+      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      {!loading && summary && <p className="mt-4 whitespace-pre-wrap text-sm text-graphite-600">{summary}</p>}
 
       {(searched || loading) &&
         TABS.map((tab) => (
           <div key={tab.id} className="mt-6">
-            <h3 className="eyebrow-gold mb-2">{tab.label}</h3>
+            <h3 className="eyebrow mb-2">{tab.label}</h3>
             <ResourceCategoryView
               category={tab.id}
               loading={loading}
