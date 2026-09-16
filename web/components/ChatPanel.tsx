@@ -60,6 +60,7 @@ export default function ChatPanel({
 
   return (
     <div className="card flex h-[520px] flex-col">
+      <p className="eyebrow-gold mb-3">🤖 Assistente IA</p>
       <div className="flex-1 space-y-3 overflow-y-auto">
         {messages.length === 0 && (
           <p className="text-sm text-graphite-500">
@@ -69,15 +70,22 @@ export default function ChatPanel({
         {messages.map((m) => (
           <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
-              className={`max-w-[80%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
-                m.role === "user" ? "bg-brand-600 text-white" : "bg-graphite-700 text-graphite-200"
+              className={`max-w-[80%] whitespace-pre-wrap rounded-lg px-3 py-2 text-sm ${
+                m.role === "user"
+                  ? "bg-brand-600 text-white"
+                  : "border border-gold-700/30 bg-graphite-900 text-graphite-200"
               }`}
             >
               {m.content}
             </div>
           </div>
         ))}
-        {loading && <p className="text-sm text-graphite-500">L&apos;assistente sta scrivendo…</p>}
+        {loading && (
+          <p className="flex items-center gap-2 text-sm text-graphite-500">
+            <span className="spinner text-gold-500" aria-hidden />
+            L&apos;assistente sta scrivendo…
+          </p>
+        )}
       </div>
 
       {error && <p className="mt-2 text-sm text-red-400">{error}</p>}

@@ -124,7 +124,8 @@ export default function NewVehiclePage() {
       <div className="hero-glow" />
 
       <div className="relative z-10 mb-6 text-center">
-        <h1 className="text-3xl font-bold text-white">🏁 Aggiungi veicolo</h1>
+        <p className="eyebrow-gold justify-center">Nuovo arrivo</p>
+        <h1 className="mt-2 text-3xl font-bold text-white">🏁 Aggiungi veicolo</h1>
         <p className="mt-1 text-sm text-graphite-400">
           Cerca nel catalogo oppure inserisci liberamente marca e modello: al resto pensa l&apos;agente IA.
         </p>

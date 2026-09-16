@@ -91,32 +91,32 @@ export default function VehicleDetailTabs({
       {(autodocLink || maintenanceLink) && (
         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {autodocLink && (
-            <a
-              href={autodocLink.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-lg border border-flag/40 bg-graphite-800 p-4 transition hover:border-flag"
-            >
-              <span className="text-2xl">🛒</span>
-              <span>
+            <a href={autodocLink.url} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-500/10 text-xl">
+                🛒
+              </span>
+              <span className="min-w-0">
                 <span className="block font-display font-semibold text-graphite-50">Ricambi su AutoDoc</span>
-                <span className="block text-xs text-graphite-400">{autodocLink.titolo}</span>
+                <span className="block truncate text-xs text-graphite-400">{autodocLink.titolo}</span>
+              </span>
+              <span className="ml-auto shrink-0 text-gold-500 opacity-0 transition group-hover:opacity-100">
+                ↗
               </span>
             </a>
           )}
           {maintenanceLink && (
-            <a
-              href={maintenanceLink.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-lg border border-flag/40 bg-graphite-800 p-4 transition hover:border-flag"
-            >
-              <span className="text-2xl">🛠️</span>
-              <span>
+            <a href={maintenanceLink.url} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-500/10 text-xl">
+                🛠️
+              </span>
+              <span className="min-w-0">
                 <span className="block font-display font-semibold text-graphite-50">
                   Piano di manutenzione ufficiale
                 </span>
-                <span className="block text-xs text-graphite-400">{maintenanceLink.titolo}</span>
+                <span className="block truncate text-xs text-graphite-400">{maintenanceLink.titolo}</span>
+              </span>
+              <span className="ml-auto shrink-0 text-gold-500 opacity-0 transition group-hover:opacity-100">
+                ↗
               </span>
             </a>
           )}
@@ -126,8 +126,9 @@ export default function VehicleDetailTabs({
       {/* Barra di stato/aggiornamento ricerca: sempre visibile, in qualunque tab */}
       <div className="card mb-4">
         {loading ? (
-          <p className="text-sm text-graphite-300">
-            🔎 L&apos;agente IA sta cercando informazioni online… di solito serve mezzo minuto circa.
+          <p className="flex items-center gap-2 text-sm text-graphite-300">
+            <span className="spinner text-gold-500" aria-hidden />
+            L&apos;agente IA sta cercando informazioni online… di solito serve mezzo minuto circa.
           </p>
         ) : !hasSearchedOnce ? (
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -175,13 +176,15 @@ export default function VehicleDetailTabs({
         {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2 border-b border-graphite-700 pb-2">
+      <div className="mb-4 flex flex-wrap gap-1.5 rounded-xl border border-graphite-800 bg-graphite-800/40 p-1.5">
         {sections.map((s) => (
           <button
             key={s.id}
             onClick={() => setActiveId(s.id)}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
-              activeId === s.id ? "bg-brand-600 text-white" : "text-graphite-300 hover:bg-graphite-700"
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-150 ${
+              activeId === s.id
+                ? "bg-brand-600 text-white shadow shadow-brand-900/40"
+                : "text-graphite-300 hover:bg-graphite-700 hover:text-white"
             }`}
           >
             {s.label}
@@ -192,8 +195,10 @@ export default function VehicleDetailTabs({
           <button
             key={t.id}
             onClick={() => setActiveId(t.id)}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
-              activeId === t.id ? "bg-brand-600 text-white" : "text-graphite-300 hover:bg-graphite-700"
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-150 ${
+              activeId === t.id
+                ? "bg-brand-600 text-white shadow shadow-brand-900/40"
+                : "text-graphite-300 hover:bg-graphite-700 hover:text-white"
             }`}
           >
             {t.label}

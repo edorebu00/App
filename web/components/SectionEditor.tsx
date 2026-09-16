@@ -96,19 +96,19 @@ export default function SectionEditor({ section, images: initialImages, specs, r
 
   return (
     <div className="card">
-      <h2 className="mb-4 text-lg font-semibold text-graphite-50">{section.label}</h2>
+      <h2 className="mb-4 font-display text-lg font-semibold text-graphite-50">{section.label}</h2>
 
-      <div className="mb-5 rounded-md border border-graphite-700 bg-graphite-900 p-4">
-        <p className="label mb-3">📡 Dati trovati online</p>
+      <div className="glass-panel mb-5 p-4">
+        <p className="eyebrow-gold mb-3">Dati trovati online</p>
 
         {hasWebData ? (
           <>
             {specs && Object.keys(specs).length > 0 && (
-              <dl className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-3">
+              <dl className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {Object.entries(specs).map(([k, v]) => (
-                  <div key={k}>
-                    <dt className="text-xs uppercase tracking-wide text-graphite-500">{k}</dt>
-                    <dd className="text-graphite-100">{v}</dd>
+                  <div key={k} className="rounded-lg border border-graphite-700 bg-graphite-900/60 px-3 py-2">
+                    <dt className="text-[11px] uppercase tracking-wide text-graphite-500">{k}</dt>
+                    <dd className="mt-0.5 text-sm font-medium text-graphite-100">{v}</dd>
                   </div>
                 ))}
               </dl>
@@ -117,31 +117,28 @@ export default function SectionEditor({ section, images: initialImages, specs, r
             {resources && resources.length > 0 && (
               <ul className="space-y-1.5 text-sm">
                 {resources.map((r, i) => (
-                  <li key={i}>
+                  <li key={i} className="flex items-baseline gap-1.5">
+                    <span aria-hidden>
+                      {r.categoria === "pezzo_ricambio" ? "🔧" : r.categoria === "schema_tecnico" ? "🗺️" : "📄"}
+                    </span>
                     <a
                       href={r.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-brand-600 hover:underline"
+                      className="text-gold-500 hover:underline"
                     >
                       {r.titolo}
                     </a>
-                    <span className="ml-1 text-xs text-graphite-500">
-                      (
-                      {r.categoria === "pezzo_ricambio"
-                        ? "ricambio"
-                        : r.categoria === "schema_tecnico"
-                          ? "schema"
-                          : "documento"}
-                      )
-                    </span>
                   </li>
                 ))}
               </ul>
             )}
           </>
         ) : searchPending ? (
-          <p className="text-sm text-graphite-400">🔎 Ricerca in corso…</p>
+          <p className="flex items-center gap-2 text-sm text-graphite-400">
+            <span className="spinner text-gold-500" aria-hidden />
+            Ricerca in corso…
+          </p>
         ) : (
           <p className="text-sm text-graphite-500">
             Nessuna informazione trovata ancora per questa sezione. Usa &quot;Cerca informazioni online&quot; /
@@ -185,7 +182,7 @@ export default function SectionEditor({ section, images: initialImages, specs, r
                 </button>
               </div>
             ))}
-            <button type="button" onClick={addField} className="text-sm font-medium text-brand-600 hover:underline">
+            <button type="button" onClick={addField} className="text-sm font-medium text-gold-500 hover:underline">
               + Aggiungi caratteristica
             </button>
           </div>

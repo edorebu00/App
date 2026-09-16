@@ -29,6 +29,29 @@ h3 {
   @apply rounded-xl border border-graphite-700/80 border-l-4 border-l-brand-600 bg-graphite-800/80 p-5 shadow-xl shadow-black/25 backdrop-blur-sm;
 }
 
+/* Card per link "premium" (es. catalogo ricambi, piano manutenzione): accento oro invece
+   del rosso standard, per distinguerle come scorciatoie di valore verso siti esterni. */
+.card-gold-link {
+  @apply flex items-center gap-3 rounded-xl border border-gold-700/40 bg-gradient-to-br from-graphite-800 to-graphite-900 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-gold-500 hover:shadow-lg hover:shadow-gold-900/20;
+}
+
+/* Anello di caricamento leggero, per gli stati "in corso" dell'agente IA. */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 9999px;
+  animation: spin 0.7s linear infinite;
+  vertical-align: -0.2em;
+}
+
 /* Saracinesca del box auto (Il mio garage): copre la scheda finche' non viene aperta.
    Le doghe orizzontali sono un repeating-linear-gradient, la barra superiore richiama
    il flag-stripe per coerenza col resto del tema. */

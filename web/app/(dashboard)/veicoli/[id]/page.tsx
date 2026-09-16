@@ -60,24 +60,26 @@ export default async function VehicleDetailPage({
 
   return (
     <div>
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-400">
-            {v.type === "moto" ? "Moto" : "Auto"}
-          </span>
-          <h1 className="mt-2 text-2xl font-bold text-graphite-50">
-            {v.make} {v.model} {v.year ? `(${v.year})` : ""}
-          </h1>
-          <p className="text-sm text-graphite-400">
-            {v.engine_code && <>Motorizzazione: {v.engine_code} · </>}
-            {v.plate && <>Targa: {v.plate}</>}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Link href={`/veicoli/${v.id}/documenti`} className="btn-primary">
-            📤 I miei documenti e chat
-          </Link>
-          <DeleteVehicleButton vehicleId={v.id} label={`${v.make} ${v.model}`} />
+      <div className="relative mb-8 overflow-hidden rounded-xl border border-graphite-800 bg-graphite-800/40 px-6 py-8">
+        <div className="hero-spotlight" />
+        <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="eyebrow-gold">{v.type === "moto" ? "🏍️ Moto" : "🚗 Auto"}</p>
+            <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-white">
+              {v.make} {v.model} {v.year ? `(${v.year})` : ""}
+            </h1>
+            <p className="mt-1 text-sm text-graphite-400">
+              {v.engine_code && <>Motorizzazione: {v.engine_code} · </>}
+              {v.plate && <>Targa: {v.plate}</>}
+            </p>
+            <div className="flag-stripe mt-4 w-16 rounded-full" />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link href={`/veicoli/${v.id}/documenti`} className="btn-primary">
+              📤 Documenti e chat
+            </Link>
+            <DeleteVehicleButton vehicleId={v.id} label={`${v.make} ${v.model}`} />
+          </div>
         </div>
       </div>
 
