@@ -1824,6 +1824,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.2 75cv", yearFrom: 2019, yearTo: null },
         { label: "1.2 Turbo 100cv", yearFrom: 2019, yearTo: null },
         { label: "Elettrica 136cv", yearFrom: 2020, yearTo: null },
+        { label: "OPC 1.6 Turbo 192cv", yearFrom: 2007, yearTo: 2014 },
+        { label: "OPC 1.6 Turbo 207cv", yearFrom: 2015, yearTo: 2019 },
       ],
       Astra: [
         { label: "1.2 Turbo 110cv", yearFrom: 2021, yearTo: null },
