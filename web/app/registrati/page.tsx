@@ -24,14 +24,21 @@ export default function RegisterPage() {
   const tBrand = useTranslations("brand");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+
+    if (password !== confirmPassword) {
+      setError(t("passwordMismatch"));
+      return;
+    }
+
+    setLoading(true);
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -126,6 +133,18 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <p className="mt-1 text-xs text-graphite-400">{t("minChars")}</p>
+              </div>
+              <div>
+                <label className="label" htmlFor="confirmPassword">{t("confirmPasswordLabel")}</label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  required
+                  minLength={6}
+                  className="input"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
               </div>
 
               {error && <p className="text-sm text-red-600">{error}</p>}
