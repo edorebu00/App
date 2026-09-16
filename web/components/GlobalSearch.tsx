@@ -53,7 +53,7 @@ export default function GlobalSearch() {
 
   return (
     <div>
-      <form onSubmit={handleSearch} className="card flex gap-2">
+      <form onSubmit={handleSearch} className="glass-panel flex gap-2 p-4">
         <input
           className="input"
           placeholder="Modello, codice motore, o qualsiasi cosa tu voglia cercare…"
@@ -61,7 +61,14 @@ export default function GlobalSearch() {
           onChange={(e) => setQuery(e.target.value)}
         />
         <button type="submit" disabled={loading} className="btn-primary whitespace-nowrap">
-          {loading ? "Ricerca…" : "Cerca"}
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <span className="spinner" aria-hidden />
+              Ricerca…
+            </span>
+          ) : (
+            "Cerca"
+          )}
         </button>
       </form>
 
@@ -71,7 +78,7 @@ export default function GlobalSearch() {
       {(searched || loading) &&
         TABS.map((tab) => (
           <div key={tab.id} className="mt-6">
-            <h3 className="mb-2 text-sm font-semibold text-graphite-200">{tab.label}</h3>
+            <h3 className="eyebrow-gold mb-2">{tab.label}</h3>
             <ResourceCategoryView
               category={tab.id}
               loading={loading}

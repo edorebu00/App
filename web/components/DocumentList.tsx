@@ -23,18 +23,36 @@ export default function DocumentList({ documents }: { documents: DocumentRow[] }
   return (
     <ul className="space-y-2">
       {documents.map((doc) => (
-        <li key={doc.id} className="card flex items-center justify-between">
-          <div>
-            <p className="font-medium text-graphite-200">{doc.file_name}</p>
-            <p className="text-xs text-graphite-500">
-              {doc.processed
-                ? "Pronto per la chat IA"
-                : doc.processing_error
-                  ? `Non elaborato: ${doc.processing_error}`
-                  : "Elaborazione in corso…"}
-            </p>
+        <li key={doc.id} className="card flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-start gap-3">
+            <span className="mt-0.5 text-xl" aria-hidden>
+              📄
+            </span>
+            <div className="min-w-0">
+              <p className="truncate font-medium text-graphite-200">{doc.file_name}</p>
+              <p
+                className={`text-xs ${
+                  doc.processed
+                    ? "text-gold-500"
+                    : doc.processing_error
+                      ? "text-red-400"
+                      : "flex items-center gap-1.5 text-graphite-500"
+                }`}
+              >
+                {doc.processed ? (
+                  "✓ Pronto per la chat IA"
+                ) : doc.processing_error ? (
+                  `Non elaborato: ${doc.processing_error}`
+                ) : (
+                  <>
+                    <span className="spinner" aria-hidden />
+                    Elaborazione in corso…
+                  </>
+                )}
+              </p>
+            </div>
           </div>
-          <button onClick={() => handleDownload(doc)} className="btn-secondary text-sm">
+          <button onClick={() => handleDownload(doc)} className="btn-secondary shrink-0 text-sm">
             ⬇️ Scarica
           </button>
         </li>
