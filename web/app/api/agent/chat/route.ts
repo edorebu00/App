@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient, CLAUDE_MODEL } from "@/lib/anthropic";
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_MODEL } from "@/lib/openai";
+import { LOCALE_LANGUAGE_NAME, resolveLocale } from "@/i18n/locales";
 
 export const maxDuration = 90;
 
@@ -29,19 +31,26 @@ async function chatWithOpenAI(systemPrompt: string, history: ChatHistoryItem[], 
 
 export async function POST(request: Request) {
   const supabase = await createClient();
+  const tErr = await getTranslations("apiErrors");
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Non autenticato." }, { status: 401 });
+    return NextResponse.json({ error: tErr("notAuthenticated") }, { status: 401 });
   }
 
-  const { vehicleId, message } = (await request.json()) as { vehicleId?: string; message?: string };
+  const { vehicleId, message, locale } = (await request.json()) as {
+    vehicleId?: string;
+    message?: string;
+    locale?: string;
+  };
 
   if (!message || !message.trim()) {
-    return NextResponse.json({ error: "Il messaggio non può essere vuoto." }, { status: 400 });
+    return NextResponse.json({ error: tErr("emptyMessage") }, { status: 400 });
   }
+
+  const language = LOCALE_LANGUAGE_NAME[resolveLocale(locale)];
 
   try {
     let docQuery = supabase.from("documents").select("file_name, extracted_text").eq("processed", true);
@@ -76,10 +85,10 @@ export async function POST(request: Request) {
         "principalmente sui documenti caricati (libretti, manuali di manutenzione, ecc.) riportati sotto. " +
         "Se l'informazione richiesta non è presente nei documenti, dillo chiaramente e poi puoi rispondere " +
         "con la tua conoscenza generale, specificando che non proviene dai documenti caricati. " +
-        "Rispondi sempre in italiano, in modo chiaro e pratico.\n\n" +
+        `Rispondi SEMPRE in ${language}, in modo chiaro e pratico, indipendentemente dalla lingua dei documenti.\n\n` +
         `DOCUMENTI DISPONIBILI:${context}`
       : "Sei l'assistente di My Vehicle. L'utente non ha ancora caricato documenti per questo veicolo: " +
-        "rispondi con la tua conoscenza generale su auto e moto, in italiano, e suggerisci di caricare il " +
+        `rispondi con la tua conoscenza generale su auto e moto, SEMPRE in ${language}, e suggerisci di caricare il ` +
         "libretto d'uso e manutenzione per risposte più precise.";
 
     let reply: string;
@@ -115,6 +124,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ reply, documentsUsed: (docs || []).map((d) => d.file_name) });
   } catch (err) {
     console.error("Errore chat IA:", err);
-    return NextResponse.json({ error: "Errore durante la generazione della risposta. Riprova più tardi." }, { status: 500 });
+    return NextResponse.json({ error: tErr("chatError") }, { status: 500 });
   }
 }

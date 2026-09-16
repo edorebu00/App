@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import type { VehicleType } from "@/lib/types";
 
 export default function VehicleAddedOverlay({
@@ -13,6 +14,8 @@ export default function VehicleAddedOverlay({
   label: string;
   onDone: () => void;
 }) {
+  const t = useTranslations("vehicleAdded");
+
   useEffect(() => {
     const t = setTimeout(onDone, 1400);
     return () => clearTimeout(t);
@@ -52,7 +55,7 @@ export default function VehicleAddedOverlay({
         </motion.span>
         <h2 className="mt-1 text-xl font-bold text-graphite-900">{label}</h2>
         <p className="mt-1 max-w-xs text-sm text-graphite-500">
-          Veicolo aggiunto! Stiamo cercando le prime info online…
+          {t("text")}
         </p>
       </motion.div>
     </motion.div>

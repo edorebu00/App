@@ -4,17 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { useScrolled } from "@/lib/useScrolled";
-
-const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/circuiti", label: "Circuiti" },
-];
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function PublicHeader({ loggedIn }: { loggedIn: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const scrolled = useScrolled();
+  const t = useTranslations("publicHeader");
+  const tNav = useTranslations("nav");
+
+  const NAV_LINKS = [
+    { href: "/", label: tNav("home") },
+    { href: "/circuiti", label: tNav("circuits") },
+  ];
 
   return (
     <header
@@ -52,50 +56,54 @@ export default function PublicHeader({ loggedIn }: { loggedIn: boolean }) {
           })}
         </nav>
         <div className="hidden items-center gap-3 sm:flex">
+          <LanguageSwitcher />
           {loggedIn ? (
             <Link href="/dashboard" className="btn-primary">
-              Il mio garage
+              {t("myGarage")}
             </Link>
           ) : (
             <>
               <Link href="/login" className="text-sm font-medium text-graphite-600 transition hover:text-graphite-900">
-                Accedi
+                {t("login")}
               </Link>
               <Link href="/registrati" className="btn-primary">
-                Registrati
+                {t("register")}
               </Link>
             </>
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setMenuOpen((o) => !o)}
-          className="flex h-9 w-9 items-center justify-center rounded-md text-graphite-600 hover:bg-graphite-100 hover:text-graphite-900 sm:hidden"
-          aria-label={menuOpen ? "Chiudi il menu" : "Apri il menu"}
-          aria-expanded={menuOpen}
-        >
-          <span className="text-xl" aria-hidden>
-            {menuOpen ? "✕" : "☰"}
-          </span>
-        </button>
+        <div className="flex items-center gap-1 sm:hidden">
+          <LanguageSwitcher />
+          <button
+            type="button"
+            onClick={() => setMenuOpen((o) => !o)}
+            className="flex h-9 w-9 items-center justify-center rounded-md text-graphite-600 hover:bg-graphite-100 hover:text-graphite-900"
+            aria-label={menuOpen ? t("menuClose") : t("menuOpen")}
+            aria-expanded={menuOpen}
+          >
+            <span className="text-xl" aria-hidden>
+              {menuOpen ? "✕" : "☰"}
+            </span>
+          </button>
+        </div>
       </div>
 
       {menuOpen && (
         <nav className="border-t border-graphite-200 bg-white px-4 py-3 sm:hidden">
           <div className="flex flex-col gap-1 text-sm font-medium text-graphite-600">
-            <Link href="/" className="rounded-md px-2 py-2 transition hover:bg-graphite-50 hover:text-graphite-900">
-              Home
-            </Link>
-            <Link
-              href="/circuiti"
-              className="rounded-md px-2 py-2 transition hover:bg-graphite-50 hover:text-graphite-900"
-            >
-              Circuiti
-            </Link>
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-md px-2 py-2 transition hover:bg-graphite-50 hover:text-graphite-900"
+              >
+                {link.label}
+              </Link>
+            ))}
             {loggedIn ? (
               <Link href="/dashboard" className="btn-primary mt-2 justify-center">
-                Il mio garage
+                {t("myGarage")}
               </Link>
             ) : (
               <>
@@ -103,10 +111,10 @@ export default function PublicHeader({ loggedIn }: { loggedIn: boolean }) {
                   href="/login"
                   className="rounded-md px-2 py-2 transition hover:bg-graphite-50 hover:text-graphite-900"
                 >
-                  Accedi
+                  {t("login")}
                 </Link>
                 <Link href="/registrati" className="btn-primary mt-2 justify-center">
-                  Registrati
+                  {t("register")}
                 </Link>
               </>
             )}

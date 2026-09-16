@@ -1,12 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ResourceLink } from "@/lib/types";
-
-const EMPTY_COPY: Record<string, string> = {
-  documenti: "Nessun documento trovato online per questo veicolo.",
-  forum: "Nessun forum trovato online per questo veicolo.",
-  video: "Nessun video trovato online per questo veicolo.",
-};
 
 const CATEGORY_ICON: Record<ResourceLink["categoria"], string> = {
   forum: "💬",
@@ -28,17 +23,26 @@ export default function ResourceCategoryView({
   items: ResourceLink[];
   loading: boolean;
 }) {
+  const t = useTranslations("resourceCategory");
+  const tSearch = useTranslations("search");
+
+  const emptyCopy: Record<string, string> = {
+    documenti: t("emptyDocuments"),
+    forum: t("emptyForum"),
+    video: t("emptyVideo"),
+  };
+
   if (loading) {
     return (
       <p className="flex items-center gap-2 text-sm text-graphite-500">
         <span className="spinner text-brand-600" aria-hidden />
-        L&apos;agente IA sta cercando risorse online…
+        {tSearch("searchingResources")}
       </p>
     );
   }
 
   if (items.length === 0) {
-    return <p className="text-sm text-graphite-400">{EMPTY_COPY[category]}</p>;
+    return <p className="text-sm text-graphite-400">{emptyCopy[category]}</p>;
   }
 
   return (

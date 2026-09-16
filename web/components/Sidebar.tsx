@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import type { Vehicle } from "@/lib/types";
 
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
@@ -30,17 +31,18 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
 
 export default function Sidebar({ vehicles }: { vehicles: Vehicle[] }) {
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   return (
     <aside className="w-full shrink-0 border-graphite-200 md:w-60 md:border-r">
       <nav className="space-y-1 py-6 pr-4">
-        <NavLink href="/">🏠 Home</NavLink>
-        <NavLink href="/dashboard">🚗 Il mio garage</NavLink>
-        <NavLink href="/circuiti">🏁 Circuiti</NavLink>
-        <NavLink href="/ricerca">🔍 Ricerca</NavLink>
+        <NavLink href="/">🏠 {t("home")}</NavLink>
+        <NavLink href="/dashboard">🚗 {t("garage")}</NavLink>
+        <NavLink href="/circuiti">🏁 {t("circuits")}</NavLink>
+        <NavLink href="/ricerca">🔍 {t("search")}</NavLink>
 
         <div className="pt-4">
-          <p className="label px-3">I miei veicoli</p>
+          <p className="label px-3">{t("myVehicles")}</p>
           <div className="mt-1 space-y-1">
             {vehicles.map((v) => {
               const href = `/veicoli/${v.id}`;
@@ -67,13 +69,13 @@ export default function Sidebar({ vehicles }: { vehicles: Vehicle[] }) {
               );
             })}
             {vehicles.length === 0 && (
-              <p className="px-3 text-xs text-graphite-400">Nessun veicolo aggiunto.</p>
+              <p className="px-3 text-xs text-graphite-400">{t("noVehicles")}</p>
             )}
             <Link
               href="/veicoli/nuovo"
               className="block rounded-md px-3 py-2 text-sm font-medium text-brand-600 hover:bg-graphite-100"
             >
-              + Aggiungi veicolo
+              {t("addVehicle")}
             </Link>
           </div>
         </div>

@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import type { Vehicle } from "@/lib/types";
 
 const MotionLink = motion.create(Link);
 
 export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
+  const t = useTranslations("vehicleCard");
+
   return (
     <MotionLink
       href={`/veicoli/${vehicle.id}`}
@@ -21,7 +24,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
           {vehicle.type === "moto" ? "🏍️" : "🚗"}
         </span>
         <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-brand-700 shadow-sm">
-          {vehicle.type === "moto" ? "Moto" : "Auto"}
+          {vehicle.type === "moto" ? t("moto") : t("auto")}
         </span>
         {vehicle.year && (
           <span className="absolute right-3 top-3 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-graphite-500 shadow-sm">
@@ -35,12 +38,12 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
           {vehicle.make} {vehicle.model}
         </h3>
         {vehicle.engine_code && (
-          <p className="mt-1 text-sm text-graphite-500">Motore: {vehicle.engine_code}</p>
+          <p className="mt-1 text-sm text-graphite-500">{t("engineLabel")}: {vehicle.engine_code}</p>
         )}
-        {vehicle.plate && <p className="mt-1 text-sm text-graphite-400">Targa: {vehicle.plate}</p>}
+        {vehicle.plate && <p className="mt-1 text-sm text-graphite-400">{t("plateLabel")}: {vehicle.plate}</p>}
 
         <div className="mt-4 flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-brand-600">
-          Apri scheda
+          {t("openSheet")}
           <span aria-hidden className="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
         </div>
       </div>

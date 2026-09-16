@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_SECTIONS, type VehicleType } from "@/lib/types";
 import { getEngineVariants, getMakes, getModels } from "@/lib/vehicleData";
@@ -13,6 +14,7 @@ const MIN_YEAR = 1990;
 export default function NewVehiclePage() {
   const router = useRouter();
   const supabase = createClient();
+  const t = useTranslations("vehicleNew");
 
   const [type, setType] = useState<VehicleType>("auto");
   const [make, setMake] = useState("");
@@ -76,7 +78,7 @@ export default function NewVehiclePage() {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      setError("Sessione scaduta, effettua di nuovo l'accesso.");
+      setError(t("sessionExpired"));
       setLoading(false);
       return;
     }
@@ -96,7 +98,7 @@ export default function NewVehiclePage() {
       .single();
 
     if (insertError || !vehicle) {
-      setError(insertError?.message || "Errore durante la creazione del veicolo.");
+      setError(insertError?.message || t("genericError"));
       setLoading(false);
       return;
     }
@@ -122,30 +124,30 @@ export default function NewVehiclePage() {
   return (
     <div className="relative mx-auto max-w-lg">
       <div className="mb-6 text-center">
-        <p className="eyebrow justify-center">Nuovo arrivo</p>
-        <h1 className="mt-2 text-3xl font-bold text-graphite-900">🏁 Aggiungi veicolo</h1>
+        <p className="eyebrow justify-center">{t("eyebrow")}</p>
+        <h1 className="mt-2 text-3xl font-bold text-graphite-900">{t("title")}</h1>
         <p className="mt-1 text-sm text-graphite-500">
-          Cerca nel catalogo oppure inserisci liberamente marca e modello: al resto pensa l&apos;agente IA.
+          {t("subtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="card animate-rise-in space-y-4">
         <div>
-          <label className="label">Tipologia</label>
+          <label className="label">{t("typeLabel")}</label>
           <div className="flex gap-3">
-            {(["auto", "moto"] as VehicleType[]).map((t) => (
+            {(["auto", "moto"] as VehicleType[]).map((tp) => (
               <button
-                key={t}
+                key={tp}
                 type="button"
-                onClick={() => handleTypeChange(t)}
+                onClick={() => handleTypeChange(tp)}
                 className={`flex-1 rounded-lg border px-4 py-3 text-sm font-semibold capitalize transition-all duration-200 ${
-                  type === t
+                  type === tp
                     ? "scale-[1.02] border-brand-500 bg-brand-50 text-brand-700 shadow-sm"
                     : "border-graphite-300 text-graphite-600 hover:bg-graphite-50"
                 }`}
               >
-                <span className="mr-1.5">{t === "moto" ? "🏍️" : "🚗"}</span>
-                {t}
+                <span className="mr-1.5">{tp === "moto" ? "🏍️" : "🚗"}</span>
+                {tp === "moto" ? t("moto") : t("auto")}
               </button>
             ))}
           </div>
@@ -153,7 +155,7 @@ export default function NewVehiclePage() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="label" htmlFor="make">Marca</label>
+              <label className="label" htmlFor="make">{t("makeLabel")}</label>
               <input
                 id="make"
                 required
@@ -161,7 +163,7 @@ export default function NewVehiclePage() {
                 value={make}
                 onChange={(e) => handleMakeChange(e.target.value)}
                 list="vehicle-makes"
-                placeholder="Cerca o scrivi la marca…"
+                placeholder={t("makePlaceholder")}
                 autoComplete="organization"
               />
               <datalist id="vehicle-makes">
@@ -173,7 +175,7 @@ export default function NewVehiclePage() {
               </datalist>
             </div>
             <div>
-              <label className="label" htmlFor="model">Modello</label>
+              <label className="label" htmlFor="model">{t("modelLabel")}</label>
               <input
                 id="model"
                 required
@@ -181,7 +183,7 @@ export default function NewVehiclePage() {
                 value={model}
                 onChange={(e) => handleModelChange(e.target.value)}
                 list="vehicle-models"
-                placeholder={make ? "Cerca o scrivi il modello…" : "Inserisci prima la marca"}
+                placeholder={make ? t("modelPlaceholderWithMake") : t("modelPlaceholderNoMake")}
                 disabled={!make}
                 autoComplete="off"
               />
@@ -194,7 +196,7 @@ export default function NewVehiclePage() {
               </datalist>
               {make && models.length === 0 && (
                 <p className="mt-1 text-xs text-gold-600">
-                  Marca non ancora nel catalogo: puoi inserire il modello manualmente.
+                  {t("makeNotInCatalogue")}
                 </p>
               )}
             </div>
@@ -202,7 +204,7 @@ export default function NewVehiclePage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="label" htmlFor="engineCode">Motorizzazione</label>
+            <label className="label" htmlFor="engineCode">{t("engineLabel")}</label>
             {variants ? (
               <select
                 id="engineCode"
@@ -212,7 +214,7 @@ export default function NewVehiclePage() {
                 onChange={(e) => handleVariantChange(e.target.value)}
               >
                 <option value="" disabled>
-                  Seleziona motorizzazione…
+                  {t("engineSelectPlaceholder")}
                 </option>
                 {variants.map((v) => (
                   <option key={v.label} value={v.label}>
@@ -225,21 +227,19 @@ export default function NewVehiclePage() {
                 <input
                   id="engineCode"
                   className="input"
-                  placeholder="es. 1.6 MultiJet, K20A…"
+                  placeholder={t("enginePlaceholderFree")}
                   value={engineCode}
                   onChange={(e) => setEngineCode(e.target.value)}
                   disabled={!model}
                 />
                 <p className="mt-1 text-xs text-graphite-500">
-                  {model
-                    ? "Modello o motorizzazione non nel catalogo: inseriscila manualmente."
-                    : "Inserisci prima marca e modello."}
+                  {model ? t("modelNotInCatalogue") : t("enterMakeModelFirst")}
                 </p>
               </>
             )}
           </div>
           <div>
-            <label className="label" htmlFor="year">Anno</label>
+            <label className="label" htmlFor="year">{t("yearLabel")}</label>
             {variants ? (
               <select
                 id="year"
@@ -250,7 +250,7 @@ export default function NewVehiclePage() {
                 onChange={(e) => setYear(e.target.value)}
               >
                 <option value="" disabled>
-                  {selectedVariant ? "Seleziona anno…" : "Scegli prima la motorizzazione"}
+                  {selectedVariant ? t("yearSelectPlaceholder") : t("yearSelectDisabled")}
                 </option>
                 {yearOptions.map((y) => (
                   <option key={y} value={y}>
@@ -271,14 +271,14 @@ export default function NewVehiclePage() {
         </div>
 
         <div>
-          <label className="label" htmlFor="plate">Targa (opzionale)</label>
+          <label className="label" htmlFor="plate">{t("plateLabel")}</label>
           <input id="plate" className="input" value={plate} onChange={(e) => setPlate(e.target.value)} />
         </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
         <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
-          {loading ? "Salvataggio…" : "🏁 Salva veicolo"}
+          {loading ? t("submitLoading") : t("submit")}
         </button>
       </form>
 

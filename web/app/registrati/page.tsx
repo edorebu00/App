@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -19,6 +20,8 @@ const itemVariants = {
 
 export default function RegisterPage() {
   const supabase = createClient();
+  const t = useTranslations("auth");
+  const tBrand = useTranslations("brand");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -70,14 +73,13 @@ export default function RegisterPage() {
             >
               ✉️
             </motion.span>
-            <p className="eyebrow mt-4 justify-center">Un ultimo passo</p>
-            <h1 className="mt-2 text-xl font-semibold text-graphite-900">Controlla la tua email</h1>
+            <p className="eyebrow mt-4 justify-center">{t("confirmEmailEyebrow")}</p>
+            <h1 className="mt-2 text-xl font-semibold text-graphite-900">{t("confirmEmailTitle")}</h1>
             <p className="mt-2 text-sm text-graphite-600">
-              Ti abbiamo inviato un link di conferma a <strong>{email}</strong>. Apri il link per attivare
-              l&apos;account, poi torna qui per accedere.
+              {t.rich("confirmEmailText", { email, b: (chunks) => <strong>{chunks}</strong> })}
             </p>
             <Link href="/login" className="btn-primary mt-4 inline-flex">
-              Vai al login
+              {t("goToLogin")}
             </Link>
           </motion.div>
         ) : (
@@ -90,19 +92,19 @@ export default function RegisterPage() {
           >
             <div className="mb-8 text-center">
               <motion.p variants={itemVariants} className="eyebrow justify-center">
-                Garage digitale
+                {tBrand("eyebrow")}
               </motion.p>
               <motion.h1 variants={itemVariants} className="mt-3 font-display text-3xl font-bold tracking-tight text-graphite-900">
                 My<span className="text-brand-600">Vehicle</span>
               </motion.h1>
               <motion.p variants={itemVariants} className="mt-2 text-sm text-graphite-500">
-                Crea il tuo account e inizia a curare la tua collezione.
+                {t("registerTagline")}
               </motion.p>
             </div>
 
             <motion.form variants={itemVariants} onSubmit={handleSubmit} className="glass-panel space-y-4">
               <div>
-                <label className="label" htmlFor="email">Email</label>
+                <label className="label" htmlFor="email">{t("emailLabel")}</label>
                 <input
                   id="email"
                   type="email"
@@ -113,7 +115,7 @@ export default function RegisterPage() {
                 />
               </div>
               <div>
-                <label className="label" htmlFor="password">Password</label>
+                <label className="label" htmlFor="password">{t("passwordLabel")}</label>
                 <input
                   id="password"
                   type="password"
@@ -123,20 +125,20 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <p className="mt-1 text-xs text-graphite-400">Almeno 6 caratteri.</p>
+                <p className="mt-1 text-xs text-graphite-400">{t("minChars")}</p>
               </div>
 
               {error && <p className="text-sm text-red-600">{error}</p>}
 
               <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
-                {loading ? "Creazione account…" : "Registrati"}
+                {loading ? t("registerSubmitLoading") : t("registerSubmit")}
               </button>
             </motion.form>
 
             <motion.p variants={itemVariants} className="mt-5 text-center text-sm text-graphite-500">
-              Hai già un account?{" "}
+              {t("hasAccount")}{" "}
               <Link href="/login" className="font-medium text-brand-600 hover:underline">
-                Accedi
+                {t("loginLink")}
               </Link>
             </motion.p>
           </motion.div>

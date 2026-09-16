@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -21,6 +22,8 @@ const itemVariants = {
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
+  const t = useTranslations("auth");
+  const tBrand = useTranslations("brand");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +39,7 @@ export default function LoginPage() {
 
     if (error) {
       setLoading(false);
-      setError(error.message === "Invalid login credentials" ? "Email o password non corretti." : error.message);
+      setError(error.message === "Invalid login credentials" ? t("invalidCredentials") : error.message);
       return;
     }
 
@@ -68,7 +71,7 @@ export default function LoginPage() {
             >
               ✓
             </motion.span>
-            <p className="mt-1 text-sm font-medium text-graphite-600">Accesso effettuato, ti portiamo al garage…</p>
+            <p className="mt-1 text-sm font-medium text-graphite-600">{t("loginSuccess")}</p>
           </motion.div>
         ) : (
           <motion.div
@@ -80,19 +83,19 @@ export default function LoginPage() {
           >
             <div className="mb-8 text-center">
               <motion.p variants={itemVariants} className="eyebrow justify-center">
-                Garage digitale
+                {tBrand("eyebrow")}
               </motion.p>
               <motion.h1 variants={itemVariants} className="mt-3 font-display text-3xl font-bold tracking-tight text-graphite-900">
                 My<span className="text-brand-600">Vehicle</span>
               </motion.h1>
               <motion.p variants={itemVariants} className="mt-2 text-sm text-graphite-500">
-                Il tuo parco auto e moto, sempre sotto controllo.
+                {t("tagline")}
               </motion.p>
             </div>
 
             <motion.form variants={itemVariants} onSubmit={handleSubmit} className="glass-panel space-y-4">
               <div>
-                <label className="label" htmlFor="email">Email</label>
+                <label className="label" htmlFor="email">{t("emailLabel")}</label>
                 <input
                   id="email"
                   type="email"
@@ -103,7 +106,7 @@ export default function LoginPage() {
                 />
               </div>
               <div>
-                <label className="label" htmlFor="password">Password</label>
+                <label className="label" htmlFor="password">{t("passwordLabel")}</label>
                 <input
                   id="password"
                   type="password"
@@ -117,14 +120,14 @@ export default function LoginPage() {
               {error && <p className="text-sm text-red-600">{error}</p>}
 
               <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
-                {loading ? "Accesso in corso…" : "Accedi"}
+                {loading ? t("loginSubmitLoading") : t("loginSubmit")}
               </button>
             </motion.form>
 
             <motion.p variants={itemVariants} className="mt-5 text-center text-sm text-graphite-500">
-              Non hai un account?{" "}
+              {t("noAccount")}{" "}
               <Link href="/registrati" className="font-medium text-brand-600 hover:underline">
-                Registrati
+                {t("registerLink")}
               </Link>
             </motion.p>
           </motion.div>

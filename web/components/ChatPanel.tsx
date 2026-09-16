@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import type { ChatMessage } from "@/lib/types";
 
 export default function ChatPanel({
@@ -10,6 +11,8 @@ export default function ChatPanel({
   vehicleId: string;
   initialMessages: ChatMessage[];
 }) {
+  const t = useTranslations("chat");
+  const locale = useLocale();
   const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,12 +35,12 @@ export default function ChatPanel({
       const res = await fetch("/api/agent/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vehicleId, message: text }),
+        body: JSON.stringify({ vehicleId, message: text, locale }),
       });
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Errore durante la risposta dell'assistente.");
+        setError(data.error || t("errorGeneric"));
       } else {
         setMessages((prev) => [
           ...prev,
@@ -52,7 +55,7 @@ export default function ChatPanel({
         ]);
       }
     } catch {
-      setError("Impossibile contattare l'assistente. Riprova più tardi.");
+      setError(t("errorContact"));
     } finally {
       setLoading(false);
     }
@@ -60,11 +63,11 @@ export default function ChatPanel({
 
   return (
     <div className="card flex h-[520px] flex-col">
-      <p className="eyebrow mb-3">🤖 Assistente IA</p>
+      <p className="eyebrow mb-3">{t("title")}</p>
       <div className="flex-1 space-y-3 overflow-y-auto">
         {messages.length === 0 && (
           <p className="text-sm text-graphite-500">
-            Fai una domanda sul tuo veicolo: l&apos;assistente risponderà usando i documenti caricati.
+            {t("empty")}
           </p>
         )}
         {messages.map((m) => (
@@ -83,7 +86,7 @@ export default function ChatPanel({
         {loading && (
           <p className="flex items-center gap-2 text-sm text-graphite-500">
             <span className="spinner text-brand-600" aria-hidden />
-            L&apos;assistente sta scrivendo…
+            {t("thinking")}
           </p>
         )}
       </div>
@@ -93,12 +96,12 @@ export default function ChatPanel({
       <form onSubmit={handleSend} className="mt-3 flex gap-2 border-t border-graphite-200 pt-3">
         <input
           className="input"
-          placeholder="Scrivi una domanda…"
+          placeholder={t("placeholder")}
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
         <button type="submit" disabled={loading} className="btn-primary">
-          Invia
+          {t("send")}
         </button>
       </form>
     </div>
