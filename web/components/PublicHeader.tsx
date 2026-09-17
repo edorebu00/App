@@ -22,8 +22,8 @@ export default function PublicHeader({ loggedIn }: { loggedIn: boolean }) {
 
   return (
     <header
-      className={`sticky top-0 z-40 border-b bg-white/85 backdrop-blur-xl transition-shadow duration-300 ${
-        scrolled ? "border-graphite-200 shadow-sm shadow-graphite-900/5" : "border-transparent"
+      className={`sticky top-0 z-40 border-b bg-graphite-50/80 backdrop-blur-xl transition-shadow duration-300 ${
+        scrolled ? "border-graphite-200 shadow-sm shadow-black/30" : "border-transparent"
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
@@ -31,8 +31,8 @@ export default function PublicHeader({ loggedIn }: { loggedIn: boolean }) {
           href="/"
           className="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-graphite-900"
         >
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-base text-white shadow-sm shadow-brand-600/30">M</span>
-          <span>My<span className="text-brand-600">Vehicle</span></span>
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-b from-brand-500 to-brand-400 text-base font-semibold text-graphite-50 shadow-sm shadow-black/40">M</span>
+          <span>My<span className="text-brand-500">Vehicle</span></span>
         </Link>
         <nav className="hidden items-center gap-1 text-sm font-medium text-graphite-600 sm:flex">
           {NAV_LINKS.map((link) => {
@@ -82,15 +82,19 @@ export default function PublicHeader({ loggedIn }: { loggedIn: boolean }) {
             aria-label={menuOpen ? t("menuClose") : t("menuOpen")}
             aria-expanded={menuOpen}
           >
-            <span className="text-xl" aria-hidden>
-              {menuOpen ? "✕" : "☰"}
-            </span>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
+              {menuOpen ? (
+                <path d="M4 4 L14 14 M14 4 L4 14" />
+              ) : (
+                <path d="M2.5 5 H15.5 M2.5 9 H15.5 M2.5 13 H15.5" />
+              )}
+            </svg>
           </button>
         </div>
       </div>
 
       {menuOpen && (
-        <nav className="border-t border-graphite-200 bg-white px-4 py-3 sm:hidden">
+        <nav className="border-t border-graphite-200 bg-graphite-50 px-4 py-3 sm:hidden">
           <div className="flex flex-col gap-1 text-sm font-medium text-graphite-600">
             {NAV_LINKS.map((link) => (
               <Link

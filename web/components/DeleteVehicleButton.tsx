@@ -60,7 +60,7 @@ export default function DeleteVehicleButton({ vehicleId, label }: { vehicleId: s
     <button
       onClick={handleDelete}
       disabled={deleting}
-      className="btn-secondary border-red-200 text-red-600 hover:bg-red-50"
+      className="btn-secondary border-red-500/30 text-red-400 hover:border-red-500/50 hover:bg-red-500/10"
     >
       {deleting ? t("deleting") : t("deleteVehicle")}
     </button>

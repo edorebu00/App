@@ -52,7 +52,7 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-graphite-50 px-4">
-      <div className="animate-drift pointer-events-none absolute left-1/2 top-0 h-80 w-[36rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-brand-100/70 blur-3xl" />
+      <div className="animate-drift pointer-events-none absolute left-1/2 top-0 h-80 w-[36rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-brand-500/15 blur-3xl" />
 
       <AnimatePresence mode="wait">
         {success ? (
@@ -67,7 +67,7 @@ export default function LoginPage() {
               initial={{ scale: 0.6, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.1, type: "spring", stiffness: 400, damping: 18 }}
-              className="grid h-12 w-12 place-items-center rounded-full bg-green-100 text-2xl text-green-700"
+              className="grid h-12 w-12 place-items-center rounded-full bg-emerald-500/15 text-2xl text-emerald-400"
             >
               ✓
             </motion.span>
@@ -117,7 +117,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              {error && <p className="text-sm text-red-600">{error}</p>}
+              {error && <p className="text-sm text-red-400">{error}</p>}
 
               <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
                 {loading ? t("loginSubmitLoading") : t("loginSubmit")}
