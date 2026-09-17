@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { safeExternalUrl } from "@/lib/safeUrl";
 import type { ResourceLink } from "@/lib/types";
 
 const CATEGORY_ICON: Record<ResourceLink["categoria"], string> = {
@@ -60,24 +61,30 @@ export default function ResourceCategoryView({
 
   return (
     <ul className="space-y-2">
-      {items.map((item, i) => (
-        <li key={i} className="card flex items-start gap-3">
-          <span className="mt-0.5 text-xl" aria-hidden>
-            {CATEGORY_ICON[item.categoria] || "🔗"}
-          </span>
-          <span className="min-w-0">
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-brand-600 hover:underline"
-            >
-              {item.titolo}
-            </a>
-            <p className="mt-1 text-sm text-graphite-500">{item.descrizione}</p>
-          </span>
-        </li>
-      ))}
+      {items.map((item, i) => {
+        // L'URL arriva dal modello IA: se non e' http/https non lo rendiamo cliccabile.
+        const href = safeExternalUrl(item.url);
+        if (!href) return null;
+
+        return (
+          <li key={i} className="card flex items-start gap-3">
+            <span className="mt-0.5 text-xl" aria-hidden>
+              {CATEGORY_ICON[item.categoria] || "🔗"}
+            </span>
+            <span className="min-w-0">
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-brand-600 hover:underline"
+              >
+                {item.titolo}
+              </a>
+              <p className="mt-1 text-sm text-graphite-500">{item.descrizione}</p>
+            </span>
+          </li>
+        );
+      })}
     </ul>
   );
 }

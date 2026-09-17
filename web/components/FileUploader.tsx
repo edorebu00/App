@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { DOCUMENT_EXTENSIONS, MAX_UPLOAD_BYTES, hasAllowedExtension, sanitizeFileName } from "@/lib/files";
 
 export default function FileUploader({ vehicleId }: { vehicleId: string }) {
   const supabase = createClient();
@@ -16,8 +17,23 @@ export default function FileUploader({ vehicleId }: { vehicleId: string }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploading(true);
     setError(null);
+
+    // L'attributo `accept` e' solo un suggerimento del browser: il controllo vero va fatto qui,
+    // altrimenti finiscono nello storage file che poi l'estrazione testo non sa comunque leggere.
+    if (!hasAllowedExtension(file.name, DOCUMENT_EXTENSIONS)) {
+      setError(t("unsupportedFileType"));
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setError(t("fileTooLarge"));
+      e.target.value = "";
+      return;
+    }
+
+    setUploading(true);
 
     const {
       data: { user },
@@ -29,7 +45,7 @@ export default function FileUploader({ vehicleId }: { vehicleId: string }) {
       return;
     }
 
-    const path = `${user.id}/${vehicleId}/${Date.now()}-${file.name}`;
+    const path = `${user.id}/${vehicleId}/${Date.now()}-${sanitizeFileName(file.name)}`;
 
     const { error: uploadError } = await supabase.storage.from("vehicle-files").upload(path, file);
 
@@ -74,7 +90,12 @@ export default function FileUploader({ vehicleId }: { vehicleId: string }) {
     <div>
       <label className="btn-primary inline-flex cursor-pointer">
         {uploading ? t("uploading") : t("uploadButton")}
-        <input type="file" accept=".pdf,.txt" className="hidden" onChange={handleUpload} />
+        <input
+          type="file"
+          accept=".pdf,.txt,application/pdf,text/plain"
+          className="hidden"
+          onChange={handleUpload}
+        />
       </label>
       <p className="mt-1 text-xs text-graphite-400">{t("supportedFormats")}</p>
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}

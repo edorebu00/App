@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { IMAGE_EXTENSIONS, MAX_UPLOAD_BYTES, hasAllowedExtension, sanitizeFileName } from "@/lib/files";
+import { safeExternalUrl } from "@/lib/safeUrl";
 import type { ResourceLink, SectionImage, SectionKey, VehicleSection } from "@/lib/types";
 
 interface Props {
@@ -33,6 +35,7 @@ export default function SectionEditor({ section, images: initialImages, specs, r
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [showOwnData, setShowOwnData] = useState(hasOwnData);
 
   function updateField(index: number, key: string, value: string) {
@@ -69,6 +72,14 @@ export default function SectionEditor({ section, images: initialImages, specs, r
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setUploadError(null);
+
+    if (!hasAllowedExtension(file.name, IMAGE_EXTENSIONS) || file.size > MAX_UPLOAD_BYTES) {
+      setUploadError(t("imageUploadError"));
+      e.target.value = "";
+      return;
+    }
+
     setUploading(true);
 
     const {
@@ -80,11 +91,13 @@ export default function SectionEditor({ section, images: initialImages, specs, r
       return;
     }
 
-    const path = `${user.id}/${section.vehicle_id}/${section.id}/${Date.now()}-${file.name}`;
+    const path = `${user.id}/${section.vehicle_id}/${section.id}/${Date.now()}-${sanitizeFileName(file.name)}`;
 
     const { error: uploadError } = await supabase.storage.from("vehicle-images").upload(path, file);
 
-    if (!uploadError) {
+    if (uploadError) {
+      setUploadError(t("imageUploadError"));
+    } else {
       const { data: row } = await supabase
         .from("section_images")
         .insert({ section_id: section.id, storage_path: path, source: "upload", caption: file.name })
@@ -122,21 +135,26 @@ export default function SectionEditor({ section, images: initialImages, specs, r
 
             {resources && resources.length > 0 && (
               <ul className="space-y-1.5 text-sm">
-                {resources.map((r, i) => (
-                  <li key={i} className="flex items-baseline gap-1.5">
-                    <span aria-hidden>
-                      {r.categoria === "pezzo_ricambio" ? "🔧" : r.categoria === "schema_tecnico" ? "🗺️" : "📄"}
-                    </span>
-                    <a
-                      href={r.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-brand-600 hover:underline"
-                    >
-                      {r.titolo}
-                    </a>
-                  </li>
-                ))}
+                {resources.map((r, i) => {
+                  const href = safeExternalUrl(r.url);
+                  if (!href) return null;
+
+                  return (
+                    <li key={i} className="flex items-baseline gap-1.5">
+                      <span aria-hidden>
+                        {r.categoria === "pezzo_ricambio" ? "🔧" : r.categoria === "schema_tecnico" ? "🗺️" : "📄"}
+                      </span>
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand-600 hover:underline"
+                      >
+                        {r.titolo}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </>
@@ -214,9 +232,16 @@ export default function SectionEditor({ section, images: initialImages, specs, r
               <label className="label mb-0">{t("uploadedSchemesLabel")}</label>
               <label className="btn-secondary cursor-pointer text-xs">
                 {uploading ? t("uploading") : t("uploadImage")}
-                <input type="file" accept="image/*,.pdf" className="hidden" onChange={handleImageUpload} />
+                <input
+                  type="file"
+                  accept=".png,.jpg,.jpeg,.webp,.gif,.pdf"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
               </label>
             </div>
+
+            {uploadError && <p className="mb-2 text-sm text-red-600">{uploadError}</p>}
 
             {images.length === 0 ? (
               <p className="text-sm text-graphite-400">

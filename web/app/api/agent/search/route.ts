@@ -2,10 +2,13 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import type Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@/lib/supabase/server";
-import { getAnthropicClient, CLAUDE_MODEL } from "@/lib/anthropic";
+import { getAnthropicClient, CLAUDE_MODEL, logTokenUsage } from "@/lib/anthropic";
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_SEARCH_MODEL } from "@/lib/openai";
-import { LOCALE_LANGUAGE_NAME, resolveLocale } from "@/i18n/locales";
-import type { SearchPayload } from "@/lib/types";
+import { LOCALE_LANGUAGE_NAME, resolveLocale, type Locale } from "@/i18n/locales";
+import { checkRateLimit } from "@/lib/rateLimit";
+import { safeExternalUrl } from "@/lib/safeUrl";
+import { clampText, isUuid } from "@/lib/validation";
+import type { ResourceLink, SearchPayload } from "@/lib/types";
 
 // La ricerca fa alcune chiamate allo strumento web_search piu' l'eventuale retry: teniamo un
 // margine oltre alla durata attesa (~20-50s per tentativo), il piano Hobby di Vercel supporta
@@ -13,6 +16,24 @@ import type { SearchPayload } from "@/lib/types";
 export const maxDuration = 180;
 
 const MAX_RISORSE = 10;
+/** La query finisce nel prompt: un tetto evita richieste enormi (e costose) verso i modelli. */
+const MAX_QUERY_CHARS = 200;
+const MAX_TEXT_FIELD_CHARS = 500;
+const MAX_SPEC_ENTRIES = 12;
+const MAX_SUMMARY_CHARS = 2000;
+/** Ogni ricerca costa piu' chiamate al modello con web search: massimo 10 ogni 5 minuti per utente. */
+const RATE_LIMIT = 10;
+const RATE_WINDOW_MS = 5 * 60 * 1000;
+/** Numero di ricerche web concesse al modello: al primo tentativo e al ritentativo. */
+const MAX_WEB_SEARCHES = 4;
+const MAX_WEB_SEARCHES_RETRY = 2;
+/**
+ * Per quanto tempo una ricerca identica (stesso utente, stesso veicolo, stessa query) viene
+ * riproposta dalla cronologia invece di rieseguirla. Le risorse online su un modello di
+ * qualche anno fa non cambiano da un giorno all'altro, mentre rieseguirla costa ogni volta
+ * l'intero giro di ricerche web.
+ */
+const REUSE_WINDOW_DAYS = 7;
 
 /**
  * Tool "fittizio" (non eseguito da noi: e' il modo per chiedere a Claude un output
@@ -45,6 +66,9 @@ const SUBMIT_FINDINGS_TOOL: Anthropic.Tool = {
             },
             sezione: {
               type: "string",
+              description:
+                "La sezione più specifica possibile. Usa 'generale' SOLO se la risorsa non è riconducibile " +
+                "a nessuna delle altre (es. un forum generico sul marchio).",
               enum: ["motore", "carrozzeria", "assetto", "impianto_frenante", "trasmissione", "elettronica", "generale"],
             },
             titolo: { type: "string" },
@@ -57,8 +81,11 @@ const SUBMIT_FINDINGS_TOOL: Anthropic.Tool = {
       specifiche: {
         type: "object",
         description:
-          "Specifiche tecniche per sezione. 'motore' e' obbligatorio (3-6 voci). Le altre sezioni solo se " +
-          "non rallentano la risposta: meglio ometterle che ritardare la chiamata a questo strumento.",
+          "Specifiche tecniche per sezione. 'motore' è OBBLIGATORIO con 3-6 voci, ricavate dalla ricerca web " +
+          "e dalla tua conoscenza del modello (se un dato non è certo al 100% va bene il valore tipico di " +
+          "quella motorizzazione). Le altre sezioni sono un bonus: compilale solo se hai già i dati sotto " +
+          "mano, mai facendo ricerche aggiuntive — meglio ometterle che ritardare la chiamata. Per un " +
+          "veicolo raro non inventare numeri: ometti la singola voce.",
         properties: {
           motore: { type: "object", additionalProperties: { type: "string" } },
           carrozzeria: { type: "object", additionalProperties: { type: "string" } },
@@ -71,8 +98,12 @@ const SUBMIT_FINDINGS_TOOL: Anthropic.Tool = {
         type: "string",
         description:
           "Stima testuale del bollo (tassa di possesso) annuo per QUESTO veicolo, es. " +
-          "'circa 150-180 €/anno (14 CV fiscali, Euro 5) — varia per regione'. Ometti il campo del tutto se " +
-          "non riesci a stimare nemmeno la fascia approssimativa (mai inventare un numero a caso).",
+          "'circa 150-180 €/anno (14 CV fiscali, Euro 5) — varia per regione'. Ricavala SENZA ricerche web " +
+          "dedicate, dai CV fiscali/kW e dalla classe Euro già emersi per 'motore': formula ACI per le auto, " +
+          "fascia di cilindrata per le moto (sotto i 150 cc di norma non è dovuto). Indica sempre un " +
+          "intervallo, i CV fiscali/kW e la classe Euro usati, e ricorda che varia per regione (in Valle " +
+          "d'Aosta e nelle Province di Trento e Bolzano non si paga). Ometti il campo del tutto se non " +
+          "riesci a stimare nemmeno la fascia (mai inventare un numero a caso).",
       },
     },
     required: ["summary", "risorse", "specifiche"],
@@ -116,50 +147,76 @@ function extractPayloadFromText(text: string): SearchPayload | null {
   }
 }
 
+/**
+ * Il payload arriva dal modello (che a sua volta cita pagine web di terzi): prima di salvarlo e
+ * rimandarlo al browser scartiamo gli URL non http/https (`javascript:` diventerebbe XSS al click
+ * nel momento in cui il link viene renderizzato) e tagliamo i campi testuali, cosi' una risposta
+ * anomala non riempie il database.
+ */
+function sanitizePayload(payload: SearchPayload): SearchPayload {
+  const risorse: ResourceLink[] = [];
+
+  for (const risorsa of payload.risorse || []) {
+    const url = safeExternalUrl(risorsa?.url);
+    const titolo = clampText(risorsa?.titolo, MAX_TEXT_FIELD_CHARS);
+    if (!url || !titolo) continue;
+
+    risorse.push({
+      categoria: risorsa.categoria,
+      sezione: risorsa.sezione,
+      titolo,
+      url,
+      descrizione: clampText(risorsa?.descrizione, MAX_TEXT_FIELD_CHARS) || "",
+    });
+
+    if (risorse.length >= MAX_RISORSE) break;
+  }
+
+  const specifiche: SearchPayload["specifiche"] = {};
+  for (const [sezione, voci] of Object.entries(payload.specifiche || {})) {
+    if (!voci || typeof voci !== "object") continue;
+    const clean: Record<string, string> = {};
+    for (const [key, value] of Object.entries(voci).slice(0, MAX_SPEC_ENTRIES)) {
+      const cleanKey = clampText(key, 80);
+      const cleanValue = clampText(value, MAX_TEXT_FIELD_CHARS);
+      if (cleanKey && cleanValue) clean[cleanKey] = cleanValue;
+    }
+    if (Object.keys(clean).length) {
+      specifiche[sezione as keyof SearchPayload["specifiche"]] = clean;
+    }
+  }
+
+  return {
+    risorse,
+    specifiche,
+    bollo: clampText(payload.bollo, MAX_TEXT_FIELD_CHARS) || undefined,
+    summary: clampText(payload.summary, MAX_SUMMARY_CHARS) || undefined,
+    locale: payload.locale,
+  };
+}
+
 function buildSearchSystemPrompt(language: string) {
+  // Le regole sui singoli campi (sezione, specifiche, bollo) stanno nelle descrizioni dello
+  // schema di submit_findings, che viene comunque inviato a ogni richiesta: ripeterle qui
+  // significherebbe pagarle due volte. Qui resta solo quello che lo schema non può dire —
+  // l'obiettivo, il budget di ricerche e la strategia.
   return (
-  "Sei l'assistente tecnico di My Vehicle. Quando un utente aggiunge un veicolo, il tuo compito è " +
-  "riempire SUBITO le sue schede (Motore, Carrozzeria, Assetto, Impianto frenante, Trasmissione, " +
-  "Elettronica) con informazioni utili, cosi' l'utente trova già tutto pronto senza dover compilare nulla " +
-  "a mano. Usa lo strumento di ricerca web per trovare forum dedicati, manuali/PDF di manutenzione, video " +
-  "YouTube (tutorial/riparazioni/revisioni), schemi tecnici/viste esplose, e negozi/cataloghi di pezzi di " +
-  "ricambio pertinenti al modello e alla motorizzazione indicati. L'utente è in attesa: sii efficiente, fai " +
-  "al massimo 3-4 ricerche mirate (non ripetere ricerche simili) e vai dritto al risultato senza divagare. " +
-  "La velocita' e il completare la risposta contano piu' della completezza assoluta.\n\n" +
-  "DUE RICERCHE SONO PRIORITARIE e vanno fatte quasi sempre (salvo che il veicolo sia troppo generico/raro): " +
-  "1) la pagina del catalogo ricambi di AUTODOC (dominio auto-doc.it per l'Italia, CON il trattino — NON " +
-  "autodoc.it senza trattino, che è un'azienda diversa e non centrata; per altri paesi il dominio è " +
-  "autodoc.<paese>, es. autodoc.co.uk, autodoc.de) per questo esatto modello e " +
-  "motorizzazione, da salvare con categoria 'catalogo_ricambi'; 2) il piano di manutenzione/tagliandi " +
-  "ufficiale del costruttore (intervalli di manutenzione, cosa fare a quali km/anni), da salvare con " +
-  "categoria 'piano_manutenzione' — utile a chi vuole fare da sé i tagliandi senza andare dal meccanico. " +
-  "Se non trovi una pagina AutoDoc specifica per il modello esatto, usa la pagina di ricerca generica di " +
-  "AutoDoc per quella marca/modello invece di ometterla del tutto.\n\n" +
-  "REGOLA IMPORTANTE su \"sezione\": per OGNI risultato scegli la sezione più specifica possibile tra " +
-  "motore, carrozzeria, assetto, impianto_frenante, trasmissione, elettronica. Usa 'generale' SOLO come " +
-  "ultima risorsa se davvero non è riconducibile a nessuna di queste (es. un forum generale sul marchio).\n\n" +
-  "REGOLA IMPORTANTE su \"specifiche\": è OBBLIGATORIO valorizzare SOLO 'motore', con 3-6 voci, usando la " +
-  "ricerca web E la tua conoscenza generale del modello/motorizzazione indicati (se non trovi un dato preciso " +
-  "al 100%, va bene il valore tipico/più diffuso per quella motorizzazione). Le altre sezioni " +
-  "('carrozzeria', 'assetto', 'impianto_frenante', 'trasmissione') sono un bonus: valorizzale SOLO se hai " +
-  "già i dati a portata di mano senza fare ricerche aggiuntive — è molto meglio chiamare subito lo strumento " +
-  "con 'motore' compilato e le altre sezioni vuote, piuttosto che ritardare o troncare la risposta per " +
-  "inseguire la completezza. Non inventare mai numeri specifici per un veicolo troppo raro o sconosciuto: " +
-  "in quel caso ometti solo quella singola voce.\n\n" +
-  "REGOLA IMPORTANTE su \"bollo\": valorizzalo SENZA fare ricerche web dedicate, usando solo la tua conoscenza " +
-  "generale e i CV fiscali/kW e la classe emissioni (Euro 0-6) gia' emersi per la sezione 'motore' — non e' " +
-  "una delle 3-4 ricerche prioritarie. Per le auto usa la formula ACI standard (€/kW in base alla classe " +
-  "Euro); per le moto la fascia in base alla cilindrata (sotto i 150 cc di norma non e' dovuto). Presentalo " +
-  "sempre come stima di massima con un intervallo (es. 'circa 150-180 €/anno'), specifica i CV fiscali/kW e " +
-  "la classe Euro usati per calcolarlo, e ricorda che l'importo varia per regione (in Valle d'Aosta e nelle " +
-  "Province di Trento e Bolzano non si paga). Ometti il campo del tutto se il veicolo o la motorizzazione " +
-  "sono troppo generici per una stima sensata: mai inventare un numero secco senza intervallo ne' contesto.\n\n" +
-  `Rispondi SEMPRE in ${language} (sia il riepilogo sia i valori testuali dentro lo strumento, es. "titolo", ` +
-  `"descrizione", i nomi delle caratteristiche in "specifiche"). Quando hai finito le ricerche, chiama SUBITO ` +
-  "lo strumento \"submit_findings\" con il risultato: non scrivere mai il risultato come testo o come blocco " +
-  "di codice, usa sempre e solo quello strumento, una sola volta. " +
-  'I valori delle chiavi fisse "categoria" e "sezione" restano SEMPRE nei codici elencati sopra (mai tradotti), ' +
-  "cosi' l'app puo' continuare a interpretarli correttamente."
+    "Sei l'assistente tecnico di My Vehicle. Quando un utente aggiunge un veicolo riempi le sue schede " +
+    "(Motore, Carrozzeria, Assetto, Impianto frenante, Trasmissione, Elettronica) con informazioni utili, " +
+    "così le trova già pronte senza compilare nulla a mano.\n\n" +
+    "BUDGET: l'utente è in attesa. Fai al massimo 3-4 ricerche web mirate, senza ripeterne di simili, poi " +
+    "chiama subito submit_findings. Completare la risposta conta più della completezza assoluta.\n\n" +
+    "COSA CERCARE: forum dedicati, manuali e PDF di manutenzione, video YouTube (tutorial, riparazioni, " +
+    "revisioni), schemi tecnici e viste esplose, cataloghi e negozi di ricambi pertinenti al modello e " +
+    "alla motorizzazione indicati.\n\n" +
+    "DUE RICERCHE PRIORITARIE, salvo veicolo troppo generico o raro:\n" +
+    "1) il catalogo ricambi AUTODOC per questo esatto modello e motorizzazione. In Italia il dominio è " +
+    "auto-doc.it, CON il trattino (autodoc.it senza trattino è un'altra azienda); altrove è " +
+    "autodoc.<paese>, es. autodoc.co.uk, autodoc.de. Se non trovi la pagina del modello esatto usa la " +
+    "ricerca generica di AutoDoc per quella marca/modello invece di ometterla. Categoria: catalogo_ricambi.\n" +
+    "2) il piano di manutenzione ufficiale del costruttore (intervalli, cosa fare a quali km/anni), utile " +
+    "a chi vuole fare da sé i tagliandi. Categoria: piano_manutenzione.\n\n" +
+    `LINGUA: rispondi SEMPRE in ${language}, sia il riepilogo sia i valori testuali dentro lo strumento.`
   );
 }
 
@@ -181,7 +238,7 @@ async function searchWithOpenAI(systemPrompt: string, userContent: string): Prom
 }
 
 /** Un tentativo di ricerca con Anthropic: ricerca web + output strutturato via submit_findings. */
-async function callAnthropicSearch(userContent: string, systemPrompt: string) {
+async function callAnthropicSearch(userContent: string, systemPrompt: string, maxSearches: number) {
   const anthropic = getAnthropicClient();
   const message = await anthropic.messages.create({
     model: CLAUDE_MODEL,
@@ -190,13 +247,18 @@ async function callAnthropicSearch(userContent: string, systemPrompt: string) {
     messages: [{ role: "user", content: userContent }],
     tools: [
       {
-        type: "web_search_20250305",
+        // Variante con filtraggio dinamico dei risultati: scarta da sé la impaginazione delle
+        // pagine trovate invece di riversarla nel contesto, dove verrebbe poi rispedita a ogni
+        // iterazione del giro di ricerche. È la parte più pesante di una ricerca.
+        type: "web_search_20260209",
         name: "web_search",
-        max_uses: 4,
-      } as any,
+        max_uses: maxSearches,
+      },
       SUBMIT_FINDINGS_TOOL,
     ],
   });
+
+  logTokenUsage(`ricerca (max ${maxSearches} web search)`, message.usage);
 
   const found = extractFindingsFromToolUse(message.content);
   return {
@@ -204,6 +266,48 @@ async function callAnthropicSearch(userContent: string, systemPrompt: string) {
     summary: found?.summary ?? "",
     stopReason: message.stop_reason ?? undefined,
   };
+}
+
+/**
+ * Cerca in `search_results` una ricerca identica e recente dello stesso utente. Le policy RLS
+ * limitano già la tabella alle proprie righe: nessun risultato viene condiviso fra utenti, il che
+ * evita anche che qualcuno possa avvelenare la cache di qualcun altro.
+ */
+async function findReusableSearch(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  vehicleId: string | null,
+  query: string,
+  locale: Locale
+): Promise<SearchPayload | null> {
+  const since = new Date(Date.now() - REUSE_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
+
+  let q = supabase
+    .from("search_results")
+    .select("results")
+    .eq("user_id", userId)
+    .eq("query", query)
+    .gte("created_at", since)
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  q = vehicleId ? q.eq("vehicle_id", vehicleId) : q.is("vehicle_id", null);
+
+  const { data } = await q.maybeSingle();
+  const results = data?.results;
+
+  // Le righe salvate prima di questa versione hanno una forma diversa (un semplice array di
+  // risorse, senza specifiche né riepilogo): non sono riutilizzabili, si rifà la ricerca.
+  if (!results || Array.isArray(results) || !Array.isArray(results.risorse) || !results.risorse.length) {
+    return null;
+  }
+
+  // I testi salvati sono nella lingua in cui il modello li ha scritti: riproporli a chi sta
+  // usando un'altra lingua sarebbe un risparmio pagato dall'utente. Le righe più vecchie non
+  // hanno il campo e per prudenza non vengono riusate.
+  if (results.locale !== locale) return null;
+
+  return results as SearchPayload;
 }
 
 export async function POST(request: Request) {
@@ -217,17 +321,49 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: tErr("notAuthenticated") }, { status: 401 });
   }
 
-  const { query, vehicleId, locale } = (await request.json()) as {
-    query?: string;
-    vehicleId?: string;
-    locale?: string;
-  };
+  let body: { query?: unknown; vehicleId?: unknown; locale?: unknown };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: tErr("invalidRequest") }, { status: 400 });
+  }
 
-  if (!query || query.trim().length < 2) {
+  const query = clampText(body.query, MAX_QUERY_CHARS);
+  if (!query || query.length < 2) {
     return NextResponse.json({ error: tErr("searchQueryTooShort") }, { status: 400 });
   }
 
-  const language = LOCALE_LANGUAGE_NAME[resolveLocale(locale)];
+  // Un id non-UUID farebbe fallire la query PostgREST con un errore di parsing: meglio
+  // trattarlo come "nessun veicolo di riferimento".
+  const vehicleId = isUuid(body.vehicleId) ? body.vehicleId : null;
+  const locale = typeof body.locale === "string" ? body.locale : undefined;
+
+  const resolvedLocale = resolveLocale(locale);
+  const language = LOCALE_LANGUAGE_NAME[resolvedLocale];
+
+  // Ricerca identica già fatta di recente: si ripropone il risultato salvato. Il controllo sta
+  // prima del limite di frequenza perché una risposta che arriva dal database non costa nulla
+  // al modello e non ha senso che consumi quota.
+  const reused = await findReusableSearch(supabase, user.id, vehicleId, query, resolvedLocale);
+  if (reused) {
+    console.info(`[token] ricerca: riuso di un risultato salvato per "${query}" (nessuna chiamata al modello).`);
+    return NextResponse.json({
+      query,
+      risorse: reused.risorse,
+      specifiche: reused.specifiche,
+      bollo: reused.bollo,
+      summary: reused.summary ?? "",
+    });
+  }
+
+  const limit = checkRateLimit(`search:${user.id}`, RATE_LIMIT, RATE_WINDOW_MS);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: tErr("rateLimited") },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
+    );
+  }
+
   const searchSystemPrompt = buildSearchSystemPrompt(language);
 
   let vehicleContext = "";
@@ -254,7 +390,7 @@ export async function POST(request: Request) {
     let anthropicThrew = false;
 
     try {
-      const first = await callAnthropicSearch(userContent, searchSystemPrompt);
+      const first = await callAnthropicSearch(userContent, searchSystemPrompt, MAX_WEB_SEARCHES);
       payload = first.payload;
       summary = first.summary;
       stopReason = first.stopReason;
@@ -266,10 +402,13 @@ export async function POST(request: Request) {
         console.warn(
           `Ricerca IA: nessun risultato strutturato al primo tentativo (stop_reason=${stopReason}), riprovo in modo piu' snello...`
         );
+        // Il ritentativo serve a chiudere, non a ricominciare da capo: meno ricerche web, che
+        // sono il grosso del costo, e istruzioni per andare dritto allo strumento.
         const retry = await callAnthropicSearch(
           `${userContent}\n\n(Il tentativo precedente si e' interrotto prima di completare. Sii piu' conciso: ` +
             'massimo 5 risorse e specifiche solo per "motore", poi chiama SUBITO submit_findings.)',
-          searchSystemPrompt
+          searchSystemPrompt,
+          MAX_WEB_SEARCHES_RETRY
         );
         payload = retry.payload;
         summary = retry.summary;
@@ -303,25 +442,27 @@ export async function POST(request: Request) {
       );
     }
 
+    const safePayload = sanitizePayload({ ...payload, summary, locale: resolvedLocale });
+
     await supabase.from("search_results").insert({
       user_id: user.id,
-      vehicle_id: vehicleId || null,
+      vehicle_id: vehicleId,
       query,
-      results: payload,
+      results: safePayload,
     });
 
     // Il bollo e' una proprieta' del veicolo (non della singola ricerca): la persistiamo sulla
     // riga del veicolo cosi' resta visibile in testata senza dover riaprire l'ultima ricerca.
-    if (vehicleId && payload.bollo) {
-      await supabase.from("vehicles").update({ bollo_stimato: payload.bollo }).eq("id", vehicleId);
+    if (vehicleId && safePayload.bollo) {
+      await supabase.from("vehicles").update({ bollo_stimato: safePayload.bollo }).eq("id", vehicleId);
     }
 
     return NextResponse.json({
       query,
-      risorse: payload.risorse,
-      specifiche: payload.specifiche,
-      bollo: payload.bollo,
-      summary,
+      risorse: safePayload.risorse,
+      specifiche: safePayload.specifiche,
+      bollo: safePayload.bollo,
+      summary: safePayload.summary ?? "",
     });
   } catch (err) {
     console.error("Errore ricerca IA:", err);

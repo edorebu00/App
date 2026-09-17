@@ -291,7 +291,8 @@
     "noSchemes": "No diagram uploaded. Check the \"Documents\" tab above for ones found online, or upload your own.",
     "uploadedTag": "Uploaded",
     "webTag": "From the web",
-    "imageFallback": "Image"
+    "imageFallback": "Image",
+    "imageUploadError": "Upload failed: use an image or a PDF under 20 MB."
   },
   "documentsPage": {
     "backTo": "← Back to {name}",
@@ -302,7 +303,9 @@
     "uploading": "Uploading…",
     "supportedFormats": "Formats supported for AI reading: PDF, TXT.",
     "sessionExpired": "Session expired, please log in again.",
-    "saveError": "Error while saving the document."
+    "saveError": "Error while saving the document.",
+    "unsupportedFileType": "Unsupported format: upload a PDF or a text file.",
+    "fileTooLarge": "File too large: the limit is 20 MB."
   },
   "documentList": {
     "noFiles": "No files uploaded for this vehicle.",
@@ -338,7 +341,13 @@
     "searchQueryTooShort": "Specify a model or engine code to search for.",
     "searchNoUsableResult": "The search did not produce a usable result. Please try again.",
     "searchTruncated": "The search produced too many results and was interrupted. Try a more specific search.",
-    "searchError": "Error while searching. Please try again later."
+    "searchError": "Error while searching. Please try again later.",
+    "invalidRequest": "Invalid request.",
+    "rateLimited": "Too many requests in a short time. Please wait a few minutes and try again.",
+    "documentNotFound": "Document not found.",
+    "documentProcessingError": "Error while processing the document. Please try again later.",
+    "unsupportedFileType": "Unsupported file type: only PDF and text files are allowed.",
+    "fileTooLarge": "File too large: the limit is 20 MB."
   },
   "resourceCategory": {
     "tabDocuments": "📄 Documents",

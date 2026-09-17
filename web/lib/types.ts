@@ -1,3 +1,5 @@
+import type { Locale } from "@/i18n/locales";
+
 export type VehicleType = "auto" | "moto";
 
 export interface Vehicle {
@@ -71,6 +73,16 @@ export interface SearchPayload {
   specifiche: SectionSpecs;
   /** Stima testuale del bollo annuo (es. "circa 150-180 €/anno, Euro 5, 14 CV fiscali"). */
   bollo?: string;
+  /**
+   * Riepilogo testuale. Salvato insieme al resto così una ricerca identica ripetuta a breve può
+   * essere riproposta dalla cronologia senza richiamare il modello.
+   */
+  summary?: string;
+  /**
+   * Lingua in cui il modello ha scritto titoli, descrizioni e riepilogo. Serve al riuso: una
+   * ricerca salvata in italiano non va riproposta a chi sta usando l'app in tedesco.
+   */
+  locale?: Locale;
 }
 
 export interface EngineVariant {

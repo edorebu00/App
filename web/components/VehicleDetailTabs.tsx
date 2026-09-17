@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import SectionEditor from "./SectionEditor";
 import ResourceCategoryView from "./ResourceCategoryView";
+import { safeExternalUrl } from "@/lib/safeUrl";
 import type { ResourceLink, SectionImage, SectionKey, SectionSpecs, VehicleSection } from "@/lib/types";
 
 type ResourceTabId = "documenti" | "forum" | "video";
@@ -90,8 +91,9 @@ export default function VehicleDetailTabs({
 
   const activeSection = sections.find((s) => s.id === activeId);
   const activeResourceTab = RESOURCE_TABS.find((t) => t.id === activeId);
-  const autodocLink = results.find((r) => r.categoria === "catalogo_ricambi");
-  const maintenanceLink = results.find((r) => r.categoria === "piano_manutenzione");
+  // Solo risorse con un URL http/https: gli altri schemi (es. `javascript:`) non vanno resi cliccabili.
+  const autodocLink = results.find((r) => r.categoria === "catalogo_ricambi" && safeExternalUrl(r.url));
+  const maintenanceLink = results.find((r) => r.categoria === "piano_manutenzione" && safeExternalUrl(r.url));
 
   function sectionLabel(s: VehicleSection) {
     const key = s.section_key as SectionKey;
@@ -114,7 +116,7 @@ export default function VehicleDetailTabs({
       {(autodocLink || maintenanceLink) && (
         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {autodocLink && (
-            <a href={autodocLink.url} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
+            <a href={safeExternalUrl(autodocLink.url)!} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-100 text-xl">
                 🛒
               </span>
@@ -128,7 +130,7 @@ export default function VehicleDetailTabs({
             </a>
           )}
           {maintenanceLink && (
-            <a href={maintenanceLink.url} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
+            <a href={safeExternalUrl(maintenanceLink.url)!} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-100 text-xl">
                 🛠️
               </span>
