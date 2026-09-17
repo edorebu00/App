@@ -1241,12 +1241,14 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.0 EcoBoost 100cv", yearFrom: 2017, yearTo: null },
         { label: "1.0 EcoBoost 125cv", yearFrom: 2017, yearTo: null },
         { label: "1.5 TDCi 85cv", yearFrom: 2017, yearTo: 2021 },
+        { label: "ST 1.6 EcoBoost 182cv", yearFrom: 2013, yearTo: 2017 },
         { label: "1.5 EcoBoost ST 200cv", yearFrom: 2018, yearTo: null },
       ],
       Focus: [
         { label: "1.0 EcoBoost 125cv", yearFrom: 2018, yearTo: null },
         { label: "1.5 EcoBlue 120cv", yearFrom: 2018, yearTo: null },
         { label: "ST 2.3 EcoBoost 280cv", yearFrom: 2019, yearTo: null },
+        { label: "RS 2.3 EcoBoost 350cv", yearFrom: 2016, yearTo: 2018 },
       ],
       Puma: [
         { label: "1.0 EcoBoost 125cv", yearFrom: 2019, yearTo: null },
@@ -1914,6 +1916,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.2 PureTech 130cv", yearFrom: 2019, yearTo: null },
         { label: "1.5 BlueHDi 100cv", yearFrom: 2019, yearTo: null },
         { label: "Elettrica e-208 136cv", yearFrom: 2019, yearTo: null },
+        { label: "GTi 1.6 THP 200cv", yearFrom: 2012, yearTo: 2015 },
+        { label: "GTi by Peugeot Sport 1.6 THP 208cv", yearFrom: 2015, yearTo: 2019 },
       ],
       "308": [
         { label: "1.2 PureTech 130cv", yearFrom: 2021, yearTo: null },
@@ -2050,6 +2054,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       Ibiza: [
         { label: "1.0 TSI 95cv", yearFrom: 2017, yearTo: null },
         { label: "1.5 TSI 150cv FR", yearFrom: 2017, yearTo: null },
+        { label: "Cupra 1.8 TSI 192cv", yearFrom: 2015, yearTo: 2017 },
       ],
       Leon: [
         { label: "1.5 TSI 150cv", yearFrom: 2020, yearTo: null },
@@ -2262,6 +2267,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.6 TDI 105cv", yearFrom: 2012, yearTo: 2019 },
         { label: "2.0 TDI 150cv", yearFrom: 2012, yearTo: null },
         { label: "2.0 TSI GTI 245cv", yearFrom: 2013, yearTo: null },
+        { label: "2.0 TSI R 300cv", yearFrom: 2014, yearTo: 2017 },
       ],
       Scirocco: [
         { label: "1.4 TSI 122cv", yearFrom: 2008, yearTo: 2017 },
