@@ -16,6 +16,13 @@ const RATE_LIMIT = 20;
 const RATE_WINDOW_MS = 5 * 60 * 1000;
 /** Il messaggio d'errore finisce in `processing_error`, visibile nella lista documenti. */
 const MAX_ERROR_CHARS = 200;
+/**
+ * Tetto alle pagine analizzate. Il testo viene comunque troncato a MAX_EXTRACTED_CHARS, ma quel
+ * taglio arriva dopo aver analizzato tutto: un PDF costruito ad arte con decine di migliaia di
+ * pagine terrebbe occupata la funzione fino al timeout. Con il tetto si ottiene un risultato
+ * parziale invece di un errore, e il lavoro resta limitato. Un manuale d'auto sta molto sotto.
+ */
+const MAX_PDF_PAGES = 500;
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -95,8 +102,11 @@ export async function POST(request: Request) {
     let extractedText = "";
 
     if (isPdf) {
-      const { pages, text } = await extractPdfPages(buffer);
+      const { pages, text, totalPages } = await extractPdfPages(buffer);
       rawLength = text.length;
+      if (totalPages > MAX_PDF_PAGES) {
+        console.warn(`Documento ${documentId}: ${totalPages} pagine, analizzate le prime ${MAX_PDF_PAGES}.`);
+      }
       // La pulizia costa una volta sola qui, ma il testo estratto viene rispedito al modello a
       // ogni messaggio della chat: quello che si toglie adesso si risparmia per sempre.
       extractedText = pages.length ? normalizeExtractedPages(pages) : collapseWhitespace(text);
@@ -135,11 +145,14 @@ export async function POST(request: Request) {
  * `pagerender` riceve una pagina alla volta e il suo valore di ritorno è ciò che pdf-parse
  * concatena in `text`, quindi una sola passata produce entrambe le forme.
  */
-async function extractPdfPages(buffer: Buffer): Promise<{ pages: string[]; text: string }> {
+async function extractPdfPages(
+  buffer: Buffer
+): Promise<{ pages: string[]; text: string; totalPages: number }> {
   const pdfParse = (await import("pdf-parse")).default;
   const pages: string[] = [];
 
   const parsed = await pdfParse(buffer, {
+    max: MAX_PDF_PAGES,
     pagerender: async (pageData: any) => {
       const content = await pageData.getTextContent({
         normalizeWhitespace: true,
@@ -161,7 +174,7 @@ async function extractPdfPages(buffer: Buffer): Promise<{ pages: string[]; text:
     },
   });
 
-  return { pages, text: parsed.text };
+  return { pages, text: parsed.text, totalPages: parsed.numpages };
 }
 
 /** Marca il documento come non elaborato con un messaggio utente e risponde con lo stesso testo. */

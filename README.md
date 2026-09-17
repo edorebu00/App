@@ -142,6 +142,27 @@ punto di cache sta cambiando a ogni richiesta.
   nome del file normalizzato prima di finire nella chiave di storage.
 - **Header**: `frame-ancestors`/`X-Frame-Options` (anti clickjacking), `nosniff`,
   `Referrer-Policy`, `Permissions-Policy` e HSTS sono impostati in `next.config.mjs`.
+- **Contenuti non fidati trattati come tali in lettura, non solo in scrittura**: la RLS stabilisce
+  di chi è una riga, non che cosa contiene, e `search_results` è scrivibile direttamente dal
+  browser. I risultati ripescati dalla cronologia vengono quindi risanificati anche quando si
+  rileggono, esattamente come quelli appena arrivati dal modello.
+
+### Rischio residuo noto: il parsing dei PDF
+
+`pdf-parse` 1.1.1 include al suo interno una copia di pdf.js **1.10.100, del 2018**, e i PDF
+caricati dagli utenti sono l'input non fidato più pesante che l'app elabori lato server.
+
+L'esecuzione di codice nota su quelle versioni di pdf.js (CVE-2024-4367) passa dalla generazione
+dei glifi durante il *rendering* su canvas: qui si chiama solo `getTextContent()`, quindi quel
+percorso non viene attraversato. Resta il rischio generico di un parser vecchio e non più
+mantenuto, limitato da `maxDuration = 90`, dal tetto di 20 MB per file, dal limite di frequenza e
+dal tetto di 500 pagine analizzate.
+
+La soluzione è passare a `pdf-parse` 2.x, che usa `pdfjs-dist` 5.x (2025). **Non è stato fatto
+qui** perché la 2.x carica `@napi-rs/canvas`, un binario nativo, anche per la sola estrazione
+testo: su Vercel va verificato sul deploy reale (dimensione della funzione, `serverExternalPackages`,
+binari per piattaforma), e non aveva senso rischiare la produzione per chiudere un percorso che
+non risulta raggiungibile. È un cambiamento a sé, da fare potendo verificare il deploy.
 
 ## Note sull'MVP e possibili evoluzioni future
 
