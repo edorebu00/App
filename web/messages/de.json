@@ -346,6 +346,17 @@
     "ticketsCta": "Tickets",
     "disclaimer": "Nachrichten und Kalender werden automatisch aus Online-Quellen zusammengestellt: prüfe Termine und Verfügbarkeit vor dem Kauf auf den offiziellen Seiten."
   },
+  "offline": {
+    "title": "Du bist offline",
+    "text": "Keine Verbindung. Versuche es erneut, sobald du wieder online bist: deine Fahrzeuge und Dokumente sind sicher."
+  },
+  "install": {
+    "title": "My Vehicle installieren",
+    "text": "Füge sie zum Startbildschirm hinzu: sie öffnet sich im Vollbild, wie eine App.",
+    "iosSteps": "Tippe unten auf Teilen, dann „Zum Home-Bildschirm“.",
+    "cta": "Installieren",
+    "dismiss": "Nicht jetzt"
+  },
   "apiErrors": {
     "notAuthenticated": "Nicht angemeldet.",
     "emptyMessage": "Die Nachricht darf nicht leer sein.",

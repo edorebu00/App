@@ -346,6 +346,17 @@
     "ticketsCta": "Tickets",
     "disclaimer": "News and calendars gathered automatically from online sources: check dates and availability on the official sites before buying."
   },
+  "offline": {
+    "title": "You're offline",
+    "text": "No connection. Try again once you're back online: your vehicles and documents are safe."
+  },
+  "install": {
+    "title": "Install My Vehicle",
+    "text": "Add it to your Home Screen: it opens full screen, like an app.",
+    "iosSteps": "Tap Share at the bottom, then “Add to Home Screen”.",
+    "cta": "Install",
+    "dismiss": "Not now"
+  },
   "apiErrors": {
     "notAuthenticated": "Not authenticated.",
     "emptyMessage": "The message cannot be empty.",

@@ -8,7 +8,7 @@ interface CookieToSet {
 }
 
 // Percorsi pubblici esatti: il confronto è per uguaglianza ("/" con startsWith matcherebbe tutto).
-const PUBLIC_EXACT_PATHS = ["/", "/login", "/registrati", "/auth/callback", "/circuiti"];
+const PUBLIC_EXACT_PATHS = ["/", "/offline", "/login", "/registrati", "/auth/callback", "/circuiti"];
 // Prefissi pubblici: il confronto richiede il separatore ("/circuiti/monza" sì, "/circuitiX" no),
 // così un percorso che inizia per caso con lo stesso testo non eredita l'esenzione dal login.
 const PUBLIC_PREFIX_PATHS = ["/auth/callback/", "/circuiti/"];
@@ -57,5 +57,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  // manifest.webmanifest e sw.js vanno esclusi esplicitamente: sono file statici che il browser
+  // richiede senza sessione, e passando dal middleware verrebbero rimandati al login — con il
+  // risultato che l'app non risulterebbe mai installabile.
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };
