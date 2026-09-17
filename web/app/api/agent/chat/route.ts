@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
-import { getAnthropicClient, CLAUDE_MODEL } from "@/lib/anthropic";
+import { getAnthropicClient, CLAUDE_MODEL, logTokenUsage } from "@/lib/anthropic";
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_MODEL } from "@/lib/openai";
 import { LOCALE_LANGUAGE_NAME, resolveLocale } from "@/i18n/locales";
 import { checkRateLimit } from "@/lib/rateLimit";
+import { historyWindow } from "@/lib/chatHistory";
+import { buildChatSystemBlocks, flattenSystemBlocks } from "@/lib/chatPrompt";
 import { clampText, isUuid } from "@/lib/validation";
 
 export const maxDuration = 90;
@@ -12,6 +14,13 @@ export const maxDuration = 90;
 // Budget di caratteri per il contesto documentale iniettato nel prompt (MVP senza embeddings/vector DB)
 const MAX_CONTEXT_CHARS = 250_000;
 const HISTORY_LIMIT = 20;
+/**
+ * La finestra della cronologia si sposta a blocchi, non di un messaggio alla volta. Scorrendo a
+ * ogni turno, il messaggio più vecchio cadrebbe fuori e il prefisso cambierebbe da capo ogni
+ * volta: la cache dei messaggi non verrebbe mai riletta. Tagliando a blocchi si paga un solo
+ * "miss" ogni HISTORY_BLOCK turni invece che a ogni messaggio.
+ */
+const HISTORY_BLOCK = 6;
 /** Tetto sul messaggio dell'utente: senza, un singolo invio puo' gonfiare il prompt a piacere. */
 const MAX_MESSAGE_CHARS = 4000;
 /** Massimo 30 messaggi ogni 5 minuti per utente (le chiamate al modello sono a consumo). */
@@ -99,9 +108,23 @@ export async function POST(request: Request) {
   const language = LOCALE_LANGUAGE_NAME[resolveLocale(locale)];
 
   try {
-    let docQuery = supabase.from("documents").select("file_name, extracted_text").eq("processed", true);
+    // L'ordinamento esplicito non è un dettaglio estetico: senza ORDER BY Postgres non garantisce
+    // l'ordine delle righe, i documenti finirebbero nel prompt in ordine variabile e il prefisso
+    // cambierebbe fra una richiesta e l'altra, mandando a vuoto la cache a ogni messaggio.
+    let docQuery = supabase
+      .from("documents")
+      .select("file_name, extracted_text")
+      .eq("processed", true)
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true });
     if (vehicleId) docQuery = docQuery.eq("vehicle_id", vehicleId);
-    const { data: docs } = await docQuery;
+
+    let countQuery = supabase.from("chat_messages").select("id", { count: "exact", head: true });
+    if (vehicleId) countQuery = countQuery.eq("vehicle_id", vehicleId);
+
+    // Documenti e conteggio della cronologia sono indipendenti: tanto vale chiederli insieme
+    // invece di aspettare l'uno per poi chiedere l'altro.
+    const [{ data: docs }, { count }] = await Promise.all([docQuery, countQuery]);
 
     let context = "";
     for (const doc of docs || []) {
@@ -110,14 +133,19 @@ export async function POST(request: Request) {
       context += chunk;
     }
 
+    // Quanti messaggi scartare dall'inizio, arrotondato a blocchi: il punto di partenza della
+    // finestra resta fermo per HISTORY_BLOCK turni, e in quei turni il prefisso è identico.
+    const { skip, take } = historyWindow(count ?? 0, HISTORY_LIMIT, HISTORY_BLOCK);
+
     let historyQuery = supabase
       .from("chat_messages")
       .select("role, content")
-      .order("created_at", { ascending: false })
-      .limit(HISTORY_LIMIT);
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true })
+      .range(skip, skip + take - 1);
     if (vehicleId) historyQuery = historyQuery.eq("vehicle_id", vehicleId);
     const { data: historyRows } = await historyQuery;
-    const history = (historyRows || []).reverse();
+    const history = historyRows || [];
 
     await supabase.from("chat_messages").insert({
       user_id: user.id,
@@ -126,16 +154,8 @@ export async function POST(request: Request) {
       content: message,
     });
 
-    const systemPrompt = context
-      ? "Sei l'assistente di My Vehicle: rispondi alle domande dell'utente sul proprio veicolo basandoti " +
-        "principalmente sui documenti caricati (libretti, manuali di manutenzione, ecc.) riportati sotto. " +
-        "Se l'informazione richiesta non è presente nei documenti, dillo chiaramente e poi puoi rispondere " +
-        "con la tua conoscenza generale, specificando che non proviene dai documenti caricati. " +
-        `Rispondi SEMPRE in ${language}, in modo chiaro e pratico, indipendentemente dalla lingua dei documenti.\n\n` +
-        `DOCUMENTI DISPONIBILI:${context}`
-      : "Sei l'assistente di My Vehicle. L'utente non ha ancora caricato documenti per questo veicolo: " +
-        `rispondi con la tua conoscenza generale su auto e moto, SEMPRE in ${language}, e suggerisci di caricare il ` +
-        "libretto d'uso e manutenzione per risposte più precise.";
+    const systemBlocks = buildChatSystemBlocks(context, language);
+    const systemPrompt = flattenSystemBlocks(systemBlocks);
 
     const messages = toAlternatingMessages([
       ...(history as ChatHistoryItem[]),
@@ -148,9 +168,14 @@ export async function POST(request: Request) {
       const response = await anthropic.messages.create({
         model: CLAUDE_MODEL,
         max_tokens: 2048,
-        system: systemPrompt,
+        system: systemBlocks,
+        // La conversazione cresce a ogni turno: la cache automatica segue la coda e sposta da sé
+        // il punto di cache sull'ultimo blocco, così ogni turno rilegge quelli precedenti.
+        cache_control: { type: "ephemeral" },
         messages,
       });
+
+      logTokenUsage("chat", response.usage);
 
       const textBlock = response.content.find((b) => b.type === "text") as
         | { type: "text"; text: string }

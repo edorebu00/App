@@ -79,6 +79,49 @@ npm run dev              # http://localhost:3000
 
 Nessun costo fisso mensile: paghi solo se e quando l'IA viene effettivamente utilizzata.
 
+## Consumo di token (costo delle funzioni IA)
+
+Il costo è dominato dalla chat: il testo dei documenti caricati viene rispedito al modello a
+**ogni** messaggio, e un manuale di medie dimensioni vale da solo ~60.000 token per messaggio,
+cioè centinaia di volte tutto il resto del prompt. Le scelte sono ordinate per questo.
+
+- **Cache dei prompt sui documenti.** Il prompt di sistema della chat è diviso in due blocchi
+  (`web/lib/chatPrompt.ts`): davanti istruzioni e documenti, con un punto di cache; in coda la
+  lingua, che l'utente può cambiare. Dal secondo messaggio in poi i documenti si pagano ~un
+  decimo. Su una conversazione di dieci messaggi sono circa il 75-80% in meno.
+- **Stabilità del prefisso.** La cache confronta i byte del prefisso, quindi va difesa: i
+  documenti si leggono con un `ORDER BY` esplicito (senza, Postgres può restituirli in ordine
+  diverso e la cache non viene mai riletta) e la finestra della cronologia avanza a blocchi di
+  sei messaggi invece che scorrere di uno alla volta.
+- **Pulizia del testo estratto, una volta sola** (`web/lib/extractedText.ts`): intestazioni e piè
+  di pagina ricorrenti, numeri di pagina, spaziatura e parole spezzate a fine riga vengono tolti
+  al momento del caricamento. Quanto si risparmia dipende dal documento — su un manuale con
+  intestazioni su ogni pagina è dell'ordine del 20-40% — e si risparmia su ogni messaggio futuro.
+- **Ricerche identiche riproposte dalla cronologia**: stessa query, stesso veicolo, stessa lingua
+  entro sette giorni non richiamano il modello. Le policy RLS tengono la cronologia separata per
+  utente, quindi nessuno può inquinare i risultati di un altro.
+- **Prompt di ricerca sfoltito**: le regole sui singoli campi stanno nelle descrizioni dello
+  schema di `submit_findings`, che viene comunque inviato; erano ripetute anche nel prompt di
+  sistema, e si pagavano due volte. ~36% in meno di testo fisso per chiamata, stesse regole.
+- **Ricerca web con filtraggio dinamico** (`web_search_20260209`): i risultati arrivano ripuliti
+  dall'impaginazione invece di riversarla nel contesto, dove verrebbe rispedita a ogni giro. Il
+  ritentativo, quando serve, ha metà delle ricerche a disposizione: deve chiudere, non ricominciare.
+
+### Verificare che la cache funzioni ancora
+
+La cache dei prompt non si rompe con un errore: le richieste continuano a funzionare, cambia solo
+il conto. Le due difese:
+
+```bash
+cd web && npm run check:cache
+```
+
+verifica le proprietà da cui dipende il riuso (prefisso identico fra turni, blocco volatile in
+coda, finestra della cronologia stabile) — **da rieseguire dopo ogni modifica a un prompt** — e i
+log del server, dove ogni chiamata stampa una riga `[token]` con token riletti dalla cache,
+riscritti e nuovi. A regime i riletti devono dominare: se restano a zero, qualcosa a monte del
+punto di cache sta cambiando a ogni richiesta.
+
 ## Sicurezza: com'è protetto l'accesso ai dati
 
 - **Isolamento fra utenti**: tutte le tabelle hanno Row Level Security attiva e ogni query passa

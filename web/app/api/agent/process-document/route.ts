@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { DOCUMENT_EXTENSIONS, DOCUMENT_MIME_TYPES, MAX_UPLOAD_BYTES, hasAllowedExtension } from "@/lib/files";
+import { collapseWhitespace, normalizeExtractedPages } from "@/lib/extractedText";
 import { isUuid } from "@/lib/validation";
 
 export const runtime = "nodejs";
@@ -90,17 +91,29 @@ export async function POST(request: Request) {
     }
 
     const buffer = Buffer.from(await fileData.arrayBuffer());
+    let rawLength = 0;
     let extractedText = "";
 
     if (isPdf) {
-      const pdfParse = (await import("pdf-parse")).default;
-      const parsed = await pdfParse(buffer);
-      extractedText = parsed.text;
+      const { pages, text } = await extractPdfPages(buffer);
+      rawLength = text.length;
+      // La pulizia costa una volta sola qui, ma il testo estratto viene rispedito al modello a
+      // ogni messaggio della chat: quello che si toglie adesso si risparmia per sempre.
+      extractedText = pages.length ? normalizeExtractedPages(pages) : collapseWhitespace(text);
     } else {
-      extractedText = buffer.toString("utf-8");
+      const text = buffer.toString("utf-8");
+      rawLength = text.length;
+      extractedText = collapseWhitespace(text);
     }
 
     extractedText = extractedText.slice(0, MAX_EXTRACTED_CHARS);
+
+    if (rawLength) {
+      const saved = Math.round((1 - extractedText.length / rawLength) * 100);
+      console.info(
+        `Documento ${documentId}: ${rawLength} -> ${extractedText.length} caratteri dopo la pulizia (-${saved}%).`
+      );
+    }
 
     await supabase
       .from("documents")
@@ -114,6 +127,41 @@ export async function POST(request: Request) {
     console.error("Errore elaborazione documento:", err);
     return await failDocument(supabase, documentId, tErr("documentProcessingError"), 500);
   }
+}
+
+/**
+ * Estrae il testo del PDF tenendo separate le pagine: serve a riconoscere intestazioni e piè di
+ * pagina ricorrenti, che senza il confine di pagina sarebbero indistinguibili dal contenuto.
+ * `pagerender` riceve una pagina alla volta e il suo valore di ritorno è ciò che pdf-parse
+ * concatena in `text`, quindi una sola passata produce entrambe le forme.
+ */
+async function extractPdfPages(buffer: Buffer): Promise<{ pages: string[]; text: string }> {
+  const pdfParse = (await import("pdf-parse")).default;
+  const pages: string[] = [];
+
+  const parsed = await pdfParse(buffer, {
+    pagerender: async (pageData: any) => {
+      const content = await pageData.getTextContent({
+        normalizeWhitespace: true,
+        disableCombineTextItems: false,
+      });
+
+      // Gli elementi di testo arrivano con la loro posizione: un salto sulla coordinata Y
+      // segna un a capo, altrimenti il testo di una pagina diventa un unico blocco.
+      let text = "";
+      let lastY: number | undefined;
+      for (const item of content.items as Array<{ str: string; transform: number[] }>) {
+        if (lastY !== undefined && item.transform[5] !== lastY) text += "\n";
+        text += item.str;
+        lastY = item.transform[5];
+      }
+
+      pages.push(text);
+      return text;
+    },
+  });
+
+  return { pages, text: parsed.text };
 }
 
 /** Marca il documento come non elaborato con un messaggio utente e risponde con lo stesso testo. */
