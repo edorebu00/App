@@ -34,10 +34,23 @@ export default function ResourceCategoryView({
 
   if (loading) {
     return (
-      <p className="flex items-center gap-2 text-sm text-graphite-500">
-        <span className="spinner text-brand-600" aria-hidden />
-        {tSearch("searchingResources")}
-      </p>
+      <div>
+        <p className="mb-3 flex items-center gap-2 text-sm text-graphite-500">
+          <span className="spinner text-brand-600" aria-hidden />
+          {tSearch("searchingResources")}
+        </p>
+        <ul className="space-y-2" aria-hidden>
+          {[0, 1, 2].map((i) => (
+            <li key={i} className="card flex items-start gap-3">
+              <div className="skeleton-line h-8 w-8 shrink-0 rounded-full" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <div className="skeleton-line h-3 w-2/5" />
+                <div className="skeleton-line h-2.5 w-4/5" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     );
   }
 
