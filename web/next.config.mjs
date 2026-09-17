@@ -25,7 +25,15 @@ const nextConfig = {
   // Il numero di versione di Next in chiaro serve solo a chi cerca bersagli con versioni note.
   poweredByHeader: false,
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      {
+        // Un service worker vecchio rimasto in cache continua a servire una versione superata
+        // dell'app finche' non scade: questo file va sempre richiesto alla rete.
+        source: "/sw.js",
+        headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }],
+      },
+    ];
   },
 };
 

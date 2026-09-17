@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "check:cache": "node --experimental-strip-types --no-warnings scripts/check-prompt-cache.mts"
+    "check:cache": "node --experimental-strip-types --no-warnings scripts/check-prompt-cache.mts",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.126.0",

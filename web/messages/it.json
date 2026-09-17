@@ -346,6 +346,17 @@
     "ticketsCta": "Biglietti",
     "disclaimer": "Notizie e calendari raccolti automaticamente da fonti online: verifica date e disponibilità sui siti ufficiali prima di acquistare."
   },
+  "offline": {
+    "title": "Sei offline",
+    "text": "Non c'è connessione. Riprova quando torni in rete: i tuoi veicoli e documenti sono al sicuro."
+  },
+  "install": {
+    "title": "Installa My Vehicle",
+    "text": "Aggiungila alla schermata Home: si apre a schermo intero, come un'app.",
+    "iosSteps": "Tocca Condividi in basso, poi «Aggiungi a Home».",
+    "cta": "Installa",
+    "dismiss": "Non ora"
+  },
   "apiErrors": {
     "notAuthenticated": "Non autenticato.",
     "emptyMessage": "Il messaggio non può essere vuoto.",

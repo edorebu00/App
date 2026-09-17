@@ -79,6 +79,36 @@ npm run dev              # http://localhost:3000
 
 Nessun costo fisso mensile: paghi solo se e quando l'IA viene effettivamente utilizzata.
 
+## App installabile sul telefono (PWA)
+
+L'app si installa dalla schermata Home e si apre a schermo intero, senza barra del browser.
+Non serve nessuno store: su Android compare l'invito all'installazione, su iPhone si passa da
+Condividi → «Aggiungi a Home».
+
+Nessuna scelta architetturale è cambiata per ottenerlo — restano componenti server, API route e
+autenticazione a cookie. Sono stati aggiunti soltanto:
+
+- `app/manifest.ts` — nome, icone, colori e scorciatoie;
+- `public/sw.js` — service worker **volutamente prudente**: non mette mai in cache `/api/` né
+  `/auth/`, e per le pagine va sempre in rete (il contenuto dipende da chi ha fatto l'accesso),
+  con la pagina `/offline` come ripiego. Gli unici file messi in cache sono gli asset immutabili
+  di Next;
+- `components/InstallPrompt.tsx` — invito all'installazione, con le istruzioni di iOS dove
+  l'evento di sistema non esiste; si chiude e non ritorna;
+- icone generate da `app/icon.svg` con `npm run icons` (comprese le *maskable* per Android).
+
+**Attenzione al middleware**: `manifest.webmanifest` e `sw.js` sono esclusi dal matcher. Se ci
+passassero dentro verrebbero rimandati al login e l'app non risulterebbe mai installabile — è un
+guasto silenzioso, l'app continua a funzionare e sembra solo che «l'installazione non si possa
+fare».
+
+### Cosa resta da fare prima di renderla pubblica
+
+La PWA evita i costi e le revisioni degli store, **ma non gli obblighi di legge**: l'app tratta
+email, targhe, numeri di telaio e documenti caricati. Mancano ancora un'informativa privacy e la
+cancellazione dell'account (oggi si cancella un veicolo, non il proprio profilo). Entrambe sono
+richieste dal GDPR a prescindere da dove l'app viene distribuita.
+
 ## Consumo di token (costo delle funzioni IA)
 
 Il costo è dominato dalla chat: il testo dei documenti caricati viene rispedito al modello a
