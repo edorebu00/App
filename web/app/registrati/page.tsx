@@ -61,7 +61,7 @@ export default function RegisterPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-graphite-50 px-4">
-      <div className="animate-drift pointer-events-none absolute left-1/2 top-0 h-80 w-[36rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-brand-100/70 blur-3xl" />
+      <div className="animate-drift pointer-events-none absolute left-1/2 top-0 h-80 w-[36rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-brand-500/15 blur-3xl" />
 
       <AnimatePresence mode="wait">
         {done ? (
@@ -147,7 +147,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              {error && <p className="text-sm text-red-600">{error}</p>}
+              {error && <p className="text-sm text-red-400">{error}</p>}
 
               <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
                 {loading ? t("registerSubmitLoading") : t("registerSubmit")}

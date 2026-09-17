@@ -40,7 +40,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
           <ul
             role="listbox"
-            className="absolute right-0 z-50 mt-1 w-36 overflow-hidden rounded-lg border border-graphite-200 bg-white py-1 shadow-lg shadow-graphite-900/10"
+            className="absolute right-0 z-50 mt-1 w-36 overflow-hidden rounded-lg border border-graphite-200 bg-graphite-100 py-1 shadow-lg shadow-black/50"
           >
             {LOCALES.map((l) => (
               <li key={l}>

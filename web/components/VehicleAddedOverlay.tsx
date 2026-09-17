@@ -26,7 +26,7 @@ export default function VehicleAddedOverlay({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-graphite-900/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.88, y: 8 }}
@@ -39,7 +39,7 @@ export default function VehicleAddedOverlay({
             initial={{ scale: 0.6, opacity: 0.6 }}
             animate={{ scale: 2, opacity: 0 }}
             transition={{ duration: 1.1, ease: "easeOut", repeat: Infinity, repeatDelay: 0.2 }}
-            className="absolute inset-0 rounded-full bg-brand-300"
+            className="absolute inset-0 rounded-full bg-brand-500"
           />
           <span className="relative grid h-14 w-14 place-items-center rounded-full bg-brand-100 text-3xl">
             {type === "moto" ? "🏍️" : "🚗"}
@@ -49,7 +49,7 @@ export default function VehicleAddedOverlay({
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.15, type: "spring", stiffness: 400, damping: 18 }}
-          className="grid h-6 w-6 place-items-center rounded-full bg-green-100 text-sm text-green-700"
+          className="grid h-6 w-6 place-items-center rounded-full bg-emerald-500/15 text-sm text-emerald-400"
         >
           ✓
         </motion.span>

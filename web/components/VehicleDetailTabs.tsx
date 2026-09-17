@@ -189,10 +189,10 @@ export default function VehicleDetailTabs({
           <button
             key={s.id}
             onClick={() => setActiveId(s.id)}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-150 ${
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
               activeId === s.id
-                ? "bg-brand-600 text-white shadow-sm shadow-brand-600/25"
-                : "text-graphite-600 hover:bg-white hover:text-graphite-900"
+                ? "bg-gradient-to-b from-brand-500 to-brand-400 text-graphite-50 shadow-sm shadow-black/30"
+                : "text-graphite-600 hover:bg-graphite-100 hover:text-graphite-900"
             }`}
           >
             {sectionLabel(s)}
@@ -203,10 +203,10 @@ export default function VehicleDetailTabs({
           <button
             key={rt.id}
             onClick={() => setActiveId(rt.id)}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-150 ${
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
               activeId === rt.id
-                ? "bg-brand-600 text-white shadow-sm shadow-brand-600/25"
-                : "text-graphite-600 hover:bg-white hover:text-graphite-900"
+                ? "bg-gradient-to-b from-brand-500 to-brand-400 text-graphite-50 shadow-sm shadow-black/30"
+                : "text-graphite-600 hover:bg-graphite-100 hover:text-graphite-900"
             }`}
           >
             {rt.label}

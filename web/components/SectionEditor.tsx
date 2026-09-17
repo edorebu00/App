@@ -112,7 +112,7 @@ export default function SectionEditor({ section, images: initialImages, specs, r
             {specs && Object.keys(specs).length > 0 && (
               <dl className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {Object.entries(specs).map(([k, v]) => (
-                  <div key={k} className="rounded-lg border border-graphite-200 bg-white px-3 py-2">
+                  <div key={k} className="rounded-lg border border-graphite-200 bg-graphite-50 px-3 py-2">
                     <dt className="text-[11px] uppercase tracking-wide text-graphite-400">{k}</dt>
                     <dd className="mt-0.5 text-sm font-medium text-graphite-900">{v}</dd>
                   </div>

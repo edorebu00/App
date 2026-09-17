@@ -1,8 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#6366f1"/>
-      <stop offset="1" stop-color="#4338ca"/>
+      <stop offset="0" stop-color="#141210"/>
+      <stop offset="1" stop-color="#0a0908"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="64" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#cca558"/>
+      <stop offset="1" stop-color="#e6cb95"/>
     </linearGradient>
     <clipPath id="round">
       <rect x="0" y="0" width="64" height="64" rx="16"/>
@@ -15,13 +19,13 @@
     <!-- silhouette auto, stilizzata e pulita -->
     <path
       d="M9 40 L15 40 L19 30.5 C20.5 27.5 23.5 26 27 26 L38 26 C41.5 26 44.5 27.5 46 30.5 L50 40 L56 40 L56 46 L9 46 Z"
-      fill="#ffffff"
+      fill="url(#metal)"
     />
-    <path d="M22 30.5 L27 30.5 L28.5 27.5 L24 27.5 Z" fill="#4338ca" opacity="0.35"/>
-    <path d="M31 30.5 L42 30.5 L40 27.5 L33 27.5 Z" fill="#4338ca" opacity="0.35"/>
-    <circle cx="21" cy="46" r="6" fill="#312e81"/>
-    <circle cx="21" cy="46" r="2.6" fill="#ffffff"/>
-    <circle cx="45" cy="46" r="6" fill="#312e81"/>
-    <circle cx="45" cy="46" r="2.6" fill="#ffffff"/>
+    <path d="M22 30.5 L27 30.5 L28.5 27.5 L24 27.5 Z" fill="#0a0908" opacity="0.35"/>
+    <path d="M31 30.5 L42 30.5 L40 27.5 L33 27.5 Z" fill="#0a0908" opacity="0.35"/>
+    <circle cx="21" cy="46" r="6" fill="#0a0908"/>
+    <circle cx="21" cy="46" r="2.6" fill="#e6cb95"/>
+    <circle cx="45" cy="46" r="6" fill="#0a0908"/>
+    <circle cx="45" cy="46" r="2.6" fill="#e6cb95"/>
   </g>
 </svg>

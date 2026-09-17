@@ -17,17 +17,17 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
       whileHover={{ y: -6 }}
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 400, damping: 26 }}
-      className="group block overflow-hidden rounded-xl border border-graphite-200 bg-white shadow-sm shadow-graphite-900/5 transition-[box-shadow,border-color] duration-200 hover:border-brand-300 hover:shadow-lg hover:shadow-brand-900/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+      className="group block overflow-hidden rounded-xl border border-graphite-200 bg-graphite-100 shadow-sm shadow-black/30 transition-[box-shadow,border-color] duration-300 ease-out hover:border-brand-400/60 hover:shadow-lg hover:shadow-brand-500/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
     >
-      <div className="relative flex h-32 items-center justify-center overflow-hidden bg-gradient-to-br from-brand-50 to-white">
-        <span className="text-5xl transition-transform duration-200 group-hover:scale-110">
+      <div className="relative flex h-32 items-center justify-center overflow-hidden bg-gradient-to-br from-brand-50 to-graphite-100">
+        <span className="text-5xl grayscale-[0.3] transition-transform duration-300 ease-out group-hover:scale-110">
           {vehicle.type === "moto" ? "🏍️" : "🚗"}
         </span>
-        <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-brand-700 shadow-sm">
+        <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-graphite-50/90 px-2 py-0.5 text-xs font-medium text-brand-600 shadow-sm backdrop-blur">
           {vehicle.type === "moto" ? t("moto") : t("auto")}
         </span>
         {vehicle.year && (
-          <span className="absolute right-3 top-3 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-graphite-500 shadow-sm">
+          <span className="absolute right-3 top-3 rounded-full bg-graphite-50/90 px-2 py-0.5 text-xs font-medium text-graphite-600 shadow-sm backdrop-blur">
             {vehicle.year}
           </span>
         )}
