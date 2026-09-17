@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import CircuitCarousel from "@/components/CircuitCarousel";
+import ProductPreview from "@/components/ProductPreview";
 
 export default async function HomePage() {
   const t = await getTranslations("home");
@@ -33,6 +34,8 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
+
+        <ProductPreview />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-12">

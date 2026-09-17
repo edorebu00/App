@@ -29,13 +29,19 @@ export default async function DashboardPage() {
           </div>
           <div className="flex flex-col items-start gap-4 sm:items-end">
             <div className="flex gap-2">
-              <div className="metric-chip">
-                <p className="font-display text-xl font-bold text-graphite-900">{list.length}</p>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite-500">{t("metricInGarage")}</p>
+              <div className="metric-chip flex items-center gap-2.5">
+                <span className="icon-badge" aria-hidden>🚗</span>
+                <span>
+                  <p className="font-display text-xl font-bold leading-none text-graphite-900">{list.length}</p>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-graphite-500">{t("metricInGarage")}</p>
+                </span>
               </div>
-              <div className="metric-chip">
-                <p className="font-display text-xl font-bold text-brand-600">24/7</p>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite-500">{t("metricReady")}</p>
+              <div className="metric-chip flex items-center gap-2.5">
+                <span className="icon-badge" aria-hidden>⚡</span>
+                <span>
+                  <p className="font-display text-xl font-bold leading-none text-brand-600">24/7</p>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-graphite-500">{t("metricReady")}</p>
+                </span>
               </div>
             </div>
             <Link href="/veicoli/nuovo" className="btn-primary self-start sm:self-auto">
