@@ -1,4 +1,5 @@
 import { CATALOGUE_SWEEP } from "./catalogueSweep";
+import { ENGINE_EXTENSIONS } from "./engineExtensions";
 import type { EngineVariant, VehicleType } from "./types";
 
 /**
@@ -2705,5 +2706,17 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
 };
 
 export function getEngineVariants(type: VehicleType, make: string, model: string): EngineVariant[] | null {
-  return ENGINE_DATA[type]?.[make]?.[model] || null;
+  const base = ENGINE_DATA[type]?.[make]?.[model];
+  const extra = ENGINE_EXTENSIONS[type]?.[make]?.[model];
+  if (!base && !extra) return null;
+
+  // Le estensioni si sommano al dataset originale; a parità di sigla vince la voce già presente.
+  const merged: EngineVariant[] = [];
+  const seen = new Set<string>();
+  for (const variant of [...(base || []), ...(extra || [])]) {
+    if (seen.has(variant.label)) continue;
+    seen.add(variant.label);
+    merged.push(variant);
+  }
+  return merged;
 }

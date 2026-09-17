@@ -258,7 +258,9 @@
     "searchPlaceholder": "Model, engine, or what to search for…",
     "search": "Search",
     "errorGeneric": "Error while searching.",
-    "errorContact": "Could not reach the search service. Please try again later."
+    "errorContact": "Could not reach the search service. Please try again later.",
+    "autoscoutTitle": "Used listings",
+    "autoscoutSubtitle": "See what it's worth on AutoScout24"
   },
   "sections": {
     "motore": "Engine",
@@ -334,6 +336,15 @@
     "errorGeneric": "Error while searching.",
     "errorContact": "Could not reach the search service. Please try again later.",
     "searchingResources": "The AI agent is searching for resources online…"
+  },
+  "motorsport": {
+    "eyebrow": "From the racing world",
+    "title": "News and upcoming races",
+    "subtitle": "Refreshed daily by the AI agent, with links to the official ticket offices.",
+    "racesTitle": "Upcoming races",
+    "newsTitle": "Latest news",
+    "ticketsCta": "Tickets",
+    "disclaimer": "News and calendars gathered automatically from online sources: check dates and availability on the official sites before buying."
   },
   "apiErrors": {
     "notAuthenticated": "Not authenticated.",

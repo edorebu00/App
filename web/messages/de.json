@@ -258,7 +258,9 @@
     "searchPlaceholder": "Modell, Motorisierung oder Suchbegriff…",
     "search": "Suchen",
     "errorGeneric": "Fehler bei der Suche.",
-    "errorContact": "Der Suchdienst konnte nicht erreicht werden. Bitte später erneut versuchen."
+    "errorContact": "Der Suchdienst konnte nicht erreicht werden. Bitte später erneut versuchen.",
+    "autoscoutTitle": "Gebrauchtangebote",
+    "autoscoutSubtitle": "Sieh den Wert auf AutoScout24"
   },
   "sections": {
     "motore": "Motor",
@@ -334,6 +336,15 @@
     "errorGeneric": "Fehler bei der Suche.",
     "errorContact": "Der Suchdienst konnte nicht erreicht werden. Bitte später erneut versuchen.",
     "searchingResources": "Der KI-Agent sucht online nach Ressourcen…"
+  },
+  "motorsport": {
+    "eyebrow": "Aus der Rennwelt",
+    "title": "Nachrichten und kommende Rennen",
+    "subtitle": "Täglich vom KI-Agenten aktualisiert, mit Links zu den offiziellen Ticketstellen.",
+    "racesTitle": "Kommende Rennen",
+    "newsTitle": "Neueste Nachrichten",
+    "ticketsCta": "Tickets",
+    "disclaimer": "Nachrichten und Kalender werden automatisch aus Online-Quellen zusammengestellt: prüfe Termine und Verfügbarkeit vor dem Kauf auf den offiziellen Seiten."
   },
   "apiErrors": {
     "notAuthenticated": "Nicht angemeldet.",

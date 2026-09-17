@@ -85,6 +85,8 @@ export default async function VehicleDetailPage({
 
       <VehicleDetailTabs
         vehicleId={v.id}
+        make={v.make}
+        model={v.model}
         sections={(sections || []) as VehicleSection[]}
         imagesBySection={imagesBySection}
         defaultQuery={defaultQuery}

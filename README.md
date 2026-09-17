@@ -107,6 +107,19 @@ cioè centinaia di volte tutto il resto del prompt. Le scelte sono ordinate per 
   dall'impaginazione invece di riversarla nel contesto, dove verrebbe rispedita a ogni giro. Il
   ritentativo, quando serve, ha metà delle ricerche a disposizione: deve chiudere, non ricominciare.
 
+### Il riquadro motorsport della home
+
+Notizie e prossime gare sono l'unica funzione IA che gira **senza che nessuno la chieda**: un
+calendario scritto nel codice sarebbe sbagliato entro poche settimane, e date inventate sono
+peggio di nessuna data. Il costo è tenuto basso dalla cache (`web/lib/motorsport.ts`): il
+risultato vale 24 ore ed è condiviso da tutti i visitatori, quindi si paga **una chiamata al
+giorno per lingua effettivamente visitata**, non una per visita — nell'ordine di 1 € al mese.
+Per cambiare la frequenza si modifica `CACHE_SECONDS`.
+
+Se la chiave Anthropic manca o la ricerca fallisce, la sezione semplicemente non compare: la
+home resta in piedi. Il riquadro è dentro un `<Suspense>`, così alla scadenza della cache il
+resto della pagina non aspetta la ricerca web.
+
 ### Verificare che la cache funzioni ancora
 
 La cache dei prompt non si rompe con un errore: le richieste continuano a funzionare, cambia solo
