@@ -9,7 +9,15 @@ import { getEngineVariants, getMakes, getModels } from "@/lib/vehicleData";
 import VehicleAddedOverlay from "@/components/VehicleAddedOverlay";
 
 const CURRENT_YEAR = new Date().getFullYear();
-const MIN_YEAR = 1990;
+/** Anno più vecchio proposto quando non c'è una motorizzazione a delimitare il periodo. */
+const OLDEST_YEAR = 1950;
+
+/**
+ * Valore riservato della voce "Altro": il catalogo è ampio ma non esaustivo, e bloccare la
+ * scelta alle sole voci in elenco escluderebbe veicoli d'epoca, d'importazione o appena usciti.
+ * Chi sceglie questa voce ottiene un campo libero; tutti gli altri non scrivono nulla.
+ */
+const OTHER = "__altro__";
 
 export default function NewVehiclePage() {
   const router = useRouter();
@@ -17,8 +25,10 @@ export default function NewVehiclePage() {
   const t = useTranslations("vehicleNew");
 
   const [type, setType] = useState<VehicleType>("auto");
-  const [make, setMake] = useState("");
-  const [model, setModel] = useState("");
+  const [makeChoice, setMakeChoice] = useState("");
+  const [customMake, setCustomMake] = useState("");
+  const [modelChoice, setModelChoice] = useState("");
+  const [customModel, setCustomModel] = useState("");
   const [engineCode, setEngineCode] = useState("");
   const [year, setYear] = useState("");
   const [plate, setPlate] = useState("");
@@ -26,39 +36,58 @@ export default function NewVehiclePage() {
   const [loading, setLoading] = useState(false);
   const [justAdded, setJustAdded] = useState<{ id: string; type: VehicleType; label: string } | null>(null);
 
+  const isCustomMake = makeChoice === OTHER;
+  // Con una marca fuori catalogo non esiste un elenco di modelli, quindi il modello è per forza
+  // scritto a mano: va letto da customModel anche se il menu dei modelli non è mai stato toccato.
+  const isCustomModel = isCustomMake || modelChoice === OTHER;
+  const make = (isCustomMake ? customMake : makeChoice).trim();
+  const model = (isCustomModel ? customModel : modelChoice).trim();
+
   const makes = useMemo(() => getMakes(type), [type]);
-  const models = useMemo(() => (make ? getModels(type, make) : []), [type, make]);
+  // I modelli si elencano solo per una marca del catalogo: per una marca scritta a mano non
+  // c'è nulla da proporre, e il campo passa direttamente a testo libero.
+  const models = useMemo(
+    () => (makeChoice && !isCustomMake ? getModels(type, makeChoice) : []),
+    [type, makeChoice, isCustomMake]
+  );
   const variants = useMemo(
-    () => (make && model ? getEngineVariants(type, make, model) : null),
-    [type, make, model]
+    () => (make && model && !isCustomMake && !isCustomModel ? getEngineVariants(type, make, model) : null),
+    [type, make, model, isCustomMake, isCustomModel]
   );
   const selectedVariant = variants?.find((v) => v.label === engineCode) || null;
+
   const yearOptions = useMemo(() => {
-    if (!selectedVariant) return [];
-    const to = selectedVariant.yearTo ?? CURRENT_YEAR;
-    const from = Math.min(selectedVariant.yearFrom, MIN_YEAR);
+    // Con una motorizzazione scelta gli anni sono quelli in cui è stata prodotta; senza, si
+    // propone un intervallo ampio, che deve comprendere anche i veicoli d'epoca.
+    const to = selectedVariant?.yearTo ?? CURRENT_YEAR;
+    const from = selectedVariant?.yearFrom ?? OLDEST_YEAR;
     const years: number[] = [];
-    for (let y = to; y >= from; y--) years.push(y);
+    for (let y = to; y >= Math.min(from, to); y--) years.push(y);
     return years;
   }, [selectedVariant]);
 
-  function handleTypeChange(t: VehicleType) {
-    setType(t);
-    setMake("");
-    setModel("");
+  function handleTypeChange(next: VehicleType) {
+    setType(next);
+    setMakeChoice("");
+    setCustomMake("");
+    setModelChoice("");
+    setCustomModel("");
     setEngineCode("");
     setYear("");
   }
 
-  function handleMakeChange(m: string) {
-    setMake(m);
-    setModel("");
+  function handleMakeChange(next: string) {
+    setMakeChoice(next);
+    setCustomMake("");
+    setModelChoice("");
+    setCustomModel("");
     setEngineCode("");
     setYear("");
   }
 
-  function handleModelChange(m: string) {
-    setModel(m);
+  function handleModelChange(next: string) {
+    setModelChoice(next);
+    setCustomModel("");
     setEngineCode("");
     setYear("");
   }
@@ -126,9 +155,7 @@ export default function NewVehiclePage() {
       <div className="mb-6 text-center">
         <p className="eyebrow justify-center">{t("eyebrow")}</p>
         <h1 className="mt-2 text-3xl font-bold text-graphite-900">{t("title")}</h1>
-        <p className="mt-1 text-sm text-graphite-500">
-          {t("subtitle")}
-        </p>
+        <p className="mt-1 text-sm text-graphite-500">{t("subtitle")}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="card animate-rise-in space-y-4">
@@ -153,58 +180,97 @@ export default function NewVehiclePage() {
           </div>
         </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="label" htmlFor="make">{t("makeLabel")}</label>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label className="label" htmlFor="make">
+              {t("makeLabel")}
+            </label>
+            <select
+              id="make"
+              required
+              className="input"
+              value={makeChoice}
+              onChange={(e) => handleMakeChange(e.target.value)}
+            >
+              <option value="" disabled>
+                {t("makeSelectPlaceholder")}
+              </option>
+              {makes.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+              <option value={OTHER}>{t("otherOption")}</option>
+            </select>
+            {isCustomMake && (
               <input
-                id="make"
+                className="input mt-2"
                 required
-                className="input"
-                value={make}
-                onChange={(e) => handleMakeChange(e.target.value)}
-                list="vehicle-makes"
-                placeholder={t("makePlaceholder")}
+                value={customMake}
+                onChange={(e) => setCustomMake(e.target.value)}
+                placeholder={t("customMakePlaceholder")}
                 autoComplete="organization"
+                aria-label={t("customMakePlaceholder")}
               />
-              <datalist id="vehicle-makes">
-                {makes.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </datalist>
-            </div>
-            <div>
-              <label className="label" htmlFor="model">{t("modelLabel")}</label>
+            )}
+          </div>
+
+          <div>
+            <label className="label" htmlFor="model">
+              {t("modelLabel")}
+            </label>
+            {isCustomMake ? (
+              // Marca fuori catalogo: non esiste un elenco di modelli da proporre.
               <input
                 id="model"
-                required
                 className="input"
-                value={model}
-                onChange={(e) => handleModelChange(e.target.value)}
-                list="vehicle-models"
-                placeholder={make ? t("modelPlaceholderWithMake") : t("modelPlaceholderNoMake")}
-                disabled={!make}
+                required
+                value={customModel}
+                onChange={(e) => setCustomModel(e.target.value)}
+                placeholder={t("customModelPlaceholder")}
                 autoComplete="off"
               />
-              <datalist id="vehicle-models">
-                {models.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
+            ) : (
+              <>
+                <select
+                  id="model"
+                  required
+                  className="input"
+                  value={modelChoice}
+                  disabled={!makeChoice}
+                  onChange={(e) => handleModelChange(e.target.value)}
+                >
+                  <option value="" disabled>
+                    {makeChoice ? t("modelSelectPlaceholder") : t("modelSelectDisabled")}
                   </option>
-                ))}
-              </datalist>
-              {make && models.length === 0 && (
-                <p className="mt-1 text-xs text-gold-600">
-                  {t("makeNotInCatalogue")}
-                </p>
-              )}
-            </div>
+                  {models.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                  {makeChoice && <option value={OTHER}>{t("otherOption")}</option>}
+                </select>
+                {isCustomModel && (
+                  <input
+                    className="input mt-2"
+                    required
+                    value={customModel}
+                    onChange={(e) => setCustomModel(e.target.value)}
+                    placeholder={t("customModelPlaceholder")}
+                    autoComplete="off"
+                    aria-label={t("customModelPlaceholder")}
+                  />
+                )}
+              </>
+            )}
           </div>
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="label" htmlFor="engineCode">{t("engineLabel")}</label>
+            <label className="label" htmlFor="engineCode">
+              {t("engineLabel")}
+            </label>
             {variants ? (
               <select
                 id="engineCode"
@@ -223,6 +289,9 @@ export default function NewVehiclePage() {
                 ))}
               </select>
             ) : (
+              // Senza motorizzazioni in catalogo non c'è un elenco da proporre, e inventarlo
+              // significherebbe mettere in bocca all'utente dati sbagliati. Resta un campo
+              // libero, facoltativo: se lo lascia vuoto ci pensa la ricerca IA.
               <>
                 <input
                   id="engineCode"
@@ -233,45 +302,39 @@ export default function NewVehiclePage() {
                   disabled={!model}
                 />
                 <p className="mt-1 text-xs text-graphite-500">
-                  {model ? t("modelNotInCatalogue") : t("enterMakeModelFirst")}
+                  {model ? t("engineOptionalHint") : t("enterMakeModelFirst")}
                 </p>
               </>
             )}
           </div>
+
           <div>
-            <label className="label" htmlFor="year">{t("yearLabel")}</label>
-            {variants ? (
-              <select
-                id="year"
-                required
-                className="input"
-                value={year}
-                disabled={!selectedVariant}
-                onChange={(e) => setYear(e.target.value)}
-              >
-                <option value="" disabled>
-                  {selectedVariant ? t("yearSelectPlaceholder") : t("yearSelectDisabled")}
+            <label className="label" htmlFor="year">
+              {t("yearLabel")}
+            </label>
+            <select
+              id="year"
+              required
+              className="input"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+            >
+              <option value="" disabled>
+                {t("yearSelectPlaceholder")}
+              </option>
+              {yearOptions.map((y) => (
+                <option key={y} value={y}>
+                  {y}
                 </option>
-                {yearOptions.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <input
-                id="year"
-                type="number"
-                className="input"
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-              />
-            )}
+              ))}
+            </select>
           </div>
         </div>
 
         <div>
-          <label className="label" htmlFor="plate">{t("plateLabel")}</label>
+          <label className="label" htmlFor="plate">
+            {t("plateLabel")}
+          </label>
           <input id="plate" className="input" value={plate} onChange={(e) => setPlate(e.target.value)} />
         </div>
 
