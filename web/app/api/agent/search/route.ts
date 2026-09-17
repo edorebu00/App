@@ -6,21 +6,17 @@ import { getAnthropicClient, CLAUDE_MODEL, logTokenUsage } from "@/lib/anthropic
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_SEARCH_MODEL } from "@/lib/openai";
 import { LOCALE_LANGUAGE_NAME, resolveLocale, type Locale } from "@/i18n/locales";
 import { checkRateLimit } from "@/lib/rateLimit";
-import { safeExternalUrl } from "@/lib/safeUrl";
 import { clampText, isUuid } from "@/lib/validation";
-import type { ResourceLink, SearchPayload } from "@/lib/types";
+import { MAX_RISORSE, sanitizePayload } from "@/lib/searchPayload";
+import type { SearchPayload } from "@/lib/types";
 
 // La ricerca fa alcune chiamate allo strumento web_search piu' l'eventuale retry: teniamo un
 // margine oltre alla durata attesa (~20-50s per tentativo), il piano Hobby di Vercel supporta
 // funzioni fino a 300s.
 export const maxDuration = 180;
 
-const MAX_RISORSE = 10;
 /** La query finisce nel prompt: un tetto evita richieste enormi (e costose) verso i modelli. */
 const MAX_QUERY_CHARS = 200;
-const MAX_TEXT_FIELD_CHARS = 500;
-const MAX_SPEC_ENTRIES = 12;
-const MAX_SUMMARY_CHARS = 2000;
 /** Ogni ricerca costa piu' chiamate al modello con web search: massimo 10 ogni 5 minuti per utente. */
 const RATE_LIMIT = 10;
 const RATE_WINDOW_MS = 5 * 60 * 1000;
@@ -147,54 +143,6 @@ function extractPayloadFromText(text: string): SearchPayload | null {
   }
 }
 
-/**
- * Il payload arriva dal modello (che a sua volta cita pagine web di terzi): prima di salvarlo e
- * rimandarlo al browser scartiamo gli URL non http/https (`javascript:` diventerebbe XSS al click
- * nel momento in cui il link viene renderizzato) e tagliamo i campi testuali, cosi' una risposta
- * anomala non riempie il database.
- */
-function sanitizePayload(payload: SearchPayload): SearchPayload {
-  const risorse: ResourceLink[] = [];
-
-  for (const risorsa of payload.risorse || []) {
-    const url = safeExternalUrl(risorsa?.url);
-    const titolo = clampText(risorsa?.titolo, MAX_TEXT_FIELD_CHARS);
-    if (!url || !titolo) continue;
-
-    risorse.push({
-      categoria: risorsa.categoria,
-      sezione: risorsa.sezione,
-      titolo,
-      url,
-      descrizione: clampText(risorsa?.descrizione, MAX_TEXT_FIELD_CHARS) || "",
-    });
-
-    if (risorse.length >= MAX_RISORSE) break;
-  }
-
-  const specifiche: SearchPayload["specifiche"] = {};
-  for (const [sezione, voci] of Object.entries(payload.specifiche || {})) {
-    if (!voci || typeof voci !== "object") continue;
-    const clean: Record<string, string> = {};
-    for (const [key, value] of Object.entries(voci).slice(0, MAX_SPEC_ENTRIES)) {
-      const cleanKey = clampText(key, 80);
-      const cleanValue = clampText(value, MAX_TEXT_FIELD_CHARS);
-      if (cleanKey && cleanValue) clean[cleanKey] = cleanValue;
-    }
-    if (Object.keys(clean).length) {
-      specifiche[sezione as keyof SearchPayload["specifiche"]] = clean;
-    }
-  }
-
-  return {
-    risorse,
-    specifiche,
-    bollo: clampText(payload.bollo, MAX_TEXT_FIELD_CHARS) || undefined,
-    summary: clampText(payload.summary, MAX_SUMMARY_CHARS) || undefined,
-    locale: payload.locale,
-  };
-}
-
 function buildSearchSystemPrompt(language: string) {
   // Le regole sui singoli campi (sezione, specifiche, bollo) stanno nelle descrizioni dello
   // schema di submit_findings, che viene comunque inviato a ogni richiesta: ripeterle qui
@@ -298,16 +246,19 @@ async function findReusableSearch(
 
   // Le righe salvate prima di questa versione hanno una forma diversa (un semplice array di
   // risorse, senza specifiche né riepilogo): non sono riutilizzabili, si rifà la ricerca.
-  if (!results || Array.isArray(results) || !Array.isArray(results.risorse) || !results.risorse.length) {
-    return null;
-  }
+  if (!results || Array.isArray(results) || typeof results !== "object") return null;
 
   // I testi salvati sono nella lingua in cui il modello li ha scritti: riproporli a chi sta
   // usando un'altra lingua sarebbe un risparmio pagato dall'utente. Le righe più vecchie non
   // hanno il campo e per prudenza non vengono riusate.
   if (results.locale !== locale) return null;
 
-  return results as SearchPayload;
+  // La riga viene risanificata anche in lettura, non solo in scrittura: `search_results` è una
+  // tabella che il browser può scrivere direttamente (la RLS controlla di chi è la riga, non
+  // cosa contiene), quindi il suo contenuto non è più affidabile di quello che arriva dal
+  // modello. Se dopo la pulizia non resta nulla di valido, si rifà la ricerca.
+  const sanitized = sanitizePayload(results as SearchPayload);
+  return sanitized.risorse.length ? sanitized : null;
 }
 
 export async function POST(request: Request) {
@@ -346,7 +297,9 @@ export async function POST(request: Request) {
   // al modello e non ha senso che consumi quota.
   const reused = await findReusableSearch(supabase, user.id, vehicleId, query, resolvedLocale);
   if (reused) {
-    console.info(`[token] ricerca: riuso di un risultato salvato per "${query}" (nessuna chiamata al modello).`);
+    // La query non finisce nel log: è testo dell'utente, e con un a capo si falsificherebbero
+    // righe di log. Per il conteggio dei token basta sapere che la chiamata non c'è stata.
+    console.info("[token] ricerca: riuso di un risultato salvato, nessuna chiamata al modello.");
     return NextResponse.json({
       query,
       risorse: reused.risorse,
