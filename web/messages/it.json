@@ -258,7 +258,9 @@
     "searchPlaceholder": "Modello, motorizzazione, o cosa cercare…",
     "search": "Cerca",
     "errorGeneric": "Errore durante la ricerca.",
-    "errorContact": "Impossibile contattare il servizio di ricerca. Riprova più tardi."
+    "errorContact": "Impossibile contattare il servizio di ricerca. Riprova più tardi.",
+    "autoscoutTitle": "Annunci usato",
+    "autoscoutSubtitle": "Vedi quanto vale su AutoScout24"
   },
   "sections": {
     "motore": "Motore",
@@ -334,6 +336,15 @@
     "errorGeneric": "Errore durante la ricerca.",
     "errorContact": "Impossibile contattare il servizio di ricerca. Riprova più tardi.",
     "searchingResources": "L'agente IA sta cercando risorse online…"
+  },
+  "motorsport": {
+    "eyebrow": "Dal mondo delle corse",
+    "title": "Notizie e prossime gare",
+    "subtitle": "Aggiornato ogni giorno dall'agente IA, con i link alle biglietterie ufficiali.",
+    "racesTitle": "Prossime gare",
+    "newsTitle": "Ultime notizie",
+    "ticketsCta": "Biglietti",
+    "disclaimer": "Notizie e calendari raccolti automaticamente da fonti online: verifica date e disponibilità sui siti ufficiali prima di acquistare."
   },
   "apiErrors": {
     "notAuthenticated": "Non autenticato.",

@@ -5,13 +5,17 @@ import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import SectionEditor from "./SectionEditor";
 import ResourceCategoryView from "./ResourceCategoryView";
+import { autoscoutSearchUrl } from "@/lib/autoscout";
 import { safeExternalUrl } from "@/lib/safeUrl";
+import { resolveLocale } from "@/i18n/locales";
 import type { ResourceLink, SectionImage, SectionKey, SectionSpecs, VehicleSection } from "@/lib/types";
 
 type ResourceTabId = "documenti" | "forum" | "video";
 
 export default function VehicleDetailTabs({
   vehicleId,
+  make,
+  model,
   sections,
   imagesBySection,
   defaultQuery,
@@ -21,6 +25,8 @@ export default function VehicleDetailTabs({
   autoSearch,
 }: {
   vehicleId: string;
+  make: string;
+  model: string;
   sections: VehicleSection[];
   imagesBySection: Record<string, SectionImage[]>;
   defaultQuery: string;
@@ -92,6 +98,9 @@ export default function VehicleDetailTabs({
   const activeSection = sections.find((s) => s.id === activeId);
   const activeResourceTab = RESOURCE_TABS.find((t) => t.id === activeId);
   // Solo risorse con un URL http/https: gli altri schemi (es. `javascript:`) non vanno resi cliccabili.
+  // Il link agli annunci non dipende dalla ricerca IA: si costruisce da marca e modello, quindi
+  // c'e' sempre, anche prima che l'agente abbia trovato qualcosa.
+  const autoscoutUrl = autoscoutSearchUrl(make, model, resolveLocale(locale));
   const autodocLink = results.find((r) => r.categoria === "catalogo_ricambi" && safeExternalUrl(r.url));
   const maintenanceLink = results.find((r) => r.categoria === "piano_manutenzione" && safeExternalUrl(r.url));
 
@@ -113,8 +122,8 @@ export default function VehicleDetailTabs({
         </div>
       )}
 
-      {(autodocLink || maintenanceLink) && (
-        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+      {(autodocLink || maintenanceLink || autoscoutUrl) && (
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {autodocLink && (
             <a href={safeExternalUrl(autodocLink.url)!} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-100 text-xl">
@@ -139,6 +148,20 @@ export default function VehicleDetailTabs({
                   {t("maintenanceTitle")}
                 </span>
                 <span className="block truncate text-xs text-graphite-500">{maintenanceLink.titolo}</span>
+              </span>
+              <span className="ml-auto shrink-0 text-gold-600 opacity-0 transition group-hover:opacity-100">
+                ↗
+              </span>
+            </a>
+          )}
+          {autoscoutUrl && (
+            <a href={autoscoutUrl} target="_blank" rel="noopener noreferrer" className="card-gold-link group">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold-100 text-xl">
+                🔎
+              </span>
+              <span className="min-w-0">
+                <span className="block font-display font-semibold text-graphite-900">{t("autoscoutTitle")}</span>
+                <span className="block truncate text-xs text-graphite-500">{t("autoscoutSubtitle")}</span>
               </span>
               <span className="ml-auto shrink-0 text-gold-600 opacity-0 transition group-hover:opacity-100">
                 ↗

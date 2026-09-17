@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import CircuitCarousel from "@/components/CircuitCarousel";
+import MotorsportSection, { MotorsportSectionSkeleton } from "@/components/MotorsportSection";
 import ProductPreview from "@/components/ProductPreview";
 
 export default async function HomePage() {
@@ -37,6 +39,12 @@ export default async function HomePage() {
 
         <ProductPreview />
       </section>
+
+      {/* Il riquadro si carica a parte: alla scadenza della cache la ricerca web puo' prendere
+          decine di secondi, e il resto della home non deve restare fermo ad aspettarla. */}
+      <Suspense fallback={<MotorsportSectionSkeleton />}>
+        <MotorsportSection />
+      </Suspense>
 
       <section className="mx-auto max-w-6xl px-4 py-12">
         <p className="eyebrow">{t("disciplinesEyebrow")}</p>
