@@ -221,6 +221,24 @@ export const CATALOGUE_SWEEP: Record<VehicleType, Record<string, string[]>> = {
     Italcar: ["Attiva C2", "Attiva C3", "Attiva C4"],
     JDM: ["Abaca", "Aloes", "Roxsy", "Titane", "Xheos"],
     Tazzari: ["Zero", "Zero City", "Zero EM1"],
+
+    // ---------- Marchi mancanti: nuovi produttori cinesi e EV globali ----------
+    Aion: ["ES", "Hyper GT", "S", "V", "Y Plus"],
+    Baojun: ["510", "530", "730", "Kiwi EV", "Yep"],
+    "Can-Am": ["Ryker", "Spyder F3", "Spyder RT"],
+    "Faraday Future": ["FF 91"],
+    Haval: ["Dargo", "F7", "H6", "H9", "Jolion"],
+    HiPhi: ["X", "Y", "Z"],
+    "IM Motors": ["L6", "LS6", "LS7"],
+    "Isotta Fraschini": ["Tifosi"],
+    Karma: ["GS-6", "Revero"],
+    "Li Auto": ["L6", "L7", "L8", "L9", "Mega"],
+    Neta: ["Neta L", "Neta S", "Neta U", "Neta V", "Neta X"],
+    "Rising Auto": ["F7", "R7"],
+    Tank: ["300", "500", "700"],
+    Voyah: ["Courage", "Dreamer", "Free", "Passion"],
+    WEY: ["Coffee 01", "Coffee 02", "VV7"],
+    Wuling: ["Air EV", "Bingo", "Hongguang Mini EV", "Victory"],
   },
 
   moto: {
@@ -320,5 +338,9 @@ export const CATALOGUE_SWEEP: Record<VehicleType, Record<string, string[]>> = {
     Velocette: ["KTT", "LE", "Thruxton", "Venom", "Viper"],
     Victory: ["Cross Country", "Hammer", "Judge", "Kingpin", "Magnum", "Octane", "Vegas", "Vision"],
     Vincent: ["Black Lightning", "Black Prince", "Black Shadow", "Comet", "Rapide"],
+
+    // ---------- Marchi mancanti: elettrico e mercati emergenti ----------
+    "Ola Electric": ["S1", "S1 Air", "S1 Pro"],
+    Yadea: ["C1S", "G5", "Kando 350S", "T9"],
   },
 };
