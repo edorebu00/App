@@ -4,26 +4,59 @@ import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient, CLAUDE_MODEL } from "@/lib/anthropic";
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_MODEL } from "@/lib/openai";
 import { LOCALE_LANGUAGE_NAME, resolveLocale } from "@/i18n/locales";
+import { checkRateLimit } from "@/lib/rateLimit";
+import { clampText, isUuid } from "@/lib/validation";
 
 export const maxDuration = 90;
 
 // Budget di caratteri per il contesto documentale iniettato nel prompt (MVP senza embeddings/vector DB)
 const MAX_CONTEXT_CHARS = 250_000;
 const HISTORY_LIMIT = 20;
+/** Tetto sul messaggio dell'utente: senza, un singolo invio puo' gonfiare il prompt a piacere. */
+const MAX_MESSAGE_CHARS = 4000;
+/** Massimo 30 messaggi ogni 5 minuti per utente (le chiamate al modello sono a consumo). */
+const RATE_LIMIT = 30;
+const RATE_WINDOW_MS = 5 * 60 * 1000;
 
 type ChatHistoryItem = { role: "user" | "assistant"; content: string };
 
+/**
+ * L'API Messages di Anthropic pretende messaggi non vuoti, che iniziano con "user" e con i ruoli
+ * alternati. La cronologia salvata non lo garantisce: se una chiamata al modello fallisce dopo che
+ * il messaggio dell'utente e' gia' stato scritto a DB, resta un "user" spaiato e da quel momento
+ * ogni richiesta successiva verrebbe rifiutata con 400 — la chat di quel veicolo resterebbe rotta
+ * per sempre. Qui normalizziamo: scartiamo i vuoti e i messaggi prima del primo "user", e uniamo i
+ * ruoli consecutivi invece di perderne il contenuto.
+ */
+function toAlternatingMessages(items: ChatHistoryItem[]): ChatHistoryItem[] {
+  const out: ChatHistoryItem[] = [];
+
+  for (const item of items) {
+    const content = (item.content || "").trim();
+    if (!content) continue;
+    if (out.length === 0 && item.role !== "user") continue;
+
+    const last = out[out.length - 1];
+    if (last && last.role === item.role) {
+      last.content = `${last.content}\n\n${content}`;
+    } else {
+      out.push({ role: item.role, content });
+    }
+  }
+
+  return out;
+}
+
 // Fallback su OpenAI se Anthropic non risponde (timeout, errore 5xx, rate limit), cosi'
 // l'utente non vede un errore. Scatta solo se OPENAI_API_KEY e' configurata.
-async function chatWithOpenAI(systemPrompt: string, history: ChatHistoryItem[], message: string) {
+async function chatWithOpenAI(systemPrompt: string, messages: ChatHistoryItem[]) {
   const openai = getOpenAIClient();
   const completion = await openai.chat.completions.create({
     model: OPENAI_MODEL,
     max_tokens: 2048,
     messages: [
       { role: "system", content: systemPrompt },
-      ...history.map((h) => ({ role: h.role, content: h.content })),
-      { role: "user", content: message },
+      ...messages.map((m) => ({ role: m.role, content: m.content })),
     ],
   });
   return completion.choices[0]?.message?.content || "Non sono riuscito a generare una risposta.";
@@ -40,15 +73,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: tErr("notAuthenticated") }, { status: 401 });
   }
 
-  const { vehicleId, message, locale } = (await request.json()) as {
-    vehicleId?: string;
-    message?: string;
-    locale?: string;
-  };
+  const limit = checkRateLimit(`chat:${user.id}`, RATE_LIMIT, RATE_WINDOW_MS);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: tErr("rateLimited") },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
+    );
+  }
 
-  if (!message || !message.trim()) {
+  let body: { vehicleId?: unknown; message?: unknown; locale?: unknown };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: tErr("invalidRequest") }, { status: 400 });
+  }
+
+  const message = clampText(body.message, MAX_MESSAGE_CHARS);
+  if (!message) {
     return NextResponse.json({ error: tErr("emptyMessage") }, { status: 400 });
   }
+
+  const vehicleId = isUuid(body.vehicleId) ? body.vehicleId : null;
+  const locale = typeof body.locale === "string" ? body.locale : undefined;
 
   const language = LOCALE_LANGUAGE_NAME[resolveLocale(locale)];
 
@@ -75,7 +121,7 @@ export async function POST(request: Request) {
 
     await supabase.from("chat_messages").insert({
       user_id: user.id,
-      vehicle_id: vehicleId || null,
+      vehicle_id: vehicleId,
       role: "user",
       content: message,
     });
@@ -91,6 +137,11 @@ export async function POST(request: Request) {
         `rispondi con la tua conoscenza generale su auto e moto, SEMPRE in ${language}, e suggerisci di caricare il ` +
         "libretto d'uso e manutenzione per risposte più precise.";
 
+    const messages = toAlternatingMessages([
+      ...(history as ChatHistoryItem[]),
+      { role: "user", content: message },
+    ]);
+
     let reply: string;
     try {
       const anthropic = getAnthropicClient();
@@ -98,10 +149,7 @@ export async function POST(request: Request) {
         model: CLAUDE_MODEL,
         max_tokens: 2048,
         system: systemPrompt,
-        messages: [
-          ...history.map((h) => ({ role: h.role as "user" | "assistant", content: h.content })),
-          { role: "user" as const, content: message },
-        ],
+        messages,
       });
 
       const textBlock = response.content.find((b) => b.type === "text") as
@@ -111,12 +159,12 @@ export async function POST(request: Request) {
     } catch (primaryErr) {
       if (!hasOpenAIFallback()) throw primaryErr;
       console.error("Anthropic non disponibile per la chat, uso il fallback OpenAI:", primaryErr);
-      reply = await chatWithOpenAI(systemPrompt, history as ChatHistoryItem[], message);
+      reply = await chatWithOpenAI(systemPrompt, messages);
     }
 
     await supabase.from("chat_messages").insert({
       user_id: user.id,
-      vehicle_id: vehicleId || null,
+      vehicle_id: vehicleId,
       role: "assistant",
       content: reply,
     });

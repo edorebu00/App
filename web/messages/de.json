@@ -291,7 +291,8 @@
     "noSchemes": "Kein Schaltplan hochgeladen. Schau oben im Tab \"Dokumente\" nach online gefundenen, oder lade selbst einen hoch.",
     "uploadedTag": "Hochgeladen",
     "webTag": "Aus dem Web",
-    "imageFallback": "Bild"
+    "imageFallback": "Bild",
+    "imageUploadError": "Upload fehlgeschlagen: verwende ein Bild oder eine PDF unter 20 MB."
   },
   "documentsPage": {
     "backTo": "← Zurück zu {name}",
@@ -302,7 +303,9 @@
     "uploading": "Wird hochgeladen…",
     "supportedFormats": "Für die KI-Auswertung unterstützte Formate: PDF, TXT.",
     "sessionExpired": "Sitzung abgelaufen, bitte erneut anmelden.",
-    "saveError": "Fehler beim Speichern des Dokuments."
+    "saveError": "Fehler beim Speichern des Dokuments.",
+    "unsupportedFileType": "Nicht unterstütztes Format: lade eine PDF- oder Textdatei hoch.",
+    "fileTooLarge": "Datei zu groß: das Limit liegt bei 20 MB."
   },
   "documentList": {
     "noFiles": "Für dieses Fahrzeug wurden keine Dateien hochgeladen.",
@@ -338,7 +341,13 @@
     "searchQueryTooShort": "Gib ein Modell oder einen Motorcode zum Suchen an.",
     "searchNoUsableResult": "Die Suche hat kein verwertbares Ergebnis geliefert. Bitte erneut versuchen.",
     "searchTruncated": "Die Suche hat zu viele Ergebnisse geliefert und wurde abgebrochen. Versuche eine spezifischere Suche.",
-    "searchError": "Fehler bei der Suche. Bitte später erneut versuchen."
+    "searchError": "Fehler bei der Suche. Bitte später erneut versuchen.",
+    "invalidRequest": "Ungültige Anfrage.",
+    "rateLimited": "Zu viele Anfragen in kurzer Zeit. Bitte warte einige Minuten und versuche es erneut.",
+    "documentNotFound": "Dokument nicht gefunden.",
+    "documentProcessingError": "Fehler bei der Verarbeitung des Dokuments. Bitte später erneut versuchen.",
+    "unsupportedFileType": "Nicht unterstütztes Dateiformat: erlaubt sind PDF- und Textdateien.",
+    "fileTooLarge": "Datei zu groß: das Limit liegt bei 20 MB."
   },
   "resourceCategory": {
     "tabDocuments": "📄 Dokumente",

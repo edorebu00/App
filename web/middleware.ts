@@ -7,9 +7,11 @@ interface CookieToSet {
   options?: CookieOptions;
 }
 
-// "/" è pubblica ma deve combaciare esattamente: con startsWith matcherebbe ogni path.
-const PUBLIC_EXACT_PATHS = ["/"];
-const PUBLIC_PREFIX_PATHS = ["/login", "/registrati", "/auth/callback", "/circuiti"];
+// Percorsi pubblici esatti: il confronto è per uguaglianza ("/" con startsWith matcherebbe tutto).
+const PUBLIC_EXACT_PATHS = ["/", "/login", "/registrati", "/auth/callback", "/circuiti"];
+// Prefissi pubblici: il confronto richiede il separatore ("/circuiti/monza" sì, "/circuitiX" no),
+// così un percorso che inizia per caso con lo stesso testo non eredita l'esenzione dal login.
+const PUBLIC_PREFIX_PATHS = ["/auth/callback/", "/circuiti/"];
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });

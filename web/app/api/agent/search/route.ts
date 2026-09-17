@@ -5,7 +5,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient, CLAUDE_MODEL } from "@/lib/anthropic";
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_SEARCH_MODEL } from "@/lib/openai";
 import { LOCALE_LANGUAGE_NAME, resolveLocale } from "@/i18n/locales";
-import type { SearchPayload } from "@/lib/types";
+import { checkRateLimit } from "@/lib/rateLimit";
+import { safeExternalUrl } from "@/lib/safeUrl";
+import { clampText, isUuid } from "@/lib/validation";
+import type { ResourceLink, SearchPayload } from "@/lib/types";
 
 // La ricerca fa alcune chiamate allo strumento web_search piu' l'eventuale retry: teniamo un
 // margine oltre alla durata attesa (~20-50s per tentativo), il piano Hobby di Vercel supporta
@@ -13,6 +16,13 @@ import type { SearchPayload } from "@/lib/types";
 export const maxDuration = 180;
 
 const MAX_RISORSE = 10;
+/** La query finisce nel prompt: un tetto evita richieste enormi (e costose) verso i modelli. */
+const MAX_QUERY_CHARS = 200;
+const MAX_TEXT_FIELD_CHARS = 500;
+const MAX_SPEC_ENTRIES = 12;
+/** Ogni ricerca costa piu' chiamate al modello con web search: massimo 10 ogni 5 minuti per utente. */
+const RATE_LIMIT = 10;
+const RATE_WINDOW_MS = 5 * 60 * 1000;
 
 /**
  * Tool "fittizio" (non eseguito da noi: e' il modo per chiedere a Claude un output
@@ -116,6 +126,52 @@ function extractPayloadFromText(text: string): SearchPayload | null {
   }
 }
 
+/**
+ * Il payload arriva dal modello (che a sua volta cita pagine web di terzi): prima di salvarlo e
+ * rimandarlo al browser scartiamo gli URL non http/https (`javascript:` diventerebbe XSS al click
+ * nel momento in cui il link viene renderizzato) e tagliamo i campi testuali, cosi' una risposta
+ * anomala non riempie il database.
+ */
+function sanitizePayload(payload: SearchPayload): SearchPayload {
+  const risorse: ResourceLink[] = [];
+
+  for (const risorsa of payload.risorse || []) {
+    const url = safeExternalUrl(risorsa?.url);
+    const titolo = clampText(risorsa?.titolo, MAX_TEXT_FIELD_CHARS);
+    if (!url || !titolo) continue;
+
+    risorse.push({
+      categoria: risorsa.categoria,
+      sezione: risorsa.sezione,
+      titolo,
+      url,
+      descrizione: clampText(risorsa?.descrizione, MAX_TEXT_FIELD_CHARS) || "",
+    });
+
+    if (risorse.length >= MAX_RISORSE) break;
+  }
+
+  const specifiche: SearchPayload["specifiche"] = {};
+  for (const [sezione, voci] of Object.entries(payload.specifiche || {})) {
+    if (!voci || typeof voci !== "object") continue;
+    const clean: Record<string, string> = {};
+    for (const [key, value] of Object.entries(voci).slice(0, MAX_SPEC_ENTRIES)) {
+      const cleanKey = clampText(key, 80);
+      const cleanValue = clampText(value, MAX_TEXT_FIELD_CHARS);
+      if (cleanKey && cleanValue) clean[cleanKey] = cleanValue;
+    }
+    if (Object.keys(clean).length) {
+      specifiche[sezione as keyof SearchPayload["specifiche"]] = clean;
+    }
+  }
+
+  return {
+    risorse,
+    specifiche,
+    bollo: clampText(payload.bollo, MAX_TEXT_FIELD_CHARS) || undefined,
+  };
+}
+
 function buildSearchSystemPrompt(language: string) {
   return (
   "Sei l'assistente tecnico di My Vehicle. Quando un utente aggiunge un veicolo, il tuo compito è " +
@@ -217,15 +273,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: tErr("notAuthenticated") }, { status: 401 });
   }
 
-  const { query, vehicleId, locale } = (await request.json()) as {
-    query?: string;
-    vehicleId?: string;
-    locale?: string;
-  };
+  const limit = checkRateLimit(`search:${user.id}`, RATE_LIMIT, RATE_WINDOW_MS);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: tErr("rateLimited") },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
+    );
+  }
 
-  if (!query || query.trim().length < 2) {
+  let body: { query?: unknown; vehicleId?: unknown; locale?: unknown };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: tErr("invalidRequest") }, { status: 400 });
+  }
+
+  const query = clampText(body.query, MAX_QUERY_CHARS);
+  if (!query || query.length < 2) {
     return NextResponse.json({ error: tErr("searchQueryTooShort") }, { status: 400 });
   }
+
+  // Un id non-UUID farebbe fallire la query PostgREST con un errore di parsing: meglio
+  // trattarlo come "nessun veicolo di riferimento".
+  const vehicleId = isUuid(body.vehicleId) ? body.vehicleId : null;
+  const locale = typeof body.locale === "string" ? body.locale : undefined;
 
   const language = LOCALE_LANGUAGE_NAME[resolveLocale(locale)];
   const searchSystemPrompt = buildSearchSystemPrompt(language);
@@ -303,25 +374,27 @@ export async function POST(request: Request) {
       );
     }
 
+    const safePayload = sanitizePayload(payload);
+
     await supabase.from("search_results").insert({
       user_id: user.id,
-      vehicle_id: vehicleId || null,
+      vehicle_id: vehicleId,
       query,
-      results: payload,
+      results: safePayload,
     });
 
     // Il bollo e' una proprieta' del veicolo (non della singola ricerca): la persistiamo sulla
     // riga del veicolo cosi' resta visibile in testata senza dover riaprire l'ultima ricerca.
-    if (vehicleId && payload.bollo) {
-      await supabase.from("vehicles").update({ bollo_stimato: payload.bollo }).eq("id", vehicleId);
+    if (vehicleId && safePayload.bollo) {
+      await supabase.from("vehicles").update({ bollo_stimato: safePayload.bollo }).eq("id", vehicleId);
     }
 
     return NextResponse.json({
       query,
-      risorse: payload.risorse,
-      specifiche: payload.specifiche,
-      bollo: payload.bollo,
-      summary,
+      risorse: safePayload.risorse,
+      specifiche: safePayload.specifiche,
+      bollo: safePayload.bollo,
+      summary: summary.slice(0, 2000),
     });
   } catch (err) {
     console.error("Errore ricerca IA:", err);

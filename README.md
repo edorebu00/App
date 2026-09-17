@@ -79,6 +79,27 @@ npm run dev              # http://localhost:3000
 
 Nessun costo fisso mensile: paghi solo se e quando l'IA viene effettivamente utilizzata.
 
+## Sicurezza: com'è protetto l'accesso ai dati
+
+- **Isolamento fra utenti**: tutte le tabelle hanno Row Level Security attiva e ogni query passa
+  dalla sessione Supabase dell'utente (anche quelle dentro le API route). Non esiste da nessuna
+  parte una `service_role key`, quindi non c'è modo di aggirare le policy: un id di un veicolo o
+  di un documento altrui semplicemente non restituisce righe.
+- **File**: i bucket `vehicle-files` e `vehicle-images` sono privati e le policy consentono
+  lettura/scrittura/cancellazione solo sotto il prefisso `<user_id>/...`. I download avvengono con
+  link firmati validi 60 secondi.
+- **Link trovati dall'IA**: gli URL restituiti dal modello vengono filtrati (solo `http`/`https`)
+  sia prima di essere salvati sia prima di essere renderizzati, così uno schema come `javascript:`
+  non può diventare codice eseguito al click.
+- **Limiti di frequenza**: le route IA hanno un tetto per utente (ricerca 10 / chat 30 /
+  elaborazione documenti 20 ogni 5 minuti) per evitare che un ciclo di richieste generi consumo
+  Anthropic/OpenAI incontrollato. Il contatore è in memoria nella singola istanza serverless:
+  ferma l'abuso banale, non un attacco distribuito (per quello servirebbe un contatore condiviso).
+- **Upload**: solo PDF/TXT per i documenti e immagini/PDF per gli schemi, massimo 20 MB, con il
+  nome del file normalizzato prima di finire nella chiave di storage.
+- **Header**: `frame-ancestors`/`X-Frame-Options` (anti clickjacking), `nosniff`,
+  `Referrer-Policy`, `Permissions-Policy` e HSTS sono impostati in `next.config.mjs`.
+
 ## Note sull'MVP e possibili evoluzioni future
 
 - La chat sui documenti usa per ora "context stuffing" (il testo estratto viene passato direttamente

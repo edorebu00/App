@@ -291,7 +291,8 @@
     "noSchemes": "Nessuno schema caricato. Guarda la tab \"Documenti\" qui sopra per quelli trovati online, oppure caricane uno tuo.",
     "uploadedTag": "Caricata",
     "webTag": "Dal web",
-    "imageFallback": "Immagine"
+    "imageFallback": "Immagine",
+    "imageUploadError": "Caricamento non riuscito: usa un'immagine o un PDF sotto i 20 MB."
   },
   "documentsPage": {
     "backTo": "← Torna a {name}",
@@ -302,7 +303,9 @@
     "uploading": "Caricamento…",
     "supportedFormats": "Formati supportati per la lettura IA: PDF, TXT.",
     "sessionExpired": "Sessione scaduta, effettua di nuovo l'accesso.",
-    "saveError": "Errore durante il salvataggio del documento."
+    "saveError": "Errore durante il salvataggio del documento.",
+    "unsupportedFileType": "Formato non supportato: carica un PDF o un file di testo.",
+    "fileTooLarge": "File troppo grande: il limite è 20 MB."
   },
   "documentList": {
     "noFiles": "Nessun file caricato per questo veicolo.",
@@ -338,7 +341,13 @@
     "searchQueryTooShort": "Specifica un modello o un codice motore da cercare.",
     "searchNoUsableResult": "La ricerca non ha prodotto un risultato utilizzabile. Riprova.",
     "searchTruncated": "La ricerca ha prodotto troppi risultati ed è stata interrotta. Riprova con una ricerca più specifica.",
-    "searchError": "Errore durante la ricerca. Riprova più tardi."
+    "searchError": "Errore durante la ricerca. Riprova più tardi.",
+    "invalidRequest": "Richiesta non valida.",
+    "rateLimited": "Troppe richieste in poco tempo. Attendi qualche minuto e riprova.",
+    "documentNotFound": "Documento non trovato.",
+    "documentProcessingError": "Errore durante l'elaborazione del documento. Riprova più tardi.",
+    "unsupportedFileType": "Formato file non supportato: sono ammessi PDF e file di testo.",
+    "fileTooLarge": "File troppo grande: il limite è 20 MB."
   },
   "resourceCategory": {
     "tabDocuments": "📄 Documenti",
