@@ -225,7 +225,6 @@ export const CATALOGUE_SWEEP: Record<VehicleType, Record<string, string[]>> = {
     // ---------- Marchi mancanti: nuovi produttori cinesi e EV globali ----------
     Aion: ["ES", "Hyper GT", "S", "V", "Y Plus"],
     Baojun: ["510", "530", "730", "Kiwi EV", "Yep"],
-    "Can-Am": ["Ryker", "Spyder F3", "Spyder RT"],
     "Faraday Future": ["FF 91"],
     Haval: ["Dargo", "F7", "H6", "H9", "Jolion"],
     HiPhi: ["X", "Y", "Z"],
@@ -248,6 +247,7 @@ export const CATALOGUE_SWEEP: Record<VehicleType, Record<string, string[]>> = {
     Beta: ["Alp 4.0", "Ark", "Eikon", "Evo", "Motard 2T", "RR 125", "RR 200", "RR 390", "RR 430", "RR 480", "RR 50", "Tempo"],
     Bimota: ["BB1", "DB1", "DB2", "DB5", "DB7", "DB11", "KB1", "KB2", "KB3", "Mantra", "SB2", "SB6", "SB8K", "Tesi 1D", "Tesi 2D", "Tesi 3D", "Vdue", "YB4", "YB5", "YB11"],
     BMW: ["C 600 Sport", "C 650 GT", "C1", "CE 02", "F 650 CS", "F 650 GS", "F 700 GS", "F 800 R", "F 800 ST", "F 900 XR", "G 310 GS", "G 650 X", "HP2", "HP4", "K 1", "K 75", "K 1200 RS", "K 1300 R", "K 1300 S", "K 1600 B", "K 1600 GTL", "M 1000 R", "M 1000 RR", "M 1000 XR", "R 100 GS", "R 100 RS", "R 1100 GS", "R 1100 S", "R 1150 GS", "R 1200 GS", "R 1200 RT", "R 1200 S", "R 1250 RT", "R 1300 RT", "R 12", "R 12 nineT", "R 18 B", "R 32", "R 60", "R 69 S", "R 75", "R nineT Scrambler"],
+    "Can-Am": ["Ryker", "Spyder F3", "Spyder RT"],
     CFMoto: ["125NK", "1250TR-G", "450CL-C", "450NK", "450SR", "450SS", "650MT", "650NK", "675SR-R", "700MT", "800MT", "800NK", "Papio"],
     Ducati: ["1098", "1198", "1199 Panigale", "1299 Panigale", "750 SS", "848", "888", "899 Panigale", "900 SS", "959 Panigale", "DesertX Rally", "Diavel V4", "GT1000", "Hypermotard 698 Mono", "Hypermotard 950", "Mach 1", "Mike Hailwood Replica", "Monster 1200", "Monster 797", "Monster 821", "Monster 900", "Multistrada 1000DS", "Pantah", "Paso", "Paul Smart 1000", "Scrambler 1100", "Scrambler Icon", "ST2", "ST3", "ST4", "Streetfighter V2", "Superleggera V4"],
     Fantic: ["Caballero 125", "Caballero 500", "Caballero 700", "Imola", "Issimo", "Stealth", "XE 125", "XEF 250", "XEF 450", "XXF"],
