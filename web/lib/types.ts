@@ -11,6 +11,7 @@ export interface Vehicle {
   plate: string | null;
   vin: string | null;
   notes: string | null;
+  bollo_stimato: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -68,6 +69,8 @@ export type SectionSpecs = Partial<Record<SectionKey, Record<string, string>>>;
 export interface SearchPayload {
   risorse: ResourceLink[];
   specifiche: SectionSpecs;
+  /** Stima testuale del bollo annuo (es. "circa 150-180 €/anno, Euro 5, 14 CV fiscali"). */
+  bollo?: string;
 }
 
 export interface EngineVariant {

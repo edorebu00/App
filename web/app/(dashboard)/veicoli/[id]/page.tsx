@@ -90,6 +90,7 @@ export default async function VehicleDetailPage({
         defaultQuery={defaultQuery}
         initialResults={initialResults}
         initialSpecs={initialSpecs}
+        initialBollo={v.bollo_stimato}
         autoSearch={autosearch === "1"}
       />
     </div>

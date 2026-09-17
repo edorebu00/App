@@ -67,6 +67,13 @@ const SUBMIT_FINDINGS_TOOL: Anthropic.Tool = {
           trasmissione: { type: "object", additionalProperties: { type: "string" } },
         },
       },
+      bollo: {
+        type: "string",
+        description:
+          "Stima testuale del bollo (tassa di possesso) annuo per QUESTO veicolo, es. " +
+          "'circa 150-180 €/anno (14 CV fiscali, Euro 5) — varia per regione'. Ometti il campo del tutto se " +
+          "non riesci a stimare nemmeno la fascia approssimativa (mai inventare un numero a caso).",
+      },
     },
     required: ["summary", "risorse", "specifiche"],
   },
@@ -86,6 +93,7 @@ function extractFindingsFromToolUse(
     payload: {
       risorse: Array.isArray(input.risorse) ? (input.risorse as SearchPayload["risorse"]) : [],
       specifiche: typeof input.specifiche === "object" && input.specifiche ? (input.specifiche as SearchPayload["specifiche"]) : {},
+      bollo: typeof input.bollo === "string" && input.bollo.trim() ? input.bollo.trim() : undefined,
     },
     summary: typeof input.summary === "string" ? input.summary : "",
   };
@@ -101,6 +109,7 @@ function extractPayloadFromText(text: string): SearchPayload | null {
     return {
       risorse: Array.isArray(parsed.risorse) ? parsed.risorse : [],
       specifiche: typeof parsed.specifiche === "object" && parsed.specifiche ? parsed.specifiche : {},
+      bollo: typeof parsed.bollo === "string" && parsed.bollo.trim() ? parsed.bollo.trim() : undefined,
     };
   } catch {
     return null;
@@ -137,6 +146,14 @@ function buildSearchSystemPrompt(language: string) {
   "con 'motore' compilato e le altre sezioni vuote, piuttosto che ritardare o troncare la risposta per " +
   "inseguire la completezza. Non inventare mai numeri specifici per un veicolo troppo raro o sconosciuto: " +
   "in quel caso ometti solo quella singola voce.\n\n" +
+  "REGOLA IMPORTANTE su \"bollo\": valorizzalo SENZA fare ricerche web dedicate, usando solo la tua conoscenza " +
+  "generale e i CV fiscali/kW e la classe emissioni (Euro 0-6) gia' emersi per la sezione 'motore' — non e' " +
+  "una delle 3-4 ricerche prioritarie. Per le auto usa la formula ACI standard (€/kW in base alla classe " +
+  "Euro); per le moto la fascia in base alla cilindrata (sotto i 150 cc di norma non e' dovuto). Presentalo " +
+  "sempre come stima di massima con un intervallo (es. 'circa 150-180 €/anno'), specifica i CV fiscali/kW e " +
+  "la classe Euro usati per calcolarlo, e ricorda che l'importo varia per regione (in Valle d'Aosta e nelle " +
+  "Province di Trento e Bolzano non si paga). Ometti il campo del tutto se il veicolo o la motorizzazione " +
+  "sono troppo generici per una stima sensata: mai inventare un numero secco senza intervallo ne' contesto.\n\n" +
   `Rispondi SEMPRE in ${language} (sia il riepilogo sia i valori testuali dentro lo strumento, es. "titolo", ` +
   `"descrizione", i nomi delle caratteristiche in "specifiche"). Quando hai finito le ricerche, chiama SUBITO ` +
   "lo strumento \"submit_findings\" con il risultato: non scrivere mai il risultato come testo o come blocco " +
@@ -156,7 +173,7 @@ async function searchWithOpenAI(systemPrompt: string, userContent: string): Prom
     model: OPENAI_SEARCH_MODEL,
     tools: [{ type: "web_search_preview" }],
     input: [
-      { role: "system", content: `${systemPrompt}\n\nTermina la risposta con un blocco \`\`\`json\`\`\` contenente un oggetto {"summary": "...", "risorse": [...], "specifiche": {...}}.` },
+      { role: "system", content: `${systemPrompt}\n\nTermina la risposta con un blocco \`\`\`json\`\`\` contenente un oggetto {"summary": "...", "risorse": [...], "specifiche": {...}, "bollo": "..."} (campo "bollo" omesso se non stimabile).` },
       { role: "user", content: userContent },
     ],
   });
@@ -293,10 +310,17 @@ export async function POST(request: Request) {
       results: payload,
     });
 
+    // Il bollo e' una proprieta' del veicolo (non della singola ricerca): la persistiamo sulla
+    // riga del veicolo cosi' resta visibile in testata senza dover riaprire l'ultima ricerca.
+    if (vehicleId && payload.bollo) {
+      await supabase.from("vehicles").update({ bollo_stimato: payload.bollo }).eq("id", vehicleId);
+    }
+
     return NextResponse.json({
       query,
       risorse: payload.risorse,
       specifiche: payload.specifiche,
+      bollo: payload.bollo,
       summary,
     });
   } catch (err) {
