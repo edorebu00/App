@@ -245,6 +245,8 @@
   "vehicleTabs": {
     "autodocTitle": "Ersatzteile auf AutoDoc",
     "maintenanceTitle": "Offizieller Wartungsplan",
+    "bolloTitle": "Geschätzte Kfz-Steuer",
+    "bolloDisclaimer": "Grobe Schätzung auf Basis von Steuer-PS/kW und Abgasnorm: der tatsächliche Betrag variiert je nach Region.",
     "searchingLong": "Der KI-Agent sucht online nach Informationen… das dauert meist etwa eine halbe Minute.",
     "noInfoYet": "Für dieses Fahrzeug wurden noch keine Informationen gefunden.",
     "searchOnline": "🔍 Online nach Informationen suchen",

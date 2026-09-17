@@ -245,6 +245,8 @@
   "vehicleTabs": {
     "autodocTitle": "Ricambi su AutoDoc",
     "maintenanceTitle": "Piano di manutenzione ufficiale",
+    "bolloTitle": "Bollo stimato",
+    "bolloDisclaimer": "Stima di massima basata su CV fiscali/kW e classe Euro: l'importo reale varia per regione.",
     "searchingLong": "L'agente IA sta cercando informazioni online… di solito serve mezzo minuto circa.",
     "noInfoYet": "Nessuna informazione trovata ancora per questo veicolo.",
     "searchOnline": "🔍 Cerca informazioni online",

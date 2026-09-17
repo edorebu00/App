@@ -16,6 +16,7 @@ export default function VehicleDetailTabs({
   defaultQuery,
   initialResults,
   initialSpecs,
+  initialBollo,
   autoSearch,
 }: {
   vehicleId: string;
@@ -24,6 +25,7 @@ export default function VehicleDetailTabs({
   defaultQuery: string;
   initialResults: ResourceLink[];
   initialSpecs: SectionSpecs;
+  initialBollo: string | null;
   autoSearch: boolean;
 }) {
   const router = useRouter();
@@ -42,6 +44,7 @@ export default function VehicleDetailTabs({
   const [query, setQuery] = useState(defaultQuery);
   const [results, setResults] = useState<ResourceLink[]>(initialResults);
   const [specs, setSpecs] = useState<SectionSpecs>(initialSpecs);
+  const [bollo, setBollo] = useState<string | null>(initialBollo);
   const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,6 +69,7 @@ export default function VehicleDetailTabs({
       } else {
         setResults(data.risorse || []);
         setSpecs(data.specifiche || {});
+        if (data.bollo) setBollo(data.bollo);
         setSummary(data.summary || "");
         setHasSearchedOnce(true);
       }
@@ -96,6 +100,17 @@ export default function VehicleDetailTabs({
 
   return (
     <div>
+      {bollo && (
+        <div className="card mb-4 flex items-start gap-3">
+          <span className="icon-badge" aria-hidden>📋</span>
+          <div className="min-w-0">
+            <p className="font-display font-semibold text-graphite-900">{t("bolloTitle")}</p>
+            <p className="mt-0.5 text-sm text-graphite-600">{bollo}</p>
+            <p className="mt-1 text-xs text-graphite-500">{t("bolloDisclaimer")}</p>
+          </div>
+        </div>
+      )}
+
       {(autodocLink || maintenanceLink) && (
         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {autodocLink && (

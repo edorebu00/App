@@ -245,6 +245,8 @@
   "vehicleTabs": {
     "autodocTitle": "Parts on AutoDoc",
     "maintenanceTitle": "Official maintenance schedule",
+    "bolloTitle": "Estimated road tax",
+    "bolloDisclaimer": "Rough estimate based on fiscal HP/kW and emission class: the real amount varies by region.",
     "searchingLong": "The AI agent is searching for information online… this usually takes about half a minute.",
     "noInfoYet": "No information found yet for this vehicle.",
     "searchOnline": "🔍 Search information online",
