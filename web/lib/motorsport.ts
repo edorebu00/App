@@ -121,7 +121,7 @@ async function fetchBriefing(locale: Locale): Promise<MotorsportBriefing> {
         model: CLAUDE_MODEL,
         // Tetto su ragionamento PIU' risposta: se il ragionamento se lo mangia, il riquadro
         // sparisce dalla home senza un errore. Il margine inutilizzato non si paga.
-        max_tokens: 4000,
+        max_tokens: 8000,
         // Vedi EFFORT: leggere risultati di ricerca e riempire uno schema non ha bisogno del
         // livello `high` che si otteneva non dichiarando nulla.
         output_config: { effort: EFFORT.motorsport },
