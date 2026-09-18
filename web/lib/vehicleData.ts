@@ -1670,6 +1670,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "A200d 2.0 150cv", yearFrom: 2018, yearTo: null },
         { label: "A250 2.0 224cv", yearFrom: 2018, yearTo: null },
         { label: "A35 AMG 306cv", yearFrom: 2019, yearTo: null },
+        { label: "A45 S AMG 2.0 Turbo 421cv", yearFrom: 2019, yearTo: null },
       ],
       "Classe B": [
         { label: "B180 1.3 136cv", yearFrom: 2018, yearTo: null },
@@ -1692,6 +1693,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       CLA: [
         { label: "CLA200 1.3 163cv", yearFrom: 2019, yearTo: null },
         { label: "CLA220d 2.0 190cv", yearFrom: 2019, yearTo: null },
+        { label: "CLA45 S AMG 2.0 Turbo 421cv", yearFrom: 2019, yearTo: null },
       ],
       GLA: [
         { label: "GLA200 1.3 163cv", yearFrom: 2020, yearTo: null },
@@ -1990,6 +1992,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.0 TCe 100cv", yearFrom: 2019, yearTo: null },
         { label: "1.5 dCi/Blue dCi 85cv", yearFrom: 2019, yearTo: null },
         { label: "1.6 E-Tech Hybrid 140cv", yearFrom: 2020, yearTo: null },
+        { label: "RS 200 EDC 1.6 Turbo 200cv", yearFrom: 2013, yearTo: 2016 },
+        { label: "RS 220 Trophy 1.6 Turbo 220cv", yearFrom: 2016, yearTo: 2019 },
       ],
       Captur: [
         { label: "1.0 TCe 100cv", yearFrom: 2019, yearTo: null },
@@ -1998,6 +2002,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       Megane: [
         { label: "1.3 TCe 140cv", yearFrom: 2020, yearTo: null },
         { label: "E-Tech Elettrica 218cv", yearFrom: 2022, yearTo: null },
+        { label: "RS 280 1.8 Turbo 280cv", yearFrom: 2018, yearTo: 2023 },
+        { label: "RS 300 Trophy 1.8 Turbo 300cv", yearFrom: 2019, yearTo: 2023 },
       ],
       Kadjar: [
         { label: "1.3 TCe 140cv", yearFrom: 2019, yearTo: null },
