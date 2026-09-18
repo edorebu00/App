@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/generate-icons.mjs && next build",
     "start": "next start",
     "lint": "next lint",
     "check:cache": "node --experimental-strip-types --no-warnings scripts/check-prompt-cache.mts",
