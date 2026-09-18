@@ -15,8 +15,12 @@ const SHELL_CACHE = `shell-${VERSION}`;
 const ASSET_CACHE = `assets-${VERSION}`;
 const OFFLINE_URL = "/offline";
 
-/** Risorse statiche del guscio, messe in cache all'installazione. */
-const SHELL_ASSETS = [OFFLINE_URL, "/icon-192.png", "/icon-512.png"];
+/**
+ * Risorse statiche del guscio, messe in cache all'installazione. Solo la pagina offline: le
+ * icone hanno l'impronta nel nome (cambiano a ogni cambio di logo) e la pagina offline non ne
+ * usa nessuna, quindi elencarle qui sarebbe solo un riferimento da tenere aggiornato a mano.
+ */
+const SHELL_ASSETS = [OFFLINE_URL];
 
 /**
  * Percorsi che non devono MAI passare dalla cache: sessione, scambio del codice OAuth e le

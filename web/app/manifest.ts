@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { APP_ICONS } from "@/lib/appIcons";
 
 /**
  * Manifest della PWA: è quello che permette di installare l'app dalla schermata Home e di
@@ -26,14 +27,11 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "it",
     dir: "ltr",
     categories: ["productivity", "lifestyle", "utilities"],
-    icons: [
-      { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      // Le maskable vanno dichiarate a parte: Android ritaglia l'icona con forme diverse a
-      // seconda del telefono e usa queste, che hanno il margine di sicurezza.
-      { src: "/icon-maskable-192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
-      { src: "/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
-    ],
+    // I percorsi arrivano da un modulo generato insieme alle icone e contengono l'impronta del
+    // logo: cambiando il logo cambia il manifest, ed e' l'unico modo perche' Chrome aggiorni
+    // l'icona gia' installata sulla schermata Home. Le "maskable" sono dichiarate a parte
+    // perche' Android ritaglia l'icona con forme diverse e usa quelle, che hanno il margine.
+    icons: APP_ICONS,
     shortcuts: [
       { name: "Aggiungi veicolo", short_name: "Aggiungi", url: "/veicoli/nuovo" },
       { name: "Ricerca IA", short_name: "Ricerca", url: "/ricerca" },

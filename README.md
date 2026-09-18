@@ -97,6 +97,12 @@ autenticazione a cookie. Sono stati aggiunti soltanto:
   l'evento di sistema non esiste; si chiude e non ritorna;
 - icone generate da `app/icon.svg` con `npm run icons` (comprese le *maskable* per Android).
 
+**Se cambi il logo** basta sostituire `app/icon.svg`: `npm run build` rigenera tutto. Il nome dei
+file contiene l'impronta dell'SVG, quindi cambiando il logo cambia anche il manifest — è l'unico
+modo perché Chrome si accorga della modifica e aggiorni l'icona già installata sulla schermata
+Home. Su iPhone invece l'icona viene fotografata al momento dell'installazione e iOS non la
+rilegge mai: lì serve rimuovere l'app dalla Home e riaggiungerla.
+
 **Attenzione al middleware**: `manifest.webmanifest` e `sw.js` sono esclusi dal matcher. Se ci
 passassero dentro verrebbero rimandati al login e l'app non risulterebbe mai installabile — è un
 guasto silenzioso, l'app continua a funzionare e sembra solo che «l'installazione non si possa
