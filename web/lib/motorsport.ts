@@ -45,7 +45,13 @@ const MAX_TEXT_CHARS = 300;
 const CACHE_SECONDS = 86_400;
 /** Oltre questo tempo si rinuncia: la home non deve restare appesa a una ricerca lenta. */
 const REQUEST_TIMEOUT_MS = 60_000;
-const MAX_WEB_SEARCHES = 4;
+/**
+ * Due ricerche, non quattro: una per le notizie e una per i calendari, che e' esattamente quello
+ * che chiede il prompt. Ogni risultato in piu' non si paga solo come ricerca — resta nel contesto
+ * e viene rispedito a ogni giro successivo del ciclo, quindi la quarta ricerca la si paga una
+ * volta come ricerca e poi ancora a ogni turno come contesto.
+ */
+const MAX_WEB_SEARCHES = 2;
 
 const SUBMIT_BRIEFING_TOOL: Anthropic.Tool = {
   name: "submit_briefing",
@@ -113,7 +119,7 @@ function buildSystemPrompt(language: string, today: string) {
     "momento e le prossime gare.\n\n" +
     `OGGI E' IL ${today}. "Prossime gare" significa gare che si corrono DOPO questa data: non elencare gare ` +
     "gia' disputate.\n\n" +
-    "BUDGET: fai al massimo 3-4 ricerche web mirate (una per le notizie, una o due per i calendari), poi " +
+    `BUDGET: hai ${MAX_WEB_SEARCHES} ricerche web in tutto (una per le notizie, una per i calendari), poi ` +
     "chiama subito submit_briefing.\n\n" +
     "REGOLA NON NEGOZIABILE: ogni titolo, data e indirizzo deve venire da una pagina realmente trovata con " +
     "la ricerca web. Non ricostruire calendari o date a memoria e non costruire URL a mano: se un dato non " +
@@ -176,7 +182,21 @@ async function fetchBriefing(locale: Locale): Promise<MotorsportBriefing> {
       {
         model: CLAUDE_MODEL,
         max_tokens: 4000,
-        system: buildSystemPrompt(language, today),
+        // Blocco unico con punto di cache. L'ordine di resa e' `tools` -> `system` -> `messages`,
+        // quindi il marcatore sull'ultimo blocco di sistema mette in cache anche lo schema di
+        // submit_briefing. Ma la ragione principale e' un'altra: quando una richiesta usa gia' il
+        // caching, lo strumento di ricerca web aggiunge da se' un punto di cache dopo ogni blocco
+        // di risultati. Senza un `cache_control` esplicito quell'aggiunta non avviene e il ciclo
+        // si rispedisce tutti i risultati raccolti a prezzo pieno a ogni giro.
+        // TTL predefinito: i giri del ciclo distano secondi, un'ora costerebbe il doppio in
+        // scrittura per una voce che nessuno rileggera' (la chiamata e' una al giorno).
+        system: [
+          {
+            type: "text",
+            text: buildSystemPrompt(language, today),
+            cache_control: { type: "ephemeral" },
+          },
+        ],
         messages: [
           {
             role: "user",

@@ -171,7 +171,9 @@ export async function POST(request: Request) {
         system: systemBlocks,
         // La conversazione cresce a ogni turno: la cache automatica segue la coda e sposta da sé
         // il punto di cache sull'ultimo blocco, così ogni turno rilegge quelli precedenti.
-        cache_control: { type: "ephemeral" },
+        // Il TTL deve combaciare con quello del blocco di sistema, altrimenti la API rifiuta
+        // la richiesta.
+        cache_control: { type: "ephemeral", ttl: "1h" },
         messages,
       });
 

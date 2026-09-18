@@ -20,9 +20,17 @@ const MAX_QUERY_CHARS = 200;
 /** Ogni ricerca costa piu' chiamate al modello con web search: massimo 10 ogni 5 minuti per utente. */
 const RATE_LIMIT = 10;
 const RATE_WINDOW_MS = 5 * 60 * 1000;
-/** Numero di ricerche web concesse al modello: al primo tentativo e al ritentativo. */
-const MAX_WEB_SEARCHES = 4;
-const MAX_WEB_SEARCHES_RETRY = 2;
+/**
+ * Numero di ricerche web concesse al modello: al primo tentativo e al ritentativo.
+ *
+ * Non è solo il prezzo della singola ricerca web: ogni risultato resta nel contesto e viene
+ * rispedito a ogni giro successivo del ciclo, quindi la quarta ricerca si paga una volta come
+ * ricerca e poi ancora a ogni turno come contesto. Tre ricerche mirate coprono le due priorità
+ * (catalogo ricambi e piano di manutenzione) più una libera, che è quello che il prompt chiede.
+ */
+const MAX_WEB_SEARCHES = 3;
+/** Il ritentativo serve a chiudere, non a rifare la ricerca: una sola verifica e via. */
+const MAX_WEB_SEARCHES_RETRY = 1;
 /**
  * Per quanto tempo una ricerca identica (stesso utente, stesso veicolo, stessa query) viene
  * riproposta dalla cronologia invece di rieseguirla. Le risorse online su un modello di
@@ -143,6 +151,34 @@ function extractPayloadFromText(text: string): SearchPayload | null {
   }
 }
 
+/**
+ * Prompt di sistema come blocco unico con punto di cache.
+ *
+ * Il punto di cache qui vale molto più di quanto sembri. L'ordine con cui la richiesta viene
+ * resa è `tools` -> `system` -> `messages`, quindi il marcatore sull'ultimo blocco di sistema
+ * mette in cache anche lo schema di submit_findings, che da solo è la parte più grossa del
+ * prefisso fisso. Ma soprattutto: quando una richiesta usa già il caching, lo strumento di
+ * ricerca web aggiunge da sé un punto di cache dopo ogni blocco di risultati. È lì che sta il
+ * risparmio vero — una ricerca è un ciclo, e a ogni giro il modello si rispedisce TUTTI i
+ * risultati raccolti fino a quel momento: senza cache il costo cresce col quadrato del numero
+ * di giri, con la cache i giri precedenti si rileggono a un decimo del prezzo.
+ *
+ * Senza un `cache_control` esplicito da qualche parte quell'aggiunta automatica non avviene, e
+ * il ciclo si paga tutto a prezzo pieno. È il motivo per cui questo marcatore non si toglie.
+ *
+ * TTL predefinito (5 minuti) e non un'ora: qui non si aspetta una persona, i giri del ciclo
+ * distano secondi l'uno dall'altro e la scrittura costa il 125% invece del 200%.
+ */
+function buildSearchSystemBlocks(language: string): Anthropic.TextBlockParam[] {
+  return [
+    {
+      type: "text",
+      text: buildSearchSystemPrompt(language),
+      cache_control: { type: "ephemeral" },
+    },
+  ];
+}
+
 function buildSearchSystemPrompt(language: string) {
   // Le regole sui singoli campi (sezione, specifiche, bollo) stanno nelle descrizioni dello
   // schema di submit_findings, che viene comunque inviato a ogni richiesta: ripeterle qui
@@ -152,7 +188,7 @@ function buildSearchSystemPrompt(language: string) {
     "Sei l'assistente tecnico di My Vehicle. Quando un utente aggiunge un veicolo riempi le sue schede " +
     "(Motore, Carrozzeria, Assetto, Impianto frenante, Trasmissione, Elettronica) con informazioni utili, " +
     "così le trova già pronte senza compilare nulla a mano.\n\n" +
-    "BUDGET: l'utente è in attesa. Fai al massimo 3-4 ricerche web mirate, senza ripeterne di simili, poi " +
+    `BUDGET: l'utente è in attesa. Hai ${MAX_WEB_SEARCHES} ricerche web in tutto: usale mirate, senza ripeterne di simili, poi ` +
     "chiama subito submit_findings. Completare la risposta conta più della completezza assoluta.\n\n" +
     "COSA CERCARE: forum dedicati, manuali e PDF di manutenzione, video YouTube (tutorial, riparazioni, " +
     "revisioni), schemi tecnici e viste esplose, cataloghi e negozi di ricambi pertinenti al modello e " +
@@ -186,12 +222,16 @@ async function searchWithOpenAI(systemPrompt: string, userContent: string): Prom
 }
 
 /** Un tentativo di ricerca con Anthropic: ricerca web + output strutturato via submit_findings. */
-async function callAnthropicSearch(userContent: string, systemPrompt: string, maxSearches: number) {
+async function callAnthropicSearch(
+  userContent: string,
+  systemBlocks: Anthropic.TextBlockParam[],
+  maxSearches: number
+) {
   const anthropic = getAnthropicClient();
   const message = await anthropic.messages.create({
     model: CLAUDE_MODEL,
     max_tokens: 8000,
-    system: systemPrompt,
+    system: systemBlocks,
     messages: [{ role: "user", content: userContent }],
     tools: [
       {
@@ -318,6 +358,7 @@ export async function POST(request: Request) {
   }
 
   const searchSystemPrompt = buildSearchSystemPrompt(language);
+  const searchSystemBlocks = buildSearchSystemBlocks(language);
 
   let vehicleContext = "";
   if (vehicleId) {
@@ -343,7 +384,7 @@ export async function POST(request: Request) {
     let anthropicThrew = false;
 
     try {
-      const first = await callAnthropicSearch(userContent, searchSystemPrompt, MAX_WEB_SEARCHES);
+      const first = await callAnthropicSearch(userContent, searchSystemBlocks, MAX_WEB_SEARCHES);
       payload = first.payload;
       summary = first.summary;
       stopReason = first.stopReason;
@@ -360,7 +401,7 @@ export async function POST(request: Request) {
         const retry = await callAnthropicSearch(
           `${userContent}\n\n(Il tentativo precedente si e' interrotto prima di completare. Sii piu' conciso: ` +
             'massimo 5 risorse e specifiche solo per "motore", poi chiama SUBITO submit_findings.)',
-          searchSystemPrompt,
+          searchSystemBlocks,
           MAX_WEB_SEARCHES_RETRY
         );
         payload = retry.payload;
