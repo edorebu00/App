@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import type Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@/lib/supabase/server";
-import { getAnthropicClient, CLAUDE_MODEL, logTokenUsage } from "@/lib/anthropic";
+import { getAnthropicClient, CLAUDE_MODEL, EFFORT, logTokenUsage } from "@/lib/anthropic";
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_SEARCH_MODEL } from "@/lib/openai";
 import { LOCALE_LANGUAGE_NAME, resolveLocale, type Locale } from "@/i18n/locales";
 import { checkRateLimit } from "@/lib/rateLimit";
@@ -231,6 +231,11 @@ async function callAnthropicSearch(
   const message = await anthropic.messages.create({
     model: CLAUDE_MODEL,
     max_tokens: 8000,
+    // Vedi EFFORT: senza questa riga il modello girava a `high`, il default. Il ragionamento
+    // si paga a tariffa di output e rientra nel tetto di max_tokens, quindi era anche la causa
+    // piu' probabile delle risposte troncate prima di submit_findings — quelle che fanno
+    // scattare il ritentativo, cioe' una seconda ricerca intera da pagare.
+    output_config: { effort: EFFORT.search },
     system: systemBlocks,
     messages: [{ role: "user", content: userContent }],
     tools: [
