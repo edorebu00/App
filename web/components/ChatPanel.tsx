@@ -20,6 +20,9 @@ export default function ChatPanel({
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
+    // Il pulsante e' disabilitato mentre `loading` e' vero, ma la funzione si difende anche da
+    // sola contro un doppio invio.
+    if (loading) return;
     const text = input.trim();
     if (!text) return;
 

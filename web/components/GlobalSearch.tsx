@@ -25,7 +25,9 @@ export default function GlobalSearch() {
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    if (!query.trim()) return;
+    // Il pulsante e' disabilitato mentre `loading` e' vero, ma la funzione si difende anche da
+    // sola: ogni ricerca e' un giro intero di ricerche web, non un dettaglio da lasciare al caso.
+    if (loading || !query.trim()) return;
 
     setLoading(true);
     setError(null);
