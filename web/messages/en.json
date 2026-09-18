@@ -35,10 +35,22 @@
     "disciplinesEyebrow": "The world of racing",
     "disciplinesTitle": "Disciplines, in brief",
     "disciplines": {
-      "f1": { "title": "Formula 1", "text": "The technological pinnacle of open-wheel racing: aerodynamics, power and race strategy on permanent and street circuits." },
-      "endurance": { "title": "Endurance", "text": "Long-distance races like the 24 Hours of Le Mans, where reliability and team management matter as much as raw lap time." },
-      "rally": { "title": "Rally", "text": "Pure speed on closed public roads, gravel and snow: the driver races the clock more than the other competitors." },
-      "motogp": { "title": "MotoGP", "text": "The fastest prototype motorcycles in the world, where a few millimetres of lean angle separate victory from a crash." }
+      "f1": {
+        "title": "Formula 1",
+        "text": "The technological pinnacle of open-wheel racing: aerodynamics, power and race strategy on permanent and street circuits."
+      },
+      "endurance": {
+        "title": "Endurance",
+        "text": "Long-distance races like the 24 Hours of Le Mans, where reliability and team management matter as much as raw lap time."
+      },
+      "rally": {
+        "title": "Rally",
+        "text": "Pure speed on closed public roads, gravel and snow: the driver races the clock more than the other competitors."
+      },
+      "motogp": {
+        "title": "MotoGP",
+        "text": "The fastest prototype motorcycles in the world, where a few millimetres of lean angle separate victory from a crash."
+      }
     },
     "ctaBottomTitle": "Ready to get your garage in order?",
     "ctaBottomText": "Add your cars and motorcycles, find documents and manuals, and keep everything under control.",
@@ -78,10 +90,22 @@
         "The current layout alternates lightning-fast straights with technical chicanes, with the Parabolica as the final, iconic corner before the finish line. The low drag required makes it one of the highest average-speed tracks on the calendar."
       ],
       "facts": [
-        { "labelKey": "inaugurated", "value": "1922" },
-        { "labelKey": "length", "value": "~5.79 km" },
-        { "labelKey": "iconicCurve", "value": "Parabolica" },
-        { "labelKey": "grandPrix", "value": "Italy (F1)" }
+        {
+          "labelKey": "inaugurated",
+          "value": "1922"
+        },
+        {
+          "labelKey": "length",
+          "value": "~5.79 km"
+        },
+        {
+          "labelKey": "iconicCurve",
+          "value": "Parabolica"
+        },
+        {
+          "labelKey": "grandPrix",
+          "value": "Italy (F1)"
+        }
       ]
     },
     "spa-francorchamps": {
@@ -93,10 +117,22 @@
         "It's famous for Eau Rouge-Raidillon, the uphill sequence of corners linking the valley floor to the rest of the track, and for weather that often changes dramatically from one sector to the next."
       ],
       "facts": [
-        { "labelKey": "inaugurated", "value": "1921" },
-        { "labelKey": "length", "value": "~7.00 km" },
-        { "labelKey": "iconicCurve", "value": "Eau Rouge-Raidillon" },
-        { "labelKey": "grandPrix", "value": "Belgium (F1)" }
+        {
+          "labelKey": "inaugurated",
+          "value": "1921"
+        },
+        {
+          "labelKey": "length",
+          "value": "~7.00 km"
+        },
+        {
+          "labelKey": "iconicCurve",
+          "value": "Eau Rouge-Raidillon"
+        },
+        {
+          "labelKey": "grandPrix",
+          "value": "Belgium (F1)"
+        }
       ]
     },
     "silverstone": {
@@ -108,10 +144,22 @@
         "The track is famous for the high-speed sequence of Maggotts, Becketts and Chapel, one of the most demanding corner combinations on the calendar for balance and aerodynamics."
       ],
       "facts": [
-        { "labelKey": "inaugurated", "value": "1948" },
-        { "labelKey": "length", "value": "~5.89 km" },
-        { "labelKey": "iconicCurve", "value": "Maggotts-Becketts" },
-        { "labelKey": "grandPrix", "value": "Great Britain (F1)" }
+        {
+          "labelKey": "inaugurated",
+          "value": "1948"
+        },
+        {
+          "labelKey": "length",
+          "value": "~5.89 km"
+        },
+        {
+          "labelKey": "iconicCurve",
+          "value": "Maggotts-Becketts"
+        },
+        {
+          "labelKey": "grandPrix",
+          "value": "Great Britain (F1)"
+        }
       ]
     },
     "nurburgring-nordschleife": {
@@ -123,10 +171,22 @@
         "After Niki Lauda's severe crash in 1976, Formula 1 abandoned the long track in favour of the shorter GP-Strecke, but the Nordschleife remains a legendary proving ground for the automotive industry and for endurance races like the 24 Hours of Nürburgring."
       ],
       "facts": [
-        { "labelKey": "inaugurated", "value": "1927" },
-        { "labelKey": "length", "value": "~20.8 km" },
-        { "labelKey": "nickname", "value": "Grüne Hölle" },
-        { "labelKey": "iconicRace", "value": "24h Nürburgring" }
+        {
+          "labelKey": "inaugurated",
+          "value": "1927"
+        },
+        {
+          "labelKey": "length",
+          "value": "~20.8 km"
+        },
+        {
+          "labelKey": "nickname",
+          "value": "Grüne Hölle"
+        },
+        {
+          "labelKey": "iconicRace",
+          "value": "24h Nürburgring"
+        }
       ]
     },
     "le-mans": {
@@ -138,10 +198,22 @@
         "It's famous for the Ligne Droite des Hunaudières (the Mulsanne Straight), once taken flat out before two chicanes were introduced in the 1990s for safety reasons."
       ],
       "facts": [
-        { "labelKey": "firstEdition", "value": "1923" },
-        { "labelKey": "length", "value": "~13.6 km" },
-        { "labelKey": "iconicStretch", "value": "Mulsanne Straight" },
-        { "labelKey": "iconicRace", "value": "24 Hours of Le Mans" }
+        {
+          "labelKey": "firstEdition",
+          "value": "1923"
+        },
+        {
+          "labelKey": "length",
+          "value": "~13.6 km"
+        },
+        {
+          "labelKey": "iconicStretch",
+          "value": "Mulsanne Straight"
+        },
+        {
+          "labelKey": "iconicRace",
+          "value": "24 Hours of Le Mans"
+        }
       ]
     },
     "suzuka": {
@@ -153,10 +225,22 @@
         "Corners like 130R and Spoon Curve demand pinpoint precision, and for years the circuit hosted the Japanese Grand Prix at a pivotal point of the Formula 1 season."
       ],
       "facts": [
-        { "labelKey": "inaugurated", "value": "1962" },
-        { "labelKey": "length", "value": "~5.8 km" },
-        { "labelKey": "iconicCurve", "value": "130R" },
-        { "labelKey": "grandPrix", "value": "Japan (F1)" }
+        {
+          "labelKey": "inaugurated",
+          "value": "1962"
+        },
+        {
+          "labelKey": "length",
+          "value": "~5.8 km"
+        },
+        {
+          "labelKey": "iconicCurve",
+          "value": "130R"
+        },
+        {
+          "labelKey": "grandPrix",
+          "value": "Japan (F1)"
+        }
       ]
     }
   },
@@ -340,11 +424,11 @@
   "motorsport": {
     "eyebrow": "From the racing world",
     "title": "News and upcoming races",
-    "subtitle": "Refreshed daily by the AI agent, with links to the official ticket offices.",
-    "racesTitle": "Upcoming races",
+    "subtitle": "News refreshed daily by the AI agent, calendars linking straight to each championship's official site.",
     "newsTitle": "Latest news",
-    "ticketsCta": "Tickets",
-    "disclaimer": "News and calendars gathered automatically from online sources: check dates and availability on the official sites before buying."
+    "disclaimer": "News is gathered automatically from online sources: always check the official sites before buying tickets.",
+    "calendarsTitle": "Calendars",
+    "calendarsCta": "Go to the official calendar"
   },
   "offline": {
     "title": "You're offline",

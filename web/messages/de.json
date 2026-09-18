@@ -35,10 +35,22 @@
     "disciplinesEyebrow": "Die Welt des Motorsports",
     "disciplinesTitle": "Disziplinen im Überblick",
     "disciplines": {
-      "f1": { "title": "Formel 1", "text": "Der technologische Gipfel des Monoposto-Rennsports: Aerodynamik, Leistung und Rennstrategie auf permanenten Strecken und Stadtkursen." },
-      "endurance": { "title": "Langstrecke", "text": "Langstreckenrennen wie die 24 Stunden von Le Mans, bei denen Zuverlässigkeit und Teammanagement genauso zählen wie die schnellste Rundenzeit." },
-      "rally": { "title": "Rallye", "text": "Reine Geschwindigkeit auf gesperrten Straßen, Schotter und Schnee: Der Fahrer kämpft mehr gegen die Uhr als gegen die Konkurrenz." },
-      "motogp": { "title": "MotoGP", "text": "Die schnellsten Prototyp-Motorräder der Welt, bei denen wenige Millimeter Schräglage über Sieg oder Sturz entscheiden." }
+      "f1": {
+        "title": "Formel 1",
+        "text": "Der technologische Gipfel des Monoposto-Rennsports: Aerodynamik, Leistung und Rennstrategie auf permanenten Strecken und Stadtkursen."
+      },
+      "endurance": {
+        "title": "Langstrecke",
+        "text": "Langstreckenrennen wie die 24 Stunden von Le Mans, bei denen Zuverlässigkeit und Teammanagement genauso zählen wie die schnellste Rundenzeit."
+      },
+      "rally": {
+        "title": "Rallye",
+        "text": "Reine Geschwindigkeit auf gesperrten Straßen, Schotter und Schnee: Der Fahrer kämpft mehr gegen die Uhr als gegen die Konkurrenz."
+      },
+      "motogp": {
+        "title": "MotoGP",
+        "text": "Die schnellsten Prototyp-Motorräder der Welt, bei denen wenige Millimeter Schräglage über Sieg oder Sturz entscheiden."
+      }
     },
     "ctaBottomTitle": "Bereit, deine Garage in Ordnung zu bringen?",
     "ctaBottomText": "Füge deine Autos und Motorräder hinzu, finde Dokumente und Handbücher und behalte alles im Blick.",
@@ -78,10 +90,22 @@
         "Das heutige Layout wechselt zwischen blitzschnellen Geraden und technischen Schikanen, mit der Parabolica als letzter, ikonischer Kurve vor der Ziellinie. Der geringe erforderliche Luftwiderstand macht sie zu einer der Strecken mit der höchsten Durchschnittsgeschwindigkeit im Kalender."
       ],
       "facts": [
-        { "labelKey": "inaugurated", "value": "1922" },
-        { "labelKey": "length", "value": "~5,79 km" },
-        { "labelKey": "iconicCurve", "value": "Parabolica" },
-        { "labelKey": "grandPrix", "value": "Italien (F1)" }
+        {
+          "labelKey": "inaugurated",
+          "value": "1922"
+        },
+        {
+          "labelKey": "length",
+          "value": "~5,79 km"
+        },
+        {
+          "labelKey": "iconicCurve",
+          "value": "Parabolica"
+        },
+        {
+          "labelKey": "grandPrix",
+          "value": "Italien (F1)"
+        }
       ]
     },
     "spa-francorchamps": {
@@ -93,10 +117,22 @@
         "Berühmt ist sie für Eau Rouge-Raidillon, die bergauf führende Kurvenkombination, die das Tal mit dem Rest der Strecke verbindet, sowie für ein Wetter, das sich von Sektor zu Sektor oft stark ändert."
       ],
       "facts": [
-        { "labelKey": "inaugurated", "value": "1921" },
-        { "labelKey": "length", "value": "~7,00 km" },
-        { "labelKey": "iconicCurve", "value": "Eau Rouge-Raidillon" },
-        { "labelKey": "grandPrix", "value": "Belgien (F1)" }
+        {
+          "labelKey": "inaugurated",
+          "value": "1921"
+        },
+        {
+          "labelKey": "length",
+          "value": "~7,00 km"
+        },
+        {
+          "labelKey": "iconicCurve",
+          "value": "Eau Rouge-Raidillon"
+        },
+        {
+          "labelKey": "grandPrix",
+          "value": "Belgien (F1)"
+        }
       ]
     },
     "silverstone": {
@@ -108,10 +144,22 @@
         "Die Strecke ist berühmt für die schnelle Kurvenfolge Maggotts, Becketts und Chapel, eine der anspruchsvollsten Passagen des Kalenders in Sachen Balance und Aerodynamik."
       ],
       "facts": [
-        { "labelKey": "inaugurated", "value": "1948" },
-        { "labelKey": "length", "value": "~5,89 km" },
-        { "labelKey": "iconicCurve", "value": "Maggotts-Becketts" },
-        { "labelKey": "grandPrix", "value": "Großbritannien (F1)" }
+        {
+          "labelKey": "inaugurated",
+          "value": "1948"
+        },
+        {
+          "labelKey": "length",
+          "value": "~5,89 km"
+        },
+        {
+          "labelKey": "iconicCurve",
+          "value": "Maggotts-Becketts"
+        },
+        {
+          "labelKey": "grandPrix",
+          "value": "Großbritannien (F1)"
+        }
       ]
     },
     "nurburgring-nordschleife": {
@@ -123,10 +171,22 @@
         "Nach Niki Laudas schwerem Unfall 1976 verließ die Formel 1 die lange Strecke zugunsten der kürzeren GP-Strecke, doch die Nordschleife bleibt ein legendäres Testgelände für die Automobilindustrie und für Langstreckenrennen wie die 24 Stunden Nürburgring."
       ],
       "facts": [
-        { "labelKey": "inaugurated", "value": "1927" },
-        { "labelKey": "length", "value": "~20,8 km" },
-        { "labelKey": "nickname", "value": "Grüne Hölle" },
-        { "labelKey": "iconicRace", "value": "24h Nürburgring" }
+        {
+          "labelKey": "inaugurated",
+          "value": "1927"
+        },
+        {
+          "labelKey": "length",
+          "value": "~20,8 km"
+        },
+        {
+          "labelKey": "nickname",
+          "value": "Grüne Hölle"
+        },
+        {
+          "labelKey": "iconicRace",
+          "value": "24h Nürburgring"
+        }
       ]
     },
     "le-mans": {
@@ -138,10 +198,22 @@
         "Berühmt ist er für die Ligne Droite des Hunaudières (die Mulsanne-Gerade), die früher in einem Zug durchfahren wurde, bevor in den 1990er-Jahren aus Sicherheitsgründen zwei Schikanen eingeführt wurden."
       ],
       "facts": [
-        { "labelKey": "firstEdition", "value": "1923" },
-        { "labelKey": "length", "value": "~13,6 km" },
-        { "labelKey": "iconicStretch", "value": "Mulsanne-Gerade" },
-        { "labelKey": "iconicRace", "value": "24 Stunden von Le Mans" }
+        {
+          "labelKey": "firstEdition",
+          "value": "1923"
+        },
+        {
+          "labelKey": "length",
+          "value": "~13,6 km"
+        },
+        {
+          "labelKey": "iconicStretch",
+          "value": "Mulsanne-Gerade"
+        },
+        {
+          "labelKey": "iconicRace",
+          "value": "24 Stunden von Le Mans"
+        }
       ]
     },
     "suzuka": {
@@ -153,10 +225,22 @@
         "Kurven wie die 130R und die Spoon Curve verlangen millimetergenaue Präzision, und jahrelang war die Strecke Austragungsort des Großen Preises von Japan zu einem entscheidenden Zeitpunkt der Formel-1-Saison."
       ],
       "facts": [
-        { "labelKey": "inaugurated", "value": "1962" },
-        { "labelKey": "length", "value": "~5,8 km" },
-        { "labelKey": "iconicCurve", "value": "130R" },
-        { "labelKey": "grandPrix", "value": "Japan (F1)" }
+        {
+          "labelKey": "inaugurated",
+          "value": "1962"
+        },
+        {
+          "labelKey": "length",
+          "value": "~5,8 km"
+        },
+        {
+          "labelKey": "iconicCurve",
+          "value": "130R"
+        },
+        {
+          "labelKey": "grandPrix",
+          "value": "Japan (F1)"
+        }
       ]
     }
   },
@@ -340,11 +424,11 @@
   "motorsport": {
     "eyebrow": "Aus der Rennwelt",
     "title": "Nachrichten und kommende Rennen",
-    "subtitle": "Täglich vom KI-Agenten aktualisiert, mit Links zu den offiziellen Ticketstellen.",
-    "racesTitle": "Kommende Rennen",
+    "subtitle": "Nachrichten täglich vom KI-Agenten aktualisiert, Kalender mit Links direkt zur offiziellen Seite jeder Meisterschaft.",
     "newsTitle": "Neueste Nachrichten",
-    "ticketsCta": "Tickets",
-    "disclaimer": "Nachrichten und Kalender werden automatisch aus Online-Quellen zusammengestellt: prüfe Termine und Verfügbarkeit vor dem Kauf auf den offiziellen Seiten."
+    "disclaimer": "Nachrichten werden automatisch aus Online-Quellen zusammengestellt: prüfe vor dem Ticketkauf immer die offiziellen Seiten.",
+    "calendarsTitle": "Kalender",
+    "calendarsCta": "Zum offiziellen Kalender"
   },
   "offline": {
     "title": "Du bist offline",

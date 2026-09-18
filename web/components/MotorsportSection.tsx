@@ -1,21 +1,18 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { getMotorsportBriefing } from "@/lib/motorsport";
+import { MOTORSPORT_CALENDARS } from "@/lib/motorsportCalendars";
 import { resolveLocale } from "@/i18n/locales";
 
 /**
- * Riquadro motorsport della home: notizie del momento e prossime gare con i link ai biglietti.
- * È un componente server asincrono: va avvolto in <Suspense> perché sul primo caricamento dopo
- * la scadenza della cache la ricerca web può prendere decine di secondi, e il resto della pagina
- * non deve aspettarla.
+ * Riquadro motorsport della home: notizie del momento (agente IA) e link ai calendari ufficiali
+ * (statici, vedi lib/motorsportCalendars.ts). È un componente server asincrono: va avvolto in
+ * <Suspense> perché sul primo caricamento dopo la scadenza della cache la ricerca delle notizie
+ * può prendere qualche secondo, e il resto della pagina non deve aspettarla.
  */
 export default async function MotorsportSection() {
   const locale = resolveLocale(await getLocale());
   const t = await getTranslations("motorsport");
-  const { news, races } = await getMotorsportBriefing(locale);
-
-  // Se la ricerca non ha prodotto nulla (chiave API assente, rete, nessun risultato affidabile)
-  // la sezione sparisce invece di mostrare un riquadro vuoto.
-  if (!news.length && !races.length) return null;
+  const { news } = await getMotorsportBriefing(locale);
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-12">
@@ -24,38 +21,29 @@ export default async function MotorsportSection() {
       <p className="mt-1 text-sm text-graphite-500">{t("subtitle")}</p>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {races.length > 0 && (
-          <div>
-            <h3 className="mb-3 font-display text-base font-semibold text-graphite-900">{t("racesTitle")}</h3>
-            <ul className="space-y-2">
-              {races.map((race, i) => (
-                <li key={i} className="card flex items-start gap-3">
-                  <span className="icon-badge shrink-0" aria-hidden>
-                    🏁
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-600">
-                      {race.campionato}
-                    </p>
-                    <p className="mt-0.5 font-display font-semibold text-graphite-900">{race.gara}</p>
-                    <p className="mt-0.5 text-sm text-graphite-500">{race.circuito}</p>
-                    <p className="mt-1 text-sm font-medium text-graphite-600">{race.data}</p>
-                    {race.urlBiglietti && (
-                      <a
-                        href={race.urlBiglietti}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-2 inline-flex text-sm font-medium text-gold-600 hover:underline"
-                      >
-                        🎟️ {t("ticketsCta")}
-                      </a>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div>
+          <h3 className="mb-3 font-display text-base font-semibold text-graphite-900">{t("calendarsTitle")}</h3>
+          <ul className="space-y-2">
+            {MOTORSPORT_CALENDARS.map((cal) => (
+              <li key={cal.campionato} className="card flex items-center gap-3">
+                <span className="icon-badge shrink-0" aria-hidden>
+                  🏁
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="font-display font-semibold text-graphite-900">{cal.campionato}</p>
+                  <a
+                    href={cal.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 inline-flex text-sm font-medium text-gold-600 hover:underline"
+                  >
+                    {t("calendarsCta")}
+                  </a>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {news.length > 0 && (
           <div>
