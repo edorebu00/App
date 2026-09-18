@@ -11,6 +11,7 @@
  *
  * Da rieseguire dopo ogni modifica al modo in cui si compone un prompt.
  */
+import { readFileSync } from "node:fs";
 import { buildChatSystemBlocks } from "../lib/chatPrompt.ts";
 import { historyWindow } from "../lib/chatHistory.ts";
 import { normalizeExtractedPages } from "../lib/extractedText.ts";
@@ -88,6 +89,24 @@ check(normalizeExtractedPages(["Anti-bloccaggio\ndel freno"]).includes("Anti-blo
 
 const rawLength = pages.join("\n\n").length;
 console.log(`\n  testo estratto: ${rawLength} -> ${cleaned.length} caratteri (-${Math.round((1 - cleaned.length / rawLength) * 100)}%)`);
+
+console.log("\nPunti di cache sui percorsi con ricerca web");
+// Questi due moduli non si possono importare qui (tirano dentro Supabase e le variabili
+// d'ambiente), quindi si controlla il sorgente. Il controllo sembra grossolano ma protegge la
+// cosa giusta: senza un `cache_control` esplicito nella richiesta, lo strumento di ricerca web
+// non aggiunge i suoi punti di cache automatici dopo i risultati, e il ciclo di ricerca si
+// rispedisce tutto il contesto accumulato a prezzo pieno a ogni giro. Non fallisce nulla: si
+// paga e basta.
+for (const [file, label] of [
+  ["app/api/agent/search/route.ts", "ricerca veicolo"],
+  ["lib/motorsport.ts", "riquadro motorsport"],
+] as const) {
+  const src = readFileSync(new URL(`../${file}`, import.meta.url), "utf-8");
+  check(
+    !/web_search_\d+/.test(src) || src.includes("cache_control"),
+    `${label}: la ricerca web gira dentro una richiesta con caching (${file})`
+  );
+}
 
 console.log(failed === 0 ? "\nTutti i controlli superati.\n" : `\n${failed} controlli falliti.\n`);
 process.exit(failed === 0 ? 0 : 1);

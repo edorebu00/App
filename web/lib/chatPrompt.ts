@@ -36,7 +36,15 @@ export function buildChatSystemBlocks(context: string, language: string): Anthro
       text: stable,
       // Il punto di cache si mette solo se c'è abbastanza testo da giustificarlo: sotto il
       // minimo del modello la API lo ignora in silenzio (vedi MIN_CACHEABLE_CHARS).
-      ...(stable.length >= MIN_CACHEABLE_CHARS ? { cache_control: { type: "ephemeral" as const } } : {}),
+      //
+      // TTL di un'ora e non i 5 minuti predefiniti. Questa è una chat fra persone, non un ciclo
+      // automatico: si legge la risposta, si va a guardare l'auto, si torna dopo dieci minuti.
+      // Con 5 minuti la voce scade quasi sempre fra un messaggio e l'altro, e ogni messaggio
+      // ripaga la scrittura al 125% — cioè costa PIÙ che senza cache. Con un'ora si paga il
+      // 200% una volta sola e poi il 10% per messaggio.
+      ...(stable.length >= MIN_CACHEABLE_CHARS
+        ? { cache_control: { type: "ephemeral" as const, ttl: "1h" as const } }
+        : {}),
     },
     { type: "text", text: languageBlock },
   ];
