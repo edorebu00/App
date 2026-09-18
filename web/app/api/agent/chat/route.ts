@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
-import { getAnthropicClient, CLAUDE_MODEL, logTokenUsage } from "@/lib/anthropic";
+import { getAnthropicClient, CLAUDE_MODEL, EFFORT, logTokenUsage } from "@/lib/anthropic";
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_MODEL } from "@/lib/openai";
 import { LOCALE_LANGUAGE_NAME, resolveLocale } from "@/i18n/locales";
 import { checkRateLimit } from "@/lib/rateLimit";
@@ -167,7 +167,14 @@ export async function POST(request: Request) {
       const anthropic = getAnthropicClient();
       const response = await anthropic.messages.create({
         model: CLAUDE_MODEL,
-        max_tokens: 2048,
+        // `max_tokens` e' un tetto su ragionamento PIU' risposta, non sulla sola risposta. I
+        // 2048 di prima erano tarati su un modello che non ragionava: con il ragionamento
+        // adattivo acceso di default il modello poteva consumarne buona parte e lasciare una
+        // risposta mozza, o nessuna risposta affatto. Il margine non si paga se non si usa.
+        max_tokens: 4096,
+        // Vedi EFFORT: qui non impostarlo significava `high`, cioe' pagare a tariffa di output
+        // un ragionamento lungo per rispondere a una domanda su un manuale.
+        output_config: { effort: EFFORT.chat },
         system: systemBlocks,
         // La conversazione cresce a ogni turno: la cache automatica segue la coda e sposta da sé
         // il punto di cache sull'ultimo blocco, così ogni turno rilegge quelli precedenti.
@@ -178,6 +185,12 @@ export async function POST(request: Request) {
       });
 
       logTokenUsage("chat", response.usage);
+
+      // Una risposta troncata si riconosce solo da qui: l'utente vedrebbe un testo che si
+      // interrompe a meta' senza che nulla abbia fallito.
+      if (response.stop_reason === "max_tokens") {
+        console.warn("Chat IA: risposta troncata, max_tokens raggiunto.");
+      }
 
       const textBlock = response.content.find((b) => b.type === "text") as
         | { type: "text"; text: string }

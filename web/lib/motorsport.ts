@@ -1,7 +1,7 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import type Anthropic from "@anthropic-ai/sdk";
-import { getAnthropicClient, CLAUDE_MODEL, logTokenUsage } from "./anthropic";
+import { getAnthropicClient, CLAUDE_MODEL, EFFORT, logTokenUsage } from "./anthropic";
 import { safeExternalUrl } from "./safeUrl";
 import { clampText } from "./validation";
 import { LOCALE_LANGUAGE_NAME, type Locale } from "@/i18n/locales";
@@ -181,7 +181,12 @@ async function fetchBriefing(locale: Locale): Promise<MotorsportBriefing> {
     const message = await anthropic.messages.create(
       {
         model: CLAUDE_MODEL,
-        max_tokens: 4000,
+        // Tetto su ragionamento PIU' risposta: se il ragionamento se lo mangia, il riquadro
+        // sparisce dalla home senza un errore. Il margine inutilizzato non si paga.
+        max_tokens: 8000,
+        // Vedi EFFORT: leggere risultati di ricerca e riempire uno schema non ha bisogno del
+        // livello `high` che si otteneva non dichiarando nulla.
+        output_config: { effort: EFFORT.motorsport },
         // Blocco unico con punto di cache. L'ordine di resa e' `tools` -> `system` -> `messages`,
         // quindi il marcatore sull'ultimo blocco di sistema mette in cache anche lo schema di
         // submit_briefing. Ma la ragione principale e' un'altra: quando una richiesta usa gia' il

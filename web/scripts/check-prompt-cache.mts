@@ -90,6 +90,20 @@ check(normalizeExtractedPages(["Anti-bloccaggio\ndel freno"]).includes("Anti-blo
 const rawLength = pages.join("\n\n").length;
 console.log(`\n  testo estratto: ${rawLength} -> ${cleaned.length} caratteri (-${Math.round((1 - cleaned.length / rawLength) * 100)}%)`);
 
+console.log("\nLivello di sforzo dichiarato");
+// Non dichiarare `effort` non vuol dire "nessun ragionamento": su Claude Sonnet 5 il default e'
+// `high` e il ragionamento adattivo e' acceso. Sono token di output, alla tariffa piu' cara, che
+// non compaiono nella risposta. Una chiamata che perde questa riga torna a costare il doppio
+// senza che nulla fallisca — esattamente la classe di guasti che questo file esiste per vedere.
+for (const [file, label] of [
+  ["app/api/agent/chat/route.ts", "chat"],
+  ["app/api/agent/search/route.ts", "ricerca veicolo"],
+  ["lib/motorsport.ts", "riquadro motorsport"],
+] as const) {
+  const src = readFileSync(new URL(`../${file}`, import.meta.url), "utf-8");
+  check(/output_config:\s*\{\s*effort:/.test(src), `${label}: sforzo dichiarato in ${file}`);
+}
+
 console.log("\nPunti di cache sui percorsi con ricerca web");
 // Questi due moduli non si possono importare qui (tirano dentro Supabase e le variabili
 // d'ambiente), quindi si controlla il sorgente. Il controllo sembra grossolano ma protegge la
