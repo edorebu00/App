@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 // GENERATO DA scripts/generate-icons.mjs — non modificare a mano, si rigenera con `npm run icons`.
 // L'impronta nel nome serve a far accorgere Chrome che l'icona e' cambiata: vedi lo script.
 export const APP_ICONS: MetadataRoute.Manifest["icons"] = [
-  { src: "/icon-192-d2865673.png", sizes: "192x192", type: "image/png", purpose: "any" },
-  { src: "/icon-512-d2865673.png", sizes: "512x512", type: "image/png", purpose: "any" },
-  { src: "/icon-maskable-192-d2865673.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
-  { src: "/icon-maskable-512-d2865673.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+  { src: "/icon-192-4ab3c6ee.png", sizes: "192x192", type: "image/png", purpose: "any" },
+  { src: "/icon-512-4ab3c6ee.png", sizes: "512x512", type: "image/png", purpose: "any" },
+  { src: "/icon-maskable-192-4ab3c6ee.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
+  { src: "/icon-maskable-512-4ab3c6ee.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
 ];
