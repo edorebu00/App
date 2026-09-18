@@ -24,33 +24,37 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE = join(root, "app", "icon.svg");
 const PUBLIC = join(root, "public");
 
-/** Tinta di fondo del marchio: riempie i bordi quando Android ritaglia l'icona. */
-const BACKGROUND = "#0a0908";
 /** Quota del lato occupata dal disegno in una icona maskable (il resto è margine di sicurezza). */
 const SAFE_RATIO = 0.72;
 
-/** Avvolge l'SVG originale in un fondo pieno, rimpicciolito dentro la zona sicura. */
+/**
+ * Costruisce la variante maskable: fondo a tutta pagina e solo il segno rimpicciolito dentro la
+ * zona sicura.
+ *
+ * NON si puo' semplicemente rimpicciolire tutta l'icona su un colore di fondo: con una tessera
+ * dorata si otterrebbe un quadrato d'oro circondato di bordi scuri, e sotto il ritaglio tondo di
+ * Android si vedrebbero gli angoli. Il fondo deve arrivare fino al bordo, ed e' per questo che
+ * l'SVG marca separatamente il rettangolo di fondo (#bg) e il segno (#mark).
+ */
 function toMaskable(svg) {
-  const inner = svg
-    .replace(/^[\s\S]*?<svg[^>]*>/, "")
-    .replace(/<\/svg>\s*$/, "")
-    // gli id dei gradienti vengono rinominati per non collidere se un giorno i due SVG
-    // finissero nella stessa pagina
-    .replace(/(id="|url\(#)([a-zA-Z0-9_-]+)/g, "$1m-$2");
-
-  // Il fondo interno dell'icona originale e' leggermente piu' chiaro dello sfondo pieno: sotto
-  // una maschera circolare si vedrebbe l'arco del riquadro stondato, che sembra un difetto.
-  // Per la versione maskable si appiattisce sul colore di fondo.
-  const flat = inner.replace(/fill="url\(#m-bg\)"/g, `fill="${BACKGROUND}"`);
-
   const size = 64;
   const scaled = size * SAFE_RATIO;
   const offset = (size - scaled) / 2;
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}">
-  <rect width="${size}" height="${size}" fill="${BACKGROUND}"/>
-  <g transform="translate(${offset} ${offset}) scale(${SAFE_RATIO})">${flat}</g>
-</svg>`;
+  const withoutClip = svg
+    // via il ritaglio ad angoli stondati: e' il sistema operativo a decidere la forma
+    .replace(/\s*clip-path="url\(#round\)"/, "")
+    .replace(/<clipPath id="round">[\s\S]*?<\/clipPath>/, "");
+
+  const marked = withoutClip.replace(
+    /<g id="mark">/,
+    `<g id="mark" transform="translate(${offset} ${offset}) scale(${SAFE_RATIO})">`
+  );
+
+  if (marked === withoutClip) {
+    throw new Error("app/icon.svg non contiene <g id=\"mark\">: la variante maskable non e' costruibile");
+  }
+  return marked;
 }
 
 const TARGETS = [
