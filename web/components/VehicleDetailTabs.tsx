@@ -59,7 +59,12 @@ export default function VehicleDetailTabs({
   const [showSearchBox, setShowSearchBox] = useState(false);
 
   async function runSearch(q: string) {
-    if (!q.trim()) return;
+    // Senza questa guardia, un clic ripetuto su "Aggiorna" mentre la ricerca precedente e'
+    // ancora in corso (puo' durare decine di secondi) ne parte una seconda, poi una terza: ogni
+    // ricerca costa un giro intero di ricerche web, quindi tre clic per impazienza costano tre
+    // volte tanto. I pulsanti sotto sono gia' disabilitati mentre `loading` e' vero, ma la
+    // funzione si difende anche da sola.
+    if (loading || !q.trim()) return;
     setLoading(true);
     setError(null);
 
@@ -181,7 +186,7 @@ export default function VehicleDetailTabs({
         ) : !hasSearchedOnce ? (
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm text-graphite-500">{t("noInfoYet")}</p>
-            <button onClick={() => runSearch(query)} className="btn-primary whitespace-nowrap">
+            <button onClick={() => runSearch(query)} disabled={loading} className="btn-primary whitespace-nowrap">
               {t("searchOnline")}
             </button>
           </div>
@@ -195,7 +200,7 @@ export default function VehicleDetailTabs({
                 <button onClick={() => setShowSearchBox((s) => !s)} className="btn-secondary text-xs">
                   {showSearchBox ? t("closeSearch") : t("searchMore")}
                 </button>
-                <button onClick={() => runSearch(query)} className="btn-primary text-xs whitespace-nowrap">
+                <button onClick={() => runSearch(query)} disabled={loading} className="btn-primary text-xs whitespace-nowrap">
                   {t("update")}
                 </button>
               </div>
@@ -214,7 +219,7 @@ export default function VehicleDetailTabs({
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
-                <button type="submit" className="btn-primary whitespace-nowrap">
+                <button type="submit" disabled={loading} className="btn-primary whitespace-nowrap">
                   {t("search")}
                 </button>
               </form>
