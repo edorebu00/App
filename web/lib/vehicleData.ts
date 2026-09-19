@@ -611,6 +611,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.4 T-Jet 155cv", yearFrom: 2010, yearTo: 2012 },
         { label: "1.4 T-Jet 165cv", yearFrom: 2010, yearTo: 2012 },
       ],
+      "600e": [
+        { label: "Turismo Elettrica 240cv", yearFrom: 2024, yearTo: null },
+        { label: "Scorpionissima Elettrica 280cv", yearFrom: 2024, yearTo: null },
+      ],
     },
     "Alfa Romeo": {
       Giulia: [
@@ -709,6 +713,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       A110: [
         { label: "1.8 Turbo 252cv", yearFrom: 2017, yearTo: null },
         { label: "1.8 Turbo S 300cv", yearFrom: 2019, yearTo: null },
+      ],
+      A290: [
+        { label: "Elettrica 180cv", yearFrom: 2024, yearTo: null },
+        { label: "GT Performance Elettrica 220cv", yearFrom: 2024, yearTo: null },
       ],
     },
     Audi: {
@@ -2048,6 +2056,14 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       R4: [{ label: "1.1 34cv", yearFrom: 1961, yearTo: 1992 }],
       R5: [{ label: "1.4 Turbo 115cv", yearFrom: 1972, yearTo: 1996 }],
       R19: [{ label: "1.7 95cv", yearFrom: 1988, yearTo: 1996 }],
+      "R5 E-Tech": [
+        { label: "Elettrica 40 kWh 120cv", yearFrom: 2024, yearTo: null },
+        { label: "Elettrica 52 kWh 150cv", yearFrom: 2024, yearTo: null },
+      ],
+      "4 E-Tech": [
+        { label: "Elettrica 40 kWh 120cv", yearFrom: 2025, yearTo: null },
+        { label: "Elettrica 52 kWh 150cv", yearFrom: 2025, yearTo: null },
+      ],
       Zoe: [
         { label: "Elettrica 108cv", yearFrom: 2012, yearTo: 2024 },
         { label: "Elettrica 135cv", yearFrom: 2019, yearTo: 2024 },
@@ -2132,6 +2148,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.6 TDI 105cv", yearFrom: 2012, yearTo: 2019 },
       ],
       Citigo: [{ label: "1.0 60cv", yearFrom: 2012, yearTo: 2019 }],
+      Elroq: [{ label: "vRS Elettrica 84 kWh 340cv", yearFrom: 2025, yearTo: null }],
     },
     Smart: {
       Fortwo: [
