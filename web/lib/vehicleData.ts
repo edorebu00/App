@@ -718,6 +718,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Elettrica 180cv", yearFrom: 2024, yearTo: null },
         { label: "GT Performance Elettrica 220cv", yearFrom: 2024, yearTo: null },
       ],
+      A390: [
+        { label: "GT Elettrica 400cv", yearFrom: 2025, yearTo: null },
+        { label: "GTS Elettrica 470cv", yearFrom: 2026, yearTo: null },
+      ],
     },
     Audi: {
       "80/90": [
@@ -1083,6 +1087,15 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "2.0 TSI 300cv", yearFrom: 2019, yearTo: null },
         { label: "2.0 TDI 190cv", yearFrom: 2019, yearTo: null },
       ],
+      Terramar: [
+        { label: "1.5 Hybrid 150cv", yearFrom: 2024, yearTo: null },
+        { label: "2.0 TSI 204cv", yearFrom: 2024, yearTo: null },
+        { label: "2.0 TSI VZ 265cv", yearFrom: 2024, yearTo: null },
+      ],
+      Tavascan: [
+        { label: "Endurance Elettrica 286cv", yearFrom: 2024, yearTo: null },
+        { label: "VZ Elettrica 340cv", yearFrom: 2024, yearTo: null },
+      ],
     },
     Dacia: {
       Sandero: [
@@ -1379,7 +1392,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Hybrid 141cv", yearFrom: 2016, yearTo: 2022 },
         { label: "Elettrica 136cv", yearFrom: 2016, yearTo: 2022 },
       ],
-      "Ioniq 5": [{ label: "Elettrica 170cv", yearFrom: 2021, yearTo: null }],
+      "Ioniq 5": [
+        { label: "Elettrica 170cv", yearFrom: 2021, yearTo: null },
+        { label: "N Elettrica 650cv", yearFrom: 2024, yearTo: null },
+      ],
       "Ioniq 6": [{ label: "Elettrica 229cv", yearFrom: 2022, yearTo: null }],
       i40: [{ label: "1.7 CRDi 136cv", yearFrom: 2011, yearTo: 2019 }],
       Atos: [{ label: "1.0 55cv", yearFrom: 1998, yearTo: 2008 }],
@@ -2368,6 +2384,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       "ID.3": [
         { label: "Elettrica Pro 150cv", yearFrom: 2020, yearTo: null },
         { label: "Elettrica Pro S 204cv", yearFrom: 2020, yearTo: null },
+        { label: "GTX 286cv", yearFrom: 2024, yearTo: null },
+        { label: "GTX Performance 326cv", yearFrom: 2024, yearTo: null },
       ],
       "ID.4": [
         { label: "Elettrica Pro 170cv", yearFrom: 2021, yearTo: null },
