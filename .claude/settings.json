@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if git fetch --quiet origin claude/nightly-bug-scan 2>/dev/null && out=$(git show origin/claude/nightly-bug-scan:BUG_SCAN.md 2>/dev/null) && [ -n \"$out\" ]; then printf 'Report bug scan notturno MyVehicle (BUG_SCAN.md, branch claude/nightly-bug-scan):\n\n%s\n\nRiassumilo in poche righe in italiano nel primo messaggio (conteggio per gravita e titoli di Bloccanti/Importanti con file e riga), poi prosegui con la richiesta dell utente.\n' \"$out\"; fi; exit 0",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
