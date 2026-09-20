@@ -84,6 +84,7 @@ export default async function VehicleDetailPage({
       </div>
 
       <VehicleDetailTabs
+        key={v.id}
         vehicleId={v.id}
         make={v.make}
         model={v.model}

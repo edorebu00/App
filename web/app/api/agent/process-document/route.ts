@@ -125,10 +125,13 @@ export async function POST(request: Request) {
       );
     }
 
-    await supabase
+    const { error: updateError } = await supabase
       .from("documents")
       .update({ extracted_text: extractedText, processed: true, processing_error: null })
       .eq("id", documentId);
+    // Se il salvataggio fallisce non si risponde "ok": il catch registra l'errore e marca il
+    // documento come non elaborato, invece di lasciarlo bloccato senza diagnostica.
+    if (updateError) throw updateError;
 
     return NextResponse.json({ ok: true, characters: extractedText.length });
   } catch (err) {

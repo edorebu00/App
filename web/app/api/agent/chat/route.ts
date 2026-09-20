@@ -117,10 +117,12 @@ export async function POST(request: Request) {
       .eq("processed", true)
       .order("created_at", { ascending: true })
       .order("id", { ascending: true });
-    if (vehicleId) docQuery = docQuery.eq("vehicle_id", vehicleId);
+    // Senza veicolo si cercano solo le righe "senza veicolo" (come fa la route di ricerca), non
+    // quelle di tutti i veicoli dell'utente mescolate insieme.
+    docQuery = vehicleId ? docQuery.eq("vehicle_id", vehicleId) : docQuery.is("vehicle_id", null);
 
     let countQuery = supabase.from("chat_messages").select("id", { count: "exact", head: true });
-    if (vehicleId) countQuery = countQuery.eq("vehicle_id", vehicleId);
+    countQuery = vehicleId ? countQuery.eq("vehicle_id", vehicleId) : countQuery.is("vehicle_id", null);
 
     // Documenti e conteggio della cronologia sono indipendenti: tanto vale chiederli insieme
     // invece di aspettare l'uno per poi chiedere l'altro.
@@ -129,8 +131,11 @@ export async function POST(request: Request) {
     let context = "";
     for (const doc of docs || []) {
       const chunk = `\n\n--- Documento: ${doc.file_name} ---\n${doc.extracted_text || ""}`;
-      if (context.length + chunk.length > MAX_CONTEXT_CHARS) break;
-      context += chunk;
+      const remaining = MAX_CONTEXT_CHARS - context.length;
+      if (remaining <= 0) break;
+      // Un documento piu' grande del budget non va scartato per intero (il prompt direbbe "nessun
+      // documento caricato"): se ne tiene la parte che ci sta.
+      context += chunk.length > remaining ? chunk.slice(0, remaining) : chunk;
     }
 
     // Quanti messaggi scartare dall'inizio, arrotondato a blocchi: il punto di partenza della
@@ -143,16 +148,17 @@ export async function POST(request: Request) {
       .order("created_at", { ascending: true })
       .order("id", { ascending: true })
       .range(skip, skip + take - 1);
-    if (vehicleId) historyQuery = historyQuery.eq("vehicle_id", vehicleId);
+    historyQuery = vehicleId ? historyQuery.eq("vehicle_id", vehicleId) : historyQuery.is("vehicle_id", null);
     const { data: historyRows } = await historyQuery;
     const history = historyRows || [];
 
-    await supabase.from("chat_messages").insert({
+    const { error: userInsertError } = await supabase.from("chat_messages").insert({
       user_id: user.id,
       vehicle_id: vehicleId,
       role: "user",
       content: message,
     });
+    if (userInsertError) console.error("Chat IA: salvataggio del messaggio non riuscito:", userInsertError);
 
     const systemBlocks = buildChatSystemBlocks(context, language);
     const systemPrompt = flattenSystemBlocks(systemBlocks);
@@ -202,12 +208,13 @@ export async function POST(request: Request) {
       reply = await chatWithOpenAI(systemPrompt, messages);
     }
 
-    await supabase.from("chat_messages").insert({
+    const { error: replyInsertError } = await supabase.from("chat_messages").insert({
       user_id: user.id,
       vehicle_id: vehicleId,
       role: "assistant",
       content: reply,
     });
+    if (replyInsertError) console.error("Chat IA: salvataggio della risposta non riuscito:", replyInsertError);
 
     return NextResponse.json({ reply, documentsUsed: (docs || []).map((d) => d.file_name) });
   } catch (err) {

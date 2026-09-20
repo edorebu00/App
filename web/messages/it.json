@@ -399,7 +399,8 @@
     "ready": "✓ Pronto per la chat IA",
     "processing": "Elaborazione in corso…",
     "notProcessed": "Non elaborato: {error}",
-    "download": "⬇️ Scarica"
+    "download": "⬇️ Scarica",
+    "downloadError": "Impossibile scaricare il file. Riprova tra poco."
   },
   "chat": {
     "title": "🤖 Assistente IA",

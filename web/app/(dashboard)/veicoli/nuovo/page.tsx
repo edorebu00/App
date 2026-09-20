@@ -143,6 +143,12 @@ export default function NewVehiclePage() {
 
     if (sectionsError) {
       console.error(sectionsError);
+      // Un veicolo senza sezioni non e' utilizzabile: lo togliamo (cosi' un secondo tentativo
+      // non lascia un doppione orfano) e diciamo all'utente che non e' andata a buon fine.
+      await supabase.from("vehicles").delete().eq("id", vehicle.id);
+      setError(t("genericError"));
+      setLoading(false);
+      return;
     }
 
     // Il redirect (con avvio automatico della ricerca) parte solo dopo l'animazione

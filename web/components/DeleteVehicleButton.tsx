@@ -19,24 +19,47 @@ export default function DeleteVehicleButton({ vehicleId, label }: { vehicleId: s
 
     // Rimuove i file dallo storage prima di eliminare il veicolo (le righe DB sono in cascata,
     // ma gli oggetti nei bucket di storage vanno ripuliti esplicitamente).
-    const { data: documents } = await supabase
+    // Se una di queste letture fallisce ci si ferma: proseguire lascerebbe i file nello storage
+    // senza piu' alcuna riga che li referenzi.
+    const { data: documents, error: documentsError } = await supabase
       .from("documents")
       .select("storage_path")
       .eq("vehicle_id", vehicleId);
+
+    if (documentsError) {
+      window.alert(t("deleteError", { message: documentsError.message }));
+      setDeleting(false);
+      return;
+    }
 
     const filePaths = (documents || []).map((d) => d.storage_path).filter(Boolean);
     if (filePaths.length) {
       await supabase.storage.from("vehicle-files").remove(filePaths);
     }
 
-    const { data: sections } = await supabase.from("vehicle_sections").select("id").eq("vehicle_id", vehicleId);
+    const { data: sections, error: sectionsError } = await supabase
+      .from("vehicle_sections")
+      .select("id")
+      .eq("vehicle_id", vehicleId);
+
+    if (sectionsError) {
+      window.alert(t("deleteError", { message: sectionsError.message }));
+      setDeleting(false);
+      return;
+    }
     const sectionIds = (sections || []).map((s) => s.id);
 
     if (sectionIds.length) {
-      const { data: images } = await supabase
+      const { data: images, error: imagesError } = await supabase
         .from("section_images")
         .select("storage_path")
         .in("section_id", sectionIds);
+
+      if (imagesError) {
+        window.alert(t("deleteError", { message: imagesError.message }));
+        setDeleting(false);
+        return;
+      }
 
       const imagePaths = (images || []).map((i) => i.storage_path).filter(Boolean) as string[];
       if (imagePaths.length) {

@@ -292,6 +292,9 @@ async function findReusableSearch(
   // Le righe salvate prima di questa versione hanno una forma diversa (un semplice array di
   // risorse, senza specifiche né riepilogo): non sono riutilizzabili, si rifà la ricerca.
   if (!results || Array.isArray(results) || typeof results !== "object") return null;
+  // La riga e' scrivibile dal browser: se `risorse` non e' un array la si scarta invece di far
+  // lanciare un'eccezione a sanitizePayload (che qui sta fuori dal try della route).
+  if (!Array.isArray((results as { risorse?: unknown }).risorse)) return null;
 
   // I testi salvati sono nella lingua in cui il modello li ha scritti: riproporli a chi sta
   // usando un'altra lingua sarebbe un risparmio pagato dall'utente. Le righe più vecchie non
@@ -443,17 +446,22 @@ export async function POST(request: Request) {
 
     const safePayload = sanitizePayload({ ...payload, summary, locale: resolvedLocale });
 
-    await supabase.from("search_results").insert({
+    const { error: saveError } = await supabase.from("search_results").insert({
       user_id: user.id,
       vehicle_id: vehicleId,
       query,
       results: safePayload,
     });
+    if (saveError) console.error("Ricerca IA: salvataggio del risultato non riuscito:", saveError);
 
     // Il bollo e' una proprieta' del veicolo (non della singola ricerca): la persistiamo sulla
     // riga del veicolo cosi' resta visibile in testata senza dover riaprire l'ultima ricerca.
     if (vehicleId && safePayload.bollo) {
-      await supabase.from("vehicles").update({ bollo_stimato: safePayload.bollo }).eq("id", vehicleId);
+      const { error: bolloError } = await supabase
+        .from("vehicles")
+        .update({ bollo_stimato: safePayload.bollo })
+        .eq("id", vehicleId);
+      if (bolloError) console.error("Ricerca IA: salvataggio del bollo non riuscito:", bolloError);
     }
 
     return NextResponse.json({

@@ -399,7 +399,8 @@
     "ready": "✓ Bereit für den KI-Chat",
     "processing": "Wird verarbeitet…",
     "notProcessed": "Nicht verarbeitet: {error}",
-    "download": "⬇️ Herunterladen"
+    "download": "⬇️ Herunterladen",
+    "downloadError": "Die Datei konnte nicht heruntergeladen werden. Bitte versuche es gleich noch einmal."
   },
   "chat": {
     "title": "🤖 KI-Assistent",
