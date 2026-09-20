@@ -399,7 +399,8 @@
     "ready": "✓ Ready for AI chat",
     "processing": "Processing…",
     "notProcessed": "Not processed: {error}",
-    "download": "⬇️ Download"
+    "download": "⬇️ Download",
+    "downloadError": "Could not download the file. Please try again shortly."
   },
   "chat": {
     "title": "🤖 AI assistant",

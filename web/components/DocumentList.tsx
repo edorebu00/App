@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import type { DocumentRow } from "@/lib/types";
@@ -7,15 +8,19 @@ import type { DocumentRow } from "@/lib/types";
 export default function DocumentList({ documents }: { documents: DocumentRow[] }) {
   const supabase = createClient();
   const t = useTranslations("documentList");
+  const [downloadError, setDownloadError] = useState(false);
 
   async function handleDownload(doc: DocumentRow) {
+    setDownloadError(false);
     const { data, error } = await supabase.storage
       .from("vehicle-files")
       .createSignedUrl(doc.storage_path, 60);
 
-    if (!error && data?.signedUrl) {
-      window.open(data.signedUrl, "_blank");
+    if (error || !data?.signedUrl) {
+      setDownloadError(true);
+      return;
     }
+    window.open(data.signedUrl, "_blank");
   }
 
   if (documents.length === 0) {
@@ -23,7 +28,13 @@ export default function DocumentList({ documents }: { documents: DocumentRow[] }
   }
 
   return (
-    <ul className="space-y-2">
+    <div>
+      {downloadError && (
+        <p role="alert" className="mb-2 text-sm text-red-600">
+          {t("downloadError")}
+        </p>
+      )}
+      <ul className="space-y-2">
       {documents.map((doc) => (
         <li key={doc.id} className="card flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-start gap-3">
@@ -59,6 +70,7 @@ export default function DocumentList({ documents }: { documents: DocumentRow[] }
           </button>
         </li>
       ))}
-    </ul>
+      </ul>
+    </div>
   );
 }
