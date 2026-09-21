@@ -519,6 +519,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Elettrica 204cv", yearFrom: 2023, yearTo: null },
       ],
       "Seal U": [{ label: "Elettrica 218cv", yearFrom: 2024, yearTo: null }],
+      "Dolphin Surf": [
+        { label: "Elettrica 88cv", yearFrom: 2025, yearTo: null },
+        { label: "Elettrica 156cv", yearFrom: 2025, yearTo: null },
+      ],
     },
     Chevrolet: {
       Aveo: [{ label: "1.2 16v 86cv", yearFrom: 2011, yearTo: 2015 }],
@@ -1082,6 +1086,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       Born: [
         { label: "Elettrica 150cv", yearFrom: 2021, yearTo: null },
         { label: "Elettrica 231cv", yearFrom: 2021, yearTo: null },
+        { label: "VZ Elettrica 326cv", yearFrom: 2024, yearTo: null },
       ],
       Ateca: [
         { label: "2.0 TSI 300cv", yearFrom: 2019, yearTo: null },
@@ -1107,6 +1112,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.0 TCe 90cv", yearFrom: 2018, yearTo: null },
         { label: "1.3 TCe 150cv", yearFrom: 2018, yearTo: null },
         { label: "1.5 dCi 115cv", yearFrom: 2018, yearTo: 2022 },
+        { label: "1.6 Hybrid 140cv", yearFrom: 2024, yearTo: null },
       ],
       Jogger: [
         { label: "1.0 TCe 110cv", yearFrom: 2022, yearTo: null },
@@ -1379,6 +1385,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.0 T-GDI 120cv", yearFrom: 2017, yearTo: null },
         { label: "1.6 T-GDI Hybrid 141cv", yearFrom: 2019, yearTo: null },
         { label: "Elettrica 204cv", yearFrom: 2018, yearTo: null },
+        { label: "N 2.0 T-GDI 280cv", yearFrom: 2021, yearTo: 2023 },
       ],
       Tucson: [
         { label: "1.6 T-GDI 150cv", yearFrom: 2020, yearTo: null },
@@ -1396,7 +1403,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Elettrica 170cv", yearFrom: 2021, yearTo: null },
         { label: "N Elettrica 650cv", yearFrom: 2024, yearTo: null },
       ],
-      "Ioniq 6": [{ label: "Elettrica 229cv", yearFrom: 2022, yearTo: null }],
+      "Ioniq 6": [
+        { label: "Elettrica 229cv", yearFrom: 2022, yearTo: null },
+        { label: "N Elettrica 650cv", yearFrom: 2025, yearTo: null },
+      ],
       i40: [{ label: "1.7 CRDi 136cv", yearFrom: 2011, yearTo: 2019 }],
       Atos: [{ label: "1.0 55cv", yearFrom: 1998, yearTo: 2008 }],
       Coupe: [{ label: "2.0 16v 143cv", yearFrom: 1996, yearTo: 2009 }],
@@ -1510,7 +1520,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Elettrica 204cv", yearFrom: 2023, yearTo: null },
         { label: "GT-Line 384cv", yearFrom: 2023, yearTo: null },
       ],
-      ProCeed: [{ label: "1.4 T-GDI 140cv", yearFrom: 2018, yearTo: null }],
+      ProCeed: [
+        { label: "1.4 T-GDI 140cv", yearFrom: 2018, yearTo: null },
+        { label: "GT 1.6 T-GDI 204cv", yearFrom: 2019, yearTo: 2024 },
+      ],
       "e-Niro": [{ label: "Elettrica 204cv", yearFrom: 2018, yearTo: null }],
       Soul: [{ label: "1.6 CRDi 136cv", yearFrom: 2009, yearTo: null }],
       Carens: [{ label: "1.7 CRDi 136cv", yearFrom: 2006, yearTo: 2022 }],
@@ -2164,7 +2177,12 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.6 TDI 105cv", yearFrom: 2012, yearTo: 2019 },
       ],
       Citigo: [{ label: "1.0 60cv", yearFrom: 2012, yearTo: 2019 }],
-      Elroq: [{ label: "vRS Elettrica 84 kWh 340cv", yearFrom: 2025, yearTo: null }],
+      Elroq: [
+        { label: "Elettrica 50 170cv", yearFrom: 2024, yearTo: null },
+        { label: "Elettrica 60 204cv", yearFrom: 2024, yearTo: null },
+        { label: "Elettrica 85 286cv", yearFrom: 2024, yearTo: null },
+        { label: "vRS Elettrica 84 kWh 340cv", yearFrom: 2025, yearTo: null },
+      ],
     },
     Smart: {
       Fortwo: [
