@@ -827,17 +827,6 @@ export const ENGINE_EXTENSIONS: Partial<
       ],
     },
 
-    Cupra: {
-      Tavascan: [
-        { label: "Elettrica 77 kWh 286cv", yearFrom: 2024, yearTo: null },
-        { label: "Elettrica 77 kWh 340cv", yearFrom: 2024, yearTo: null },
-      ],
-      Terramar: [
-        { label: "1.5 eTSI 150cv", yearFrom: 2024, yearTo: null },
-        { label: "2.0 TSI 265cv", yearFrom: 2024, yearTo: null },
-      ],
-    },
-
     Tesla: {
       Cybertruck: [
         { label: "Elettrica AWD 600cv", yearFrom: 2023, yearTo: null },
@@ -852,10 +841,6 @@ export const ENGINE_EXTENSIONS: Partial<
         { label: "1.9 D 64cv", yearFrom: 1995, yearTo: 2001 },
       ],
       Favorit: [{ label: "1.3 54cv", yearFrom: 1987, yearTo: 1995 }],
-      Elroq: [
-        { label: "Elettrica 55 kWh 170cv", yearFrom: 2024, yearTo: null },
-        { label: "Elettrica 82 kWh 286cv", yearFrom: 2024, yearTo: null },
-      ],
     },
   },
 
@@ -863,7 +848,6 @@ export const ENGINE_EXTENSIONS: Partial<
     Ducati: {
       Monster: [
         { label: "797 803cc 73cv", yearFrom: 2017, yearTo: 2020 },
-        { label: "937 937cc 111cv", yearFrom: 2021, yearTo: null },
       ],
       SuperSport: [{ label: "950 937cc 110cv", yearFrom: 2017, yearTo: null }],
       DesertX: [{ label: "937cc 110cv", yearFrom: 2022, yearTo: null }],

@@ -20,7 +20,12 @@ export default function DocumentList({ documents }: { documents: DocumentRow[] }
       setDownloadError(true);
       return;
     }
-    window.open(data.signedUrl, "_blank");
+
+    // La `window.open` parte dopo un `await`, quindi fuori dal gesto dell'utente: il browser la
+    // classifica come finestra non richiesta e la blocca restituendo `null`. Senza questo controllo
+    // il pulsante non produrrebbe alcun effetto visibile.
+    const opened = window.open(data.signedUrl, "_blank");
+    if (!opened) setDownloadError(true);
   }
 
   if (documents.length === 0) {
