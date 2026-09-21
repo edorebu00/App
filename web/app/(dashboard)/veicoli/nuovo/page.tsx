@@ -145,8 +145,8 @@ export default function NewVehiclePage() {
       console.error(sectionsError);
       // Un veicolo senza sezioni non e' utilizzabile: lo togliamo (cosi' un secondo tentativo
       // non lascia un doppione orfano) e diciamo all'utente che non e' andata a buon fine.
-      await supabase.from("vehicles").delete().eq("id", vehicle.id);
-      setError(t("genericError"));
+      const { error: cleanupError } = await supabase.from("vehicles").delete().eq("id", vehicle.id);
+      setError(cleanupError ? t("incompleteVehicleError") : t("genericError"));
       setLoading(false);
       return;
     }

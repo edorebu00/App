@@ -311,7 +311,8 @@
     "submit": "🏁 Save vehicle",
     "submitLoading": "Saving…",
     "sessionExpired": "Session expired, please log in again.",
-    "genericError": "Error while creating the vehicle."
+    "genericError": "Error while creating the vehicle.",
+    "incompleteVehicleError": "The vehicle was only partly created and could not be removed: you will find it in the list without sections, delete it from its page before trying again."
   },
   "vehicleAdded": {
     "text": "Vehicle added! We're looking for the first info online…"
@@ -372,6 +373,7 @@
     "save": "Save section",
     "saving": "Saving…",
     "saved": "Saved ✓",
+    "saveError": "Save failed: your changes were not recorded, please try again.",
     "uploadedSchemesLabel": "Diagrams you've uploaded",
     "uploadImage": "Upload image",
     "uploading": "Uploading…",
@@ -392,7 +394,8 @@
     "sessionExpired": "Session expired, please log in again.",
     "saveError": "Error while saving the document.",
     "unsupportedFileType": "Unsupported format: upload a PDF or a text file.",
-    "fileTooLarge": "File too large: the limit is 20 MB."
+    "fileTooLarge": "File too large: the limit is 20 MB.",
+    "processingNotStarted": "text extraction did not start, upload the file again to retry."
   },
   "documentList": {
     "noFiles": "No files uploaded for this vehicle.",
