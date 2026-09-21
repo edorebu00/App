@@ -1,92 +1,113 @@
 # Scansione notturna dei bug — MyVehicle
 
-Data scan: 2026-09-20 16:19 UTC
-Ambito: `web/` (esclusi `node_modules/`, `.next/`, `package-lock.json`, file generati)
-PR aperte dei lavoratori al momento dello scan: nessuna.
+Data scan: 2026-09-21 09:47 UTC
+Ambito: `web/` (esclusi `node_modules/`, `.next/`, `package-lock.json`, file generati con l'intestazione "GENERATO DA")
+PR aperte al momento dello scan: nessuna (di nessun autore).
 
-Ogni problema qui sotto e' stato verificato leggendo personalmente il codice indicato (file + righe), non solo ipotizzato da un tool automatico.
+Ogni problema qui sotto e' stato verificato leggendo personalmente il codice indicato (file + righe). I problemi della notte precedente (perdita dati fra sezioni, veicoli mescolati, errori ignorati) risultano corretti dalla PR #35 e non sono ripetuti qui.
+
+Verifiche automatiche eseguite senza trovare difetti: `npm run check:cache` (23 controlli su punti di cache, finestra della cronologia, pulizia del testo estratto, livelli di sforzo) passa interamente; le chiavi di traduzione di `it`/`en`/`de` combaciano una a una (240 chiavi usate, nessuna mancante); tutti i `href` verso l'esterno passano da `safeExternalUrl`; nessun uso di `dangerouslySetInnerHTML`.
 
 ## Bloccante
 
-### B1 — `SectionEditor` puo' sovrascrivere la scheda sbagliata con dati non salvati (perdita dati)
-File: `web/components/SectionEditor.tsx:30-39,53-62`, renderizzato senza `key` in `web/components/VehicleDetailTabs.tsx:262-274`
-
-`SectionEditor` inizializza `fields`/`notes`/`images` con `useState(...)` a partire dalle props (`section.data`, `section.notes`, ecc.), ma viene montato senza una `key` legata a `section.id`. Cambiando tab (stessa pagina, `activeId` cambia ma il componente resta la stessa istanza React), lo stato interno NON si aggiorna con i dati della nuova sezione: restano quelli della sezione precedente. Se l'utente modifica un campo su "Motore" senza salvare, passa a "Carrozzeria" (che mostra ancora i dati di "Motore" per via dello stato non aggiornato) e preme "Salva", `handleSave` (righe 59-62) scrive `data`/`notes` (ancora quelli di Motore, stantii) sulla riga `vehicle_sections` di Carrozzeria (`section.id` e' invece corretto/aggiornato). Risultato: i dati di Carrozzeria vengono sovrascritti con quelli di Motore, e le modifiche originali a Motore sono perse — nessun errore, nessun avviso.
-
-Proposta: aggiungere `key={activeSection.id}` al `<SectionEditor>` in `VehicleDetailTabs.tsx:263`, cosi' React rimonta il componente a ogni cambio sezione.
+Nessun problema bloccante trovato in questa scansione.
 
 ## Importante
 
-### I1 — Cambiando veicolo dalla sidebar, la scheda veicolo mostra dati mescolati del veicolo precedente
-File: `web/components/VehicleDetailTabs.tsx:50-58`, renderizzato senza `key` in `web/app/(dashboard)/veicoli/[id]/page.tsx:86-97`
+### I1 — Il limite di frequenza delle route IA non e' condiviso fra le istanze
+File: `web/lib/rateLimit.ts:12-14`, usato in `web/app/api/agent/search/route.ts:360`, `web/app/api/agent/chat/route.ts:85`, `web/app/api/agent/process-document/route.ts:38`
 
-`VehicleDetailTabs` inizializza `activeId`/`results`/`specs`/`bollo`/`hasSearchedOnce` da props via `useState`, ma la pagina lo monta senza `key={v.id}`. Navigando da un veicolo A a un veicolo B tramite i link della Sidebar (stessa struttura JSX, stesso layout persistente), React riusa la stessa istanza del componente: `sections` (prop) si aggiorna a quelle di B, ma `activeId` resta l'id di una sezione di A (quindi nessuna `SectionEditor` corrisponde e non viene mostrata), mentre `results`/`specs`/`bollo`/`hasSearchedOnce` restano quelli di A e vengono usati per costruire i link "Autodoc"/"piano di manutenzione" mostrati come se appartenessero a B. Un refresh completo della pagina risolve il problema (esiste un aggiramento), da cui la classificazione Importante e non Bloccante.
+Il contatore vive in una `Map` in memoria, quindi appartiene alla singola istanza serverless che serve la richiesta. Con piu' istanze attive contemporaneamente il numero di chiamate al modello effettivamente concesse a uno stesso utente e' un multiplo di quello configurato (10 ricerche / 30 messaggi ogni 5 minuti), e ogni chiamata in piu' e' a consumo. La limitazione e' gia' annotata nel commento del file, ma non e' ancora stata rafforzata.
 
-Proposta: aggiungere `key={v.id}` al `<VehicleDetailTabs>` in `veicoli/[id]/page.tsx:86`.
+Proposta: affiancare al contatore in memoria un conteggio condiviso che riusa le righe gia' salvate per utente nella finestra temporale (`chat_messages` per la chat, `search_results` per la ricerca), senza tabelle nuove.
 
-### I2 — Creazione veicolo: se falliscono le sezioni di default, l'utente vede comunque "successo"
-File: `web/app/(dashboard)/veicoli/nuovo/page.tsx:135-150`
+### I2 — Il documento viene scaricato per intero prima che la dimensione reale sia verificata
+File: `web/app/api/agent/process-document/route.ts:83-98`
 
-Dopo l'insert del veicolo, l'insert delle `vehicle_sections` di default puo' fallire (errore di rete/Postgres transitorio); l'errore viene solo loggato in console (`console.error(sectionsError)`, riga 145) e il flusso prosegue comunque a `setJustAdded(...)` (riga 150), che mostra l'overlay di conferma e reindirizza come se tutto fosse andato a buon fine. Il veicolo resta permanentemente senza `vehicle_sections`: aprendo poi la scheda veicolo, `VehicleDetailTabs` riceve `sections` vuoto e non mostra alcuna `SectionEditor`, senza alcuna indicazione che qualcosa e' andato storto.
+Il controllo alla riga 83 usa `doc.size_bytes`, un valore scritto dal browser al momento del caricamento e facoltativo (`bigint` nullable in `supabase/migrations/0001_init.sql:109`): se manca o non e' un numero, il controllo viene semplicemente saltato. Il controllo sulla dimensione vera (riga 96) arriva invece dopo `supabase.storage.download()`, cioe' dopo che l'intero oggetto e' stato portato in memoria nella funzione. I bucket non dichiarano un tetto di dimensione proprio, quindi un file molto grande occupa memoria e tempo della funzione prima di essere rifiutato.
 
-Proposta: se `sectionsError` e' presente, mostrare un errore all'utente (o tentare un retry) invece di procedere silenziosamente al successo.
+Proposta: leggere la dimensione dell'oggetto dai metadati dello Storage prima di scaricarlo e confrontarla con `MAX_UPLOAD_BYTES`, tenendo `size_bytes` solo come filtro rapido preliminare.
 
-### I3 — La chat esclude silenziosamente un documento grande e dichiara "nessun documento caricato"
-File: `web/app/api/agent/chat/route.ts:15,129-134` (confrontare con `web/app/api/agent/process-document/route.ts:13,119`)
+### I3 — La pagina del veicolo usa la ricerca salvata senza ricontrollarne la forma
+File: `web/app/(dashboard)/veicoli/[id]/page.tsx:56-58`, effetto in `web/components/VehicleDetailTabs.tsx:268,281`
 
-Il budget di contesto per la chat e' `MAX_CONTEXT_CHARS = 250_000`, ma un singolo documento puo' arrivare fino a `MAX_EXTRACTED_CHARS = 400_000` (tetto di `process-document`). Il controllo nel ciclo (riga 132: `if (context.length + chunk.length > MAX_CONTEXT_CHARS) break;`) avviene PRIMA di appendere: se il primo documento da solo supera 250.000 caratteri, il ciclo si interrompe alla prima iterazione e `context` resta `""`. In `web/lib/chatPrompt.ts:20-29`, un `context` vuoto fa scrivere nel prompt di sistema "l'utente non ha ancora caricato documenti" anche se un manuale voluminoso e' stato caricato ed elaborato con successo: l'assistente risponde ignorando il documento, senza errore ne' avviso.
+La riga di `search_results` e' scrivibile direttamente dal browser (la policy controlla di chi e' la riga, non cosa contiene): per questo `findReusableSearch` la risanifica anche in lettura, con un commento esplicito (`web/app/api/agent/search/route.ts:294-309`). La pagina del veicolo, invece, legge `results.risorse` e lo passa tale e quale a `VehicleDetailTabs`, dove viene usato con `.filter(...)`. Se il contenuto salvato non e' un array la pagina del veicolo si interrompe con un errore di esecuzione e non e' piu' apribile. Lo stesso vale per `results.specifiche` alla riga 58.
 
-Proposta: troncare il singolo documento al budget residuo invece di scartarlo interamente quando supera lo spazio disponibile.
+Proposta: far passare `lastSearch.results` dalla stessa sanificazione gia' usata in lettura dalla route di ricerca, e ripiegare su elenco vuoto se non resta nulla di valido.
 
-### I4 — La chat "senza veicolo" mescola documenti e cronologia di TUTTI i veicoli dell'utente
-File: `web/app/api/agent/chat/route.ts:114-127,140-148` (confrontare con `web/app/api/agent/search/route.ts:287`)
+### I4 — Il salvataggio di una scheda puo' fallire senza che l'utente lo sappia
+File: `web/components/SectionEditor.tsx:59-68` (salvataggio), `web/components/SectionEditor.tsx:101-108` (immagine)
 
-Quando `vehicleId` e' `null` (assente o non valido nel corpo della richiesta), le query su `documents` (righe 114-120), sul conteggio di `chat_messages` (122-123) e sulla cronologia (140-146) applicano il filtro `.eq("vehicle_id", vehicleId)` SOLO se `vehicleId` e' presente (`if (vehicleId) ... `), senza alcun `else`. Risultato: quando manca il vehicleId, le query restituiscono le righe di TUTTI i veicoli dell'utente insieme, non quelle dei soli documenti "senza veicolo". La route search gestisce correttamente questo caso con `.is("vehicle_id", null)` (search/route.ts:287); la chat no. Non sfruttabile per vedere dati di altri utenti (solo propri), ma un bug di isolamento dati concreto, raggiungibile chiamando direttamente l'API autenticata (l'interfaccia attuale richiede sempre un `vehicleId`, quindi oggi non raggiungibile dalla UI spedita).
+In `handleSave`, se l'aggiornamento di `vehicle_sections` restituisce un errore, il codice esce dal ramo `if (!error)` e non fa nulla: il pulsante torna a "Salva", non compare "Salvato" ne' alcun messaggio di errore. L'utente che non nota l'assenza della spunta verde crede di aver salvato e chiude la pagina: le modifiche sono perse senza alcun avviso.
+Stesso schema in `handleImageUpload`: il file e' gia' stato caricato nello storage, ma se l'inserimento della riga `section_images` fallisce, `if (row)` e' falso, non compare alcun errore e l'immagine sparisce dall'elenco, lasciando l'oggetto nello storage senza righe che lo referenzino.
 
-Proposta: replicare in chat/route.ts lo stesso pattern usato in search/route.ts (`.is("vehicle_id", null)` quando `vehicleId` e' assente).
+Proposta: mostrare un messaggio di errore in entrambi i casi, come gia' fa il ramo `uploadError` alla riga 98-99.
 
-### I5 — Una riga `search_results` corrotta manda in crash la route di ricerca fuori dalla gestione errori
-File: `web/app/api/agent/search/route.ts:269-307,343` (chiamata fuori dal `try` che inizia a riga 385) e `web/lib/searchPayload.ts:17-20`
+### I5 — Un documento puo' restare per sempre su "in elaborazione"
+File: `web/components/FileUploader.tsx:78-82`, effetto in `web/components/DocumentList.tsx:55-64`
 
-`findReusableSearch` valida che `results` sia un oggetto non-array (`search/route.ts:294`) ma non valida che `results.risorse` sia specificamente un array. `sanitizePayload` (searchPayload.ts:20) itera con `for (const risorsa of payload.risorse || [])`: se `risorse` e' un valore troncato/oggetto non-array e non falsy, il `for...of` lancia `TypeError: ... is not iterable`. La chiamata a `findReusableSearch` (riga 343) avviene PRIMA del blocco `try` della route (che inizia a riga 385), quindi l'eccezione non viene catturata: la route risponde con l'errore generico 500 di Next.js invece del formato JSON abituale (`{error: ...}`), e questo avviene anche prima del controllo di rate limit (riga 357). Il commento del codice stesso (righe 301-304) conferma che `search_results` e' scrivibile direttamente dal browser autenticato (la RLS verifica solo la proprieta' della riga, non il contenuto), quindi il contenuto non e' garantito valido.
+La chiamata a `/api/agent/process-document` e' volutamente asincrona, ma l'esito non viene mai letto: `.catch(() => {})` ignora gli errori di rete e nulla controlla `res.ok`. La route non scrive `processing_error` su tre dei suoi percorsi d'uscita — 401 (riga 34), 429 limite di frequenza (riga 39) e 400 corpo non valido (riga 50) — perche' escono prima ancora di leggere la riga del documento. In quei casi il documento resta con `processed = false` e `processing_error = null`, cioe' esattamente lo stato che `DocumentList` disegna come rotellina "in elaborazione": la rotellina non si ferma mai, nessun errore viene mostrato e dall'interfaccia non c'e' modo di riprovare.
 
-Proposta: validare anche che `results.risorse` sia un array (o avvolgere la chiamata a `findReusableSearch`/`sanitizePayload` in un try/catch che ricade su "rifai la ricerca" invece di propagare l'eccezione).
+Proposta: controllare `res.ok` nel caricatore e, in caso di esito negativo, registrare l'errore sulla riga del documento (o mostrarlo) invece di lasciare lo stato in sospeso.
 
-### I6 — Errori di download documento ignorati senza alcun feedback all'utente
-File: `web/components/DocumentList.tsx:11-19`
+### I6 — Il download di un documento puo' non fare nulla senza dirlo
+File: `web/components/DocumentList.tsx:19-23`
 
-`handleDownload` non gestisce l'errore restituito da `createSignedUrl`: se fallisce (sessione scaduta, oggetto storage cancellato, problema RLS/rete), il click su "Scarica" non fa assolutamente nulla — nessun messaggio, nessun indicatore di caricamento. L'utente non ha modo di capire se il click e' stato registrato.
+Lo stato `downloadError` copre solo il fallimento di `createSignedUrl`. La `window.open` della riga 23 parte dopo un `await`, quindi fuori dal gesto dell'utente: i browser la classificano come finestra non richiesta e la bloccano, restituendo `null`. Il valore di ritorno non viene controllato, quindi nel caso di blocco — il piu' frequente dei due — il pulsante "Scarica" non produce alcun effetto visibile e nessun messaggio.
 
-Proposta: mostrare un messaggio di errore (analogo a quello gia' usato in altri componenti del progetto) quando `error` e' presente o `data?.signedUrl` manca.
+Proposta: controllare il valore restituito da `window.open` e, se e' nullo, mostrare lo stesso avviso gia' previsto (o offrire il link firmato come ancora cliccabile).
+
+### I7 — Errori di pulizia ignorati durante l'eliminazione di un veicolo
+File: `web/components/DeleteVehicleButton.tsx:36-38,65-67`; caso analogo in `web/app/(dashboard)/veicoli/nuovo/page.tsx:148`
+
+Il commento alle righe 20-23 dichiara che ci si ferma se la pulizia non riesce, "altrimenti i file restano nello storage senza piu' alcuna riga che li referenzi". Le letture rispettano questa regola, ma le due `storage.remove()` (righe 37 e 66) scartano il proprio errore e il veicolo viene comunque eliminato subito dopo: se la rimozione non riesce, gli oggetti restano nello storage senza piu' alcuna riga collegata e nessuno se ne accorge — cioe' proprio la situazione che il commento dice di voler evitare.
+Alla riga 148 di `veicoli/nuovo/page.tsx` la cancellazione compensativa del veicolo appena creato ignora a sua volta il proprio errore: se fallisce, resta in elenco un veicolo senza sezioni (la pagina di dettaglio non ha alcuna scheda selezionabile) e il secondo tentativo dell'utente crea il doppione che il commento dice di voler prevenire.
+
+Proposta: controllare l'errore delle rimozioni e della cancellazione compensativa e avvisare l'utente, coerentemente con il trattamento gia' riservato alle letture.
+
+### I8 — Motorizzazioni duplicate nel menu di creazione veicolo
+File: `web/lib/vehicleData.ts:1095-1103,2180-2185,2583-2586` e `web/lib/engineExtensions.ts:831-838,855-858,865-867`
+
+`getEngineVariants` (`web/lib/vehicleData.ts:2767-2781`) unisce catalogo base ed estensioni scartando i doppioni per confronto esatto della sigla. Quattro modelli hanno pero' lo stesso motore registrato nei due file con sigle diverse, quindi il confronto non lo riconosce e il menu propone due voci per lo stesso propulsore:
+
+| Modello | Voce in `vehicleData.ts` | Voce in `engineExtensions.ts` |
+| --- | --- | --- |
+| Skoda Elroq | `Elettrica 50 170cv` | `Elettrica 55 kWh 170cv` |
+| Skoda Elroq | `Elettrica 85 286cv` | `Elettrica 82 kWh 286cv` |
+| Cupra Tavascan | `Endurance Elettrica 286cv` | `Elettrica 77 kWh 286cv` |
+| Cupra Tavascan | `VZ Elettrica 340cv` | `Elettrica 77 kWh 340cv` |
+| Cupra Terramar | `1.5 Hybrid 150cv` | `1.5 eTSI 150cv` |
+| Cupra Terramar | `2.0 TSI VZ 265cv` | `2.0 TSI 265cv` |
+| Ducati Monster | `937cc 111cv` | `937 937cc 111cv` |
+
+In pratica: chi aggiunge una Elroq vede sei motorizzazioni al posto di quattro, e due utenti con la stessa identica auto finiscono con `engine_code` diversi — quindi con ricerche IA diverse e nessun riuso della ricerca gia' pagata.
+
+Proposta: togliere dalle estensioni le voci che duplicano un motore gia' presente nel catalogo base, secondo la regola gia' scritta nel codice ("a parita' di sigla vince la voce gia' presente").
 
 ## Minore
 
-### M1 — Diverse scritture Supabase ignorano l'errore restituito, mascherando i fallimenti da successo
-File: `web/app/api/agent/chat/route.ts:150-155,205-210`; `web/app/api/agent/search/route.ts:446-451,455-457`; `web/app/api/agent/process-document/route.ts:128-131`
+### M1 — Un errore momentaneo svuota il riquadro motorsport per 24 ore
+File: `web/lib/motorsport.ts:114-161` (il `try/catch` sta dentro `fetchBriefing`), `web/lib/motorsport.ts:167-172`
 
-In tutti questi punti il risultato `{error}` dell'update/insert Supabase viene scartato. Il caso piu' concreto e' `process-document/route.ts:128-133`: se l'`update` che marca il documento come `processed: true` fallisce, la route risponde comunque `{ ok: true, ... }` al client, mentre in DB il documento resta `processed: false` senza alcun `processing_error` diagnostico — bloccato silenziosamente.
+`getMotorsportBriefing` avvolge `fetchBriefing` in `unstable_cache` con `revalidate: 86400`. Ma il `catch` che trasforma un errore in `EMPTY` sta *dentro* la funzione memorizzata: per la cache un fallimento e' un risultato valido come un altro, quindi l'elenco vuoto viene conservato con la stessa durata di uno buono. Un solo timeout o errore di rete fa sparire il riquadro notizie dalla home per un giorno intero, anche se il servizio torna disponibile un minuto dopo.
 
-Proposta: controllare `{error}` su questi insert/update e, quantomeno, loggarlo/propagarlo come nelle altre route.
+Proposta: lasciare che il fallimento esca dalla funzione memorizzata e gestirlo fuori dalla cache, cosi' l'esito vuoto non viene conservato e la visita successiva riprova.
 
-### M2 — Eliminazione veicolo: errori nelle query di raccolta file ignorati, oggetti storage orfani
-File: `web/components/DeleteVehicleButton.tsx:22-45`
+### M2 — Un messaggio di chat non inviato viene perso
+File: `web/components/ChatPanel.tsx:29-34,45-47`
 
-Le select su `documents` (righe 22-25) e `vehicle_sections`/`section_images` (32-39) distrutturano solo `data`, scartando `error`. Se una di queste query fallisce (rete/RLS transitorio), `filePaths`/`imagePaths` risultano vuoti e i corrispondenti `supabase.storage.remove(...)` vengono saltati; il veicolo viene comunque eliminato (riga 47) e l'utente vede un successo, ma i file nello storage restano orfani senza piu' alcuna riga che li referenzi.
+`setInput("")` svuota il campo prima della chiamata. Se la richiesta fallisce (rete, 429, 500) il testo non viene ripristinato: l'utente deve riscrivere il messaggio da capo. Inoltre la bolla aggiunta in modo ottimistico alla riga 31 resta a schermo anche quando il messaggio non e' stato salvato lato server (per esempio con un 429, che esce prima dell'inserimento in `chat_messages`): dopo un aggiornamento della pagina la bolla sparisce senza spiegazione.
 
-Proposta: controllare l'`error` di queste select e, se presente, annullare l'operazione o avvisare l'utente invece di procedere come se non ci fossero file.
+Proposta: ripristinare il testo nel campo quando la richiesta non va a buon fine e togliere la bolla ottimistica corrispondente.
 
-### M3 — Sessione scaduta su una POST verso `/api/agent/*`: l'utente vede un errore generico invece del prompt di login
-File: `web/middleware.ts:40-48,63-65`, `web/components/ChatPanel.tsx:37-64` (stesso pattern in `VehicleDetailTabs.tsx`/ricerca)
+### M3 — La pagina offline puo' risolversi in nulla
+File: `web/public/sw.js:88-90`
 
-Il matcher del middleware non esclude `/api/`. Se il cookie di sessione e' scaduto, una POST a `/api/agent/chat` (o `/search`) riceve un redirect 302 verso `/login` dal middleware (non un 401 JSON). `fetch()` segue i redirect di default, quindi il client riceve la pagina HTML di login con `res.ok === true`; il successivo `await res.json()` lancia un'eccezione, catturata dal blocco `catch` generico che mostra il messaggio "contatta il supporto" invece di indicare che serve rifare il login.
+`caches.match(OFFLINE_URL)` restituisce `undefined` se l'installazione del guscio non e' riuscita (`sw.js:36-39` ingoia volutamente l'errore di `addAll`). `event.respondWith` riceve allora una promessa risolta a `undefined` e la navigazione fallisce con un errore di rete generico invece che con la pagina offline dedicata. L'effetto pratico e' limitato (si e' comunque offline), ma il ripiego previsto non c'e'.
 
-Proposta: nel middleware, per i percorsi sotto `/api/`, restituire un 401 JSON invece del redirect quando l'utente non e' autenticato.
+Proposta: se la pagina offline non e' in cache, restituire una `Response` minima invece di `undefined`.
 
-### M4 — Osservazioni minori non promosse a task (impatto trascurabile)
-- `web/app/(dashboard)/dashboard/page.tsx:10-13` e `web/app/(dashboard)/layout.tsx:8-11` eseguono ciascuno una `select("*") from vehicles` separata per la stessa richiesta (sidebar + griglia): solo duplicazione di round-trip, non un bug di correttezza.
-- `web/app/(dashboard)/veicoli/nuovo/page.tsx`: `loading` non viene reimpostato a `false` sul percorso di successo (righe 111-113/129-133 lo fanno solo sugli errori); innocuo perche' il form viene subito coperto da `VehicleAddedOverlay`.
-- `web/app/api/agent/search/route.ts`: il controllo di riuso (riga 343) e il rate limit (riga 357) sono due passaggi non atomici; due richieste identiche concorrenti possono entrambe superare il controllo di riuso e innescare due ricerche pagate invece di una — race a basso impatto, non sfruttabile per un vantaggio asimmetrico.
+## Richiede intervento umano
 
-## Sicurezza
-
-Finding di sicurezza: 2 (dettagli nel riepilogo della sessione)
+- **Tetto di dimensione sui bucket di Storage.** `supabase/migrations/0001_init.sql:187-193` crea `vehicle-files` e `vehicle-images` senza dichiarare un limite di dimensione per oggetto: il tetto di 20 MB esiste solo nel codice dell'applicazione. Metterlo anche a livello di bucket richiede una migrazione in `supabase/`, quindi fuori dall'ambito automatizzabile.
+- **Chiamata al modello dalla home pubblica.** `web/components/MotorsportSection.tsx:15` chiama `getMotorsportBriefing` da una pagina raggiungibile senza accesso. Il costo e' contenuto dalla cache di 24 ore per lingua (una chiamata al giorno per lingua visitata), ma se si vuole cambiare questo compromesso e' una scelta di prodotto, non una correzione.
