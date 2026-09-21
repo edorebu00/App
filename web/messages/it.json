@@ -394,7 +394,8 @@
     "sessionExpired": "Sessione scaduta, effettua di nuovo l'accesso.",
     "saveError": "Errore durante il salvataggio del documento.",
     "unsupportedFileType": "Formato non supportato: carica un PDF o un file di testo.",
-    "fileTooLarge": "File troppo grande: il limite è 20 MB."
+    "fileTooLarge": "File troppo grande: il limite è 20 MB.",
+    "processingNotStarted": "estrazione del testo non avviata, ricarica il file per riprovare."
   },
   "documentList": {
     "noFiles": "Nessun file caricato per questo veicolo.",

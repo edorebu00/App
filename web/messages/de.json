@@ -394,7 +394,8 @@
     "sessionExpired": "Sitzung abgelaufen, bitte erneut anmelden.",
     "saveError": "Fehler beim Speichern des Dokuments.",
     "unsupportedFileType": "Nicht unterstütztes Format: lade eine PDF- oder Textdatei hoch.",
-    "fileTooLarge": "Datei zu groß: das Limit liegt bei 20 MB."
+    "fileTooLarge": "Datei zu groß: das Limit liegt bei 20 MB.",
+    "processingNotStarted": "Textextraktion nicht gestartet, lade die Datei erneut hoch."
   },
   "documentList": {
     "noFiles": "Für dieses Fahrzeug wurden keine Dateien hochgeladen.",

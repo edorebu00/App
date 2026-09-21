@@ -394,7 +394,8 @@
     "sessionExpired": "Session expired, please log in again.",
     "saveError": "Error while saving the document.",
     "unsupportedFileType": "Unsupported format: upload a PDF or a text file.",
-    "fileTooLarge": "File too large: the limit is 20 MB."
+    "fileTooLarge": "File too large: the limit is 20 MB.",
+    "processingNotStarted": "text extraction did not start, upload the file again to retry."
   },
   "documentList": {
     "noFiles": "No files uploaded for this vehicle.",
