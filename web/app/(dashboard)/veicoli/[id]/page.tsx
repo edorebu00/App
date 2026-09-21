@@ -2,9 +2,26 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
+import { sanitizePayload } from "@/lib/searchPayload";
 import VehicleDetailTabs from "@/components/VehicleDetailTabs";
 import DeleteVehicleButton from "@/components/DeleteVehicleButton";
-import type { ResourceLink, SectionImage, SectionSpecs, Vehicle, VehicleSection } from "@/lib/types";
+import type { ResourceLink, SearchPayload, SectionImage, SectionSpecs, Vehicle, VehicleSection } from "@/lib/types";
+
+/**
+ * La riga di `search_results` è scrivibile direttamente dal browser (la RLS controlla di chi è la
+ * riga, non cosa contiene), quindi il suo contenuto va risanificato in lettura come fa già la
+ * route di ricerca. Senza questo controllo un `risorse` non-array farebbe interrompere la pagina
+ * al primo `.filter(...)`, rendendo il veicolo non più apribile.
+ *
+ * Compatibile sia con il vecchio formato (un array di risorse) sia con quello nuovo
+ * (oggetto { risorse, specifiche }), per non rompere ricerche fatte prima di questo aggiornamento.
+ */
+function readSavedSearch(raw: unknown): SearchPayload | null {
+  if (!raw || typeof raw !== "object") return null;
+  const payload = Array.isArray(raw) ? { risorse: raw, specifiche: {} } : (raw as SearchPayload);
+  if (!Array.isArray(payload.risorse)) return null;
+  return sanitizePayload(payload);
+}
 
 export default async function VehicleDetailPage({
   params,
@@ -51,11 +68,9 @@ export default async function VehicleDetailPage({
     .limit(1)
     .maybeSingle();
 
-  // Compatibile sia con il vecchio formato (un array di risorse) sia con quello nuovo
-  // (oggetto { risorse, specifiche }), per non rompere ricerche fatte prima di questo aggiornamento.
-  const rawResults = lastSearch?.results;
-  const initialResults: ResourceLink[] = Array.isArray(rawResults) ? rawResults : rawResults?.risorse || [];
-  const initialSpecs: SectionSpecs = Array.isArray(rawResults) ? {} : rawResults?.specifiche || {};
+  const savedSearch = readSavedSearch(lastSearch?.results);
+  const initialResults: ResourceLink[] = savedSearch?.risorse || [];
+  const initialSpecs: SectionSpecs = savedSearch?.specifiche || {};
 
   const v = vehicle as Vehicle;
   const defaultQuery = [v.make, v.model, v.engine_code].filter(Boolean).join(" ");
