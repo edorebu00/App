@@ -261,6 +261,7 @@ export default function VehicleDetailTabs({
 
       {activeSection && (
         <SectionEditor
+          key={activeSection.id}
           section={activeSection}
           images={imagesBySection[activeSection.id] || []}
           specs={specs[activeSection.section_key as SectionKey]}
