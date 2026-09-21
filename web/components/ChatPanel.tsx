@@ -26,13 +26,23 @@ export default function ChatPanel({
     const text = input.trim();
     if (!text) return;
 
+    const pendingId = `tmp-${Date.now()}`;
+
     setInput("");
     setError(null);
     setMessages((prev) => [
       ...prev,
-      { id: `tmp-${Date.now()}`, user_id: "", vehicle_id: vehicleId, role: "user", content: text, created_at: new Date().toISOString() },
+      { id: pendingId, user_id: "", vehicle_id: vehicleId, role: "user", content: text, created_at: new Date().toISOString() },
     ]);
     setLoading(true);
+
+    // Se la richiesta non va a buon fine il messaggio non e' stato registrato dal server: la bolla
+    // va tolta, altrimenti sparirebbe da sola al primo aggiornamento della pagina, e il testo va
+    // rimesso nel campo invece di costringere a riscriverlo.
+    const restoreUnsent = () => {
+      setMessages((prev) => prev.filter((m) => m.id !== pendingId));
+      setInput((current) => current || text);
+    };
 
     try {
       const res = await fetch("/api/agent/chat", {
@@ -44,6 +54,7 @@ export default function ChatPanel({
 
       if (!res.ok) {
         setError(data.error || t("errorGeneric"));
+        restoreUnsent();
       } else {
         setMessages((prev) => [
           ...prev,
@@ -59,6 +70,7 @@ export default function ChatPanel({
       }
     } catch {
       setError(t("errorContact"));
+      restoreUnsent();
     } finally {
       setLoading(false);
     }

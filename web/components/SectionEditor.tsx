@@ -111,6 +111,9 @@ export default function SectionEditor({ section, images: initialImages, specs, r
         .single();
 
       if (insertError || !row) {
+        // Il file e' gia' nello storage ma non c'e' piu' alcuna riga che lo referenzi: va tolto,
+        // altrimenti ogni nuovo tentativo ne lascia un altro senza che nessuno lo veda.
+        await supabase.storage.from("vehicle-images").remove([path]);
         setUploadError(t("imageUploadError"));
       } else {
         setImages((prev) => [...prev, row as SectionImage]);
