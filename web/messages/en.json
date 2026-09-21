@@ -372,6 +372,7 @@
     "save": "Save section",
     "saving": "Saving…",
     "saved": "Saved ✓",
+    "saveError": "Save failed: your changes were not recorded, please try again.",
     "uploadedSchemesLabel": "Diagrams you've uploaded",
     "uploadImage": "Upload image",
     "uploading": "Uploading…",

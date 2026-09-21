@@ -372,6 +372,7 @@
     "save": "Salva sezione",
     "saving": "Salvataggio…",
     "saved": "Salvato ✓",
+    "saveError": "Salvataggio non riuscito: le modifiche non sono state registrate, riprova.",
     "uploadedSchemesLabel": "Schemi ed esplosi caricati da te",
     "uploadImage": "Carica immagine",
     "uploading": "Caricamento…",

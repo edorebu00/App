@@ -372,6 +372,7 @@
     "save": "Bereich speichern",
     "saving": "Wird gespeichert…",
     "saved": "Gespeichert ✓",
+    "saveError": "Speichern fehlgeschlagen: Deine Änderungen wurden nicht übernommen, bitte versuche es erneut.",
     "uploadedSchemesLabel": "Von dir hochgeladene Schaltpläne",
     "uploadImage": "Bild hochladen",
     "uploading": "Wird hochgeladen…",
