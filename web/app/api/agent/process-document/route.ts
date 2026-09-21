@@ -198,27 +198,21 @@ async function readStoredSize(
   supabase: Awaited<ReturnType<typeof createClient>>,
   storagePath: string
 ): Promise<number | null> {
-  const separator = storagePath.lastIndexOf("/");
-  const folder = separator === -1 ? "" : storagePath.slice(0, separator);
-  const fileName = storagePath.slice(separator + 1);
-
-  // `search` e' un filtro parziale: si confronta comunque il nome esatto sulle voci tornate.
-  const { data, error } = await supabase.storage
-    .from("vehicle-files")
-    .list(folder, { search: fileName, limit: 100 });
+  // Lettura puntuale dei metadati dell'oggetto: non si sfoglia l'elenco della cartella (tutti i
+  // documenti di un veicolo stanno nella stessa, quindi andrebbe paginato) e non si scarica nulla.
+  const { data, error } = await supabase.storage.from("vehicle-files").info(storagePath);
 
   if (error) {
     console.warn(`Documento ${storagePath}: metadati dello Storage non leggibili:`, error.message);
     return null;
   }
 
-  const size = data?.find((entry) => entry.name === fileName)?.metadata?.size;
-  if (typeof size !== "number") {
+  if (typeof data?.size !== "number") {
     console.warn(`Documento ${storagePath}: metadati dello Storage senza dimensione.`);
     return null;
   }
 
-  return size;
+  return data.size;
 }
 
 async function failDocument(
