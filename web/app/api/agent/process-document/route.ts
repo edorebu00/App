@@ -83,6 +83,14 @@ export async function POST(request: Request) {
   if (typeof doc.size_bytes === "number" && doc.size_bytes > MAX_UPLOAD_BYTES) {
     return await failDocument(supabase, documentId, tErr("fileTooLarge"), 413);
   }
+  // `size_bytes` lo scrive il browser ed e' facoltativo: se manca o non e' un numero, il filtro
+  // qui sopra non scatta affatto. La dimensione vera sta nei metadati dello Storage e si legge
+  // senza scaricare nulla: il controllo a valle su `fileData.size` arriva dopo che `download()`
+  // ha gia' portato l'intero oggetto in memoria alla funzione.
+  const storedSize = await readStoredSize(supabase, doc.storage_path);
+  if (storedSize !== null && storedSize > MAX_UPLOAD_BYTES) {
+    return await failDocument(supabase, documentId, tErr("fileTooLarge"), 413);
+  }
 
   try {
     const { data: fileData, error: downloadError } = await supabase.storage
@@ -181,6 +189,38 @@ async function extractPdfPages(
 }
 
 /** Marca il documento come non elaborato con un messaggio utente e risponde con lo stesso testo. */
+/**
+ * Dimensione dell'oggetto letta dai metadati dello Storage, senza scaricarlo. Restituisce `null`
+ * quando il dato non e' leggibile: un caricamento legittimo non va rifiutato per una lettura
+ * fallita, e piu' a valle resta comunque il controllo su `fileData.size` come ultima rete.
+ */
+async function readStoredSize(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  storagePath: string
+): Promise<number | null> {
+  const separator = storagePath.lastIndexOf("/");
+  const folder = separator === -1 ? "" : storagePath.slice(0, separator);
+  const fileName = storagePath.slice(separator + 1);
+
+  // `search` e' un filtro parziale: si confronta comunque il nome esatto sulle voci tornate.
+  const { data, error } = await supabase.storage
+    .from("vehicle-files")
+    .list(folder, { search: fileName, limit: 100 });
+
+  if (error) {
+    console.warn(`Documento ${storagePath}: metadati dello Storage non leggibili:`, error.message);
+    return null;
+  }
+
+  const size = data?.find((entry) => entry.name === fileName)?.metadata?.size;
+  if (typeof size !== "number") {
+    console.warn(`Documento ${storagePath}: metadati dello Storage senza dimensione.`);
+    return null;
+  }
+
+  return size;
+}
+
 async function failDocument(
   supabase: Awaited<ReturnType<typeof createClient>>,
   documentId: string,

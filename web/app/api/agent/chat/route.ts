@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient, CLAUDE_MODEL, EFFORT, logTokenUsage } from "@/lib/anthropic";
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_MODEL } from "@/lib/openai";
 import { LOCALE_LANGUAGE_NAME, resolveLocale } from "@/i18n/locales";
-import { checkRateLimit } from "@/lib/rateLimit";
+import { checkRateLimit, checkSharedRateLimit, rateWindowStart } from "@/lib/rateLimit";
 import { historyWindow } from "@/lib/chatHistory";
 import { buildChatSystemBlocks, flattenSystemBlocks } from "@/lib/chatPrompt";
 import { clampText, isUuid } from "@/lib/validation";
@@ -87,6 +87,23 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: tErr("rateLimited") },
       { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
+    );
+  }
+
+  // Il controllo qui sopra vale solo per l'istanza che serve la richiesta. Ogni messaggio lascia
+  // gia' una riga in `chat_messages`: contarle e' un limite comune a tutte le istanze.
+  const { count: recentMessages } = await supabase
+    .from("chat_messages")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("role", "user")
+    .gte("created_at", rateWindowStart(RATE_WINDOW_MS));
+
+  const sharedLimit = checkSharedRateLimit(recentMessages ?? null, RATE_LIMIT, RATE_WINDOW_MS);
+  if (!sharedLimit.allowed) {
+    return NextResponse.json(
+      { error: tErr("rateLimited") },
+      { status: 429, headers: { "Retry-After": String(sharedLimit.retryAfterSeconds) } }
     );
   }
 
