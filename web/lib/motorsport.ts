@@ -114,59 +114,64 @@ function extractBriefing(content: Anthropic.ContentBlock[]): MotorsportBriefing 
 async function fetchBriefing(locale: Locale): Promise<MotorsportBriefing> {
   const language = LOCALE_LANGUAGE_NAME[locale];
 
-  try {
-    const anthropic = getAnthropicClient();
-    const message = await anthropic.messages.create(
-      {
-        model: CLAUDE_MODEL,
-        // Tetto su ragionamento PIU' risposta: se il ragionamento se lo mangia, il riquadro
-        // sparisce dalla home senza un errore. Il margine inutilizzato non si paga.
-        max_tokens: 8000,
-        // Vedi EFFORT: leggere risultati di ricerca e riempire uno schema non ha bisogno del
-        // livello `high` che si otteneva non dichiarando nulla.
-        output_config: { effort: EFFORT.motorsport },
-        // Blocco unico con punto di cache. L'ordine di resa e' `tools` -> `system` -> `messages`,
-        // quindi il marcatore sull'ultimo blocco di sistema mette in cache anche lo schema di
-        // submit_briefing. Ma la ragione principale e' un'altra: quando una richiesta usa gia' il
-        // caching, lo strumento di ricerca web aggiunge da se' un punto di cache dopo ogni blocco
-        // di risultati. Senza un `cache_control` esplicito quell'aggiunta non avviene e il ciclo
-        // si rispedisce tutti i risultati raccolti a prezzo pieno a ogni giro.
-        // TTL predefinito: i giri del ciclo distano secondi, un'ora costerebbe il doppio in
-        // scrittura per una voce che nessuno rileggera' (la chiamata e' una al giorno).
-        system: [
-          {
-            type: "text",
-            text: buildSystemPrompt(language),
-            cache_control: { type: "ephemeral" },
-          },
-        ],
-        messages: [
-          {
-            role: "user",
-            content: "Prepara il riquadro notizie motorsport della home page: le più rilevanti di questi giorni.",
-          },
-        ],
-        tools: [{ type: "web_search_20260209", name: "web_search", max_uses: MAX_WEB_SEARCHES }, SUBMIT_BRIEFING_TOOL],
-      },
-      { timeout: REQUEST_TIMEOUT_MS }
-    );
+  const anthropic = getAnthropicClient();
+  const message = await anthropic.messages.create(
+    {
+      model: CLAUDE_MODEL,
+      // Tetto su ragionamento PIU' risposta: se il ragionamento se lo mangia, il riquadro
+      // sparisce dalla home senza un errore. Il margine inutilizzato non si paga.
+      max_tokens: 8000,
+      // Vedi EFFORT: leggere risultati di ricerca e riempire uno schema non ha bisogno del
+      // livello `high` che si otteneva non dichiarando nulla.
+      output_config: { effort: EFFORT.motorsport },
+      // Blocco unico con punto di cache. L'ordine di resa e' `tools` -> `system` -> `messages`,
+      // quindi il marcatore sull'ultimo blocco di sistema mette in cache anche lo schema di
+      // submit_briefing. Ma la ragione principale e' un'altra: quando una richiesta usa gia' il
+      // caching, lo strumento di ricerca web aggiunge da se' un punto di cache dopo ogni blocco
+      // di risultati. Senza un `cache_control` esplicito quell'aggiunta non avviene e il ciclo
+      // si rispedisce tutti i risultati raccolti a prezzo pieno a ogni giro.
+      // TTL predefinito: i giri del ciclo distano secondi, un'ora costerebbe il doppio in
+      // scrittura per una voce che nessuno rileggera' (la chiamata e' una al giorno).
+      system: [
+        {
+          type: "text",
+          text: buildSystemPrompt(language),
+          cache_control: { type: "ephemeral" },
+        },
+      ],
+      messages: [
+        {
+          role: "user",
+          content: "Prepara il riquadro notizie motorsport della home page: le più rilevanti di questi giorni.",
+        },
+      ],
+      tools: [{ type: "web_search_20260209", name: "web_search", max_uses: MAX_WEB_SEARCHES }, SUBMIT_BRIEFING_TOOL],
+    },
+    { timeout: REQUEST_TIMEOUT_MS }
+  );
 
-    logTokenUsage(`home motorsport (${locale})`, message.usage);
-    return extractBriefing(message.content);
-  } catch (err) {
-    // La home deve restare in piedi anche senza: la sezione semplicemente non compare.
-    console.error("Riquadro motorsport non disponibile:", err);
-    return EMPTY;
-  }
+  logTokenUsage(`home motorsport (${locale})`, message.usage);
+  return extractBriefing(message.content);
 }
 
 /**
  * Versione in cache. La chiave comprende la lingua, così ogni lingua ha il suo riquadro ma solo
  * quelle effettivamente visitate vengono generate.
+ *
+ * Il fallimento si gestisce qui, fuori dalla funzione memorizzata: per la cache un risultato vale
+ * l'altro, quindi un `catch` la' dentro farebbe conservare l'elenco vuoto per le stesse 24 ore di
+ * uno buono e un singolo timeout toglierebbe il riquadro dalla home per un giorno. Lasciando
+ * uscire l'errore la voce non viene memorizzata e la richiesta successiva riprova.
  */
-export function getMotorsportBriefing(locale: Locale): Promise<MotorsportBriefing> {
-  return unstable_cache(() => fetchBriefing(locale), ["motorsport-briefing", locale], {
-    revalidate: CACHE_SECONDS,
-    tags: ["motorsport-briefing"],
-  })();
+export async function getMotorsportBriefing(locale: Locale): Promise<MotorsportBriefing> {
+  try {
+    return await unstable_cache(() => fetchBriefing(locale), ["motorsport-briefing", locale], {
+      revalidate: CACHE_SECONDS,
+      tags: ["motorsport-briefing"],
+    })();
+  } catch (err) {
+    // La home deve restare in piedi anche senza: la sezione semplicemente non compare.
+    console.error("Riquadro motorsport non disponibile:", err);
+    return EMPTY;
+  }
 }

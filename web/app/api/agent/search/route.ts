@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient, CLAUDE_MODEL, EFFORT, logTokenUsage } from "@/lib/anthropic";
 import { getOpenAIClient, hasOpenAIFallback, OPENAI_SEARCH_MODEL } from "@/lib/openai";
 import { LOCALE_LANGUAGE_NAME, resolveLocale, type Locale } from "@/i18n/locales";
-import { checkRateLimit } from "@/lib/rateLimit";
+import { checkRateLimit, checkSharedRateLimit, rateWindowStart } from "@/lib/rateLimit";
 import { clampText, isUuid } from "@/lib/validation";
 import { MAX_RISORSE, sanitizePayload } from "@/lib/searchPayload";
 import type { SearchPayload } from "@/lib/types";
@@ -362,6 +362,22 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: tErr("rateLimited") },
       { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
+    );
+  }
+
+  // Il controllo qui sopra vale solo per l'istanza che serve la richiesta. Ogni ricerca eseguita
+  // lascia gia' una riga in `search_results`: contarle e' un limite comune a tutte le istanze.
+  const { count: recentSearches } = await supabase
+    .from("search_results")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .gte("created_at", rateWindowStart(RATE_WINDOW_MS));
+
+  const sharedLimit = checkSharedRateLimit(recentSearches ?? null, RATE_LIMIT, RATE_WINDOW_MS);
+  if (!sharedLimit.allowed) {
+    return NextResponse.json(
+      { error: tErr("rateLimited") },
+      { status: 429, headers: { "Retry-After": String(sharedLimit.retryAfterSeconds) } }
     );
   }
 
