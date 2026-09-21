@@ -88,7 +88,19 @@ export default function FileUploader({ vehicleId }: { vehicleId: string }) {
       .then(async (started) => {
         if (started) return;
 
-        await supabase.from("documents").update({ processing_error: t("processingNotStarted") }).eq("id", doc.id);
+        // Anche questo aggiornamento puo' fallire: scartandone l'esito la voce resterebbe sulla
+        // rotellina esattamente come se non si fosse fatto nulla, di nuovo senza avviso.
+        try {
+          const { error: markError } = await supabase
+            .from("documents")
+            .update({ processing_error: t("processingNotStarted") })
+            .eq("id", doc.id);
+
+          if (markError) setError(t("saveError"));
+        } catch {
+          setError(t("saveError"));
+        }
+
         router.refresh();
       });
 
