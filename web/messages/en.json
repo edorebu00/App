@@ -311,7 +311,8 @@
     "submit": "🏁 Save vehicle",
     "submitLoading": "Saving…",
     "sessionExpired": "Session expired, please log in again.",
-    "genericError": "Error while creating the vehicle."
+    "genericError": "Error while creating the vehicle.",
+    "incompleteVehicleError": "The vehicle was only partly created and could not be removed: you will find it in the list without sections, delete it from its page before trying again."
   },
   "vehicleAdded": {
     "text": "Vehicle added! We're looking for the first info online…"

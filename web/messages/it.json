@@ -311,7 +311,8 @@
     "submit": "🏁 Salva veicolo",
     "submitLoading": "Salvataggio…",
     "sessionExpired": "Sessione scaduta, effettua di nuovo l'accesso.",
-    "genericError": "Errore durante la creazione del veicolo."
+    "genericError": "Errore durante la creazione del veicolo.",
+    "incompleteVehicleError": "Veicolo creato solo in parte e non e' stato possibile rimuoverlo: lo trovi in elenco senza sezioni, eliminalo dalla sua pagina prima di riprovare."
   },
   "vehicleAdded": {
     "text": "Veicolo aggiunto! Stiamo cercando le prime info online…"
