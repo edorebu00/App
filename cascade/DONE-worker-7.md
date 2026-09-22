@@ -1,2 +1,2 @@
-Data (UTC): 2026-09-21
-PR #40 unita, deploy success
+Data (UTC): 2026-09-22
+nessun problema risolvibile
