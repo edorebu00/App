@@ -58,12 +58,19 @@ export async function POST(request: Request) {
   // La RLS limita gia' la select ai documenti dell'utente: un id altrui non restituisce righe.
   const { data: doc, error: fetchError } = await supabase
     .from("documents")
-    .select("id, file_name, storage_path, mime_type, size_bytes")
+    .select("id, file_name, storage_path, mime_type, size_bytes, processed, extracted_text")
     .eq("id", documentId)
     .maybeSingle();
 
   if (fetchError || !doc) {
     return NextResponse.json({ error: tErr("documentNotFound") }, { status: 404 });
+  }
+
+  // Documento gia' elaborato: si risponde subito con lo stesso esito della prima volta. Rifare il
+  // lavoro vorrebbe dire riscaricare l'oggetto dallo Storage e rianalizzare il PDF per riscrivere
+  // lo stesso testo estratto.
+  if (doc.processed) {
+    return NextResponse.json({ ok: true, characters: (doc.extracted_text || "").length });
   }
 
   const isPdf = doc.mime_type === "application/pdf" || doc.file_name.toLowerCase().endsWith(".pdf");
@@ -221,10 +228,16 @@ async function failDocument(
   message: string,
   status: number
 ) {
-  await supabase
+  const { error: updateError } = await supabase
     .from("documents")
     .update({ processed: false, processing_error: message.slice(0, MAX_ERROR_CHARS) })
     .eq("id", documentId);
 
-  return NextResponse.json({ error: message }, { status });
+  if (updateError) {
+    console.error(`Documento ${documentId}: motivo non registrato sulla riga:`, updateError.message);
+  }
+
+  // `errorRecorded` dice al client che il motivo e' gia' finito in `processing_error`: senza questa
+  // indicazione lo sostituirebbe con il proprio messaggio di ripiego, perdendo quello vero.
+  return NextResponse.json({ error: message, errorRecorded: !updateError }, { status });
 }
