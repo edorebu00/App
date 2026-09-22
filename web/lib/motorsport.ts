@@ -4,6 +4,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { getAnthropicClient, CLAUDE_MODEL, EFFORT, logTokenUsage } from "./anthropic";
 import { safeExternalUrl } from "./safeUrl";
 import { clampText } from "./validation";
+import { checkRateLimit, isRateLimited } from "./rateLimit";
 import { LOCALE_LANGUAGE_NAME, type Locale } from "@/i18n/locales";
 
 /**
@@ -41,6 +42,12 @@ const CACHE_SECONDS = 86_400;
 const REQUEST_TIMEOUT_MS = 60_000;
 /** Una sola ricerca: solo le notizie passano dal modello, il calendario è un link statico. */
 const MAX_WEB_SEARCHES = 1;
+/**
+ * Pausa dopo un tentativo non riuscito. Il caso riuscito lo tiene la cache, quello non riuscito no:
+ * senza questa pausa, finché la generazione continua a non riuscire ogni singola visita alla home
+ * ne avvierebbe una nuova, e la home è pubblica.
+ */
+const FAILURE_PAUSE_MS = 120_000;
 
 const SUBMIT_BRIEFING_TOOL: Anthropic.Tool = {
   name: "submit_briefing",
@@ -161,9 +168,16 @@ async function fetchBriefing(locale: Locale): Promise<MotorsportBriefing> {
  * Il fallimento si gestisce qui, fuori dalla funzione memorizzata: per la cache un risultato vale
  * l'altro, quindi un `catch` la' dentro farebbe conservare l'elenco vuoto per le stesse 24 ore di
  * uno buono e un singolo timeout toglierebbe il riquadro dalla home per un giorno. Lasciando
- * uscire l'errore la voce non viene memorizzata e la richiesta successiva riprova.
+ * uscire l'errore la voce non viene memorizzata e la richiesta successiva riprova — ma non subito:
+ * fra un tentativo non riuscito e il successivo passa `FAILURE_PAUSE_MS`, altrimenti sarebbero i
+ * visitatori a decidere quante generazioni a consumo avviare.
  */
 export async function getMotorsportBriefing(locale: Locale): Promise<MotorsportBriefing> {
+  const failureKey = `motorsport-failure:${locale}`;
+  // Lettura che non lascia traccia: il percorso riuscito non deve consumare posizioni, altrimenti
+  // la visita successiva vedrebbe il riquadro vuoto pur avendo un risultato buono in cache.
+  if (isRateLimited(failureKey, 1)) return EMPTY;
+
   try {
     return await unstable_cache(() => fetchBriefing(locale), ["motorsport-briefing", locale], {
       revalidate: CACHE_SECONDS,
@@ -172,6 +186,7 @@ export async function getMotorsportBriefing(locale: Locale): Promise<MotorsportB
   } catch (err) {
     // La home deve restare in piedi anche senza: la sezione semplicemente non compare.
     console.error("Riquadro motorsport non disponibile:", err);
+    checkRateLimit(failureKey, 1, FAILURE_PAUSE_MS);
     return EMPTY;
   }
 }

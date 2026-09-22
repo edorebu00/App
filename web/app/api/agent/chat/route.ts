@@ -124,6 +124,10 @@ export async function POST(request: Request) {
 
   const language = LOCALE_LANGUAGE_NAME[resolveLocale(locale)];
 
+  // La riga del messaggio utente si scrive prima di chiamare il modello: se poi la chiamata
+  // fallisce, il client deve sapere che a database la riga c'e' gia' e non deve togliere la bolla.
+  let userMessageSaved = false;
+
   try {
     // L'ordinamento esplicito non è un dettaglio estetico: senza ORDER BY Postgres non garantisce
     // l'ordine delle righe, i documenti finirebbero nel prompt in ordine variabile e il prefisso
@@ -176,6 +180,7 @@ export async function POST(request: Request) {
       content: message,
     });
     if (userInsertError) console.error("Chat IA: salvataggio del messaggio non riuscito:", userInsertError);
+    else userMessageSaved = true;
 
     const systemBlocks = buildChatSystemBlocks(context, language);
     const systemPrompt = flattenSystemBlocks(systemBlocks);
@@ -236,6 +241,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ reply, documentsUsed: (docs || []).map((d) => d.file_name) });
   } catch (err) {
     console.error("Errore chat IA:", err);
-    return NextResponse.json({ error: tErr("chatError") }, { status: 500 });
+    return NextResponse.json({ error: tErr("chatError"), userMessageSaved }, { status: 500 });
   }
 }

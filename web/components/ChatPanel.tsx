@@ -36,9 +36,11 @@ export default function ChatPanel({
     ]);
     setLoading(true);
 
-    // Se la richiesta non va a buon fine il messaggio non e' stato registrato dal server: la bolla
-    // va tolta, altrimenti sparirebbe da sola al primo aggiornamento della pagina, e il testo va
-    // rimesso nel campo invece di costringere a riscriverlo.
+    // Quando il server non ha registrato il messaggio la bolla va tolta, altrimenti sparirebbe da
+    // sola al primo aggiornamento della pagina, e il testo va rimesso nel campo invece di
+    // costringere a riscriverlo. Non vale pero' per ogni errore: la route scrive la riga prima di
+    // chiamare il modello, quindi se dichiara di averla salvata la bolla resta dov'e', altrimenti
+    // ricomparirebbe al ricaricamento e un reinvio ne lascerebbe due in cronologia.
     const restoreUnsent = () => {
       setMessages((prev) => prev.filter((m) => m.id !== pendingId));
       setInput((current) => current || text);
@@ -54,7 +56,7 @@ export default function ChatPanel({
 
       if (!res.ok) {
         setError(data.error || t("errorGeneric"));
-        restoreUnsent();
+        if (!data.userMessageSaved) restoreUnsent();
       } else {
         setMessages((prev) => [
           ...prev,
