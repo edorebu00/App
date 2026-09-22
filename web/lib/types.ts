@@ -48,16 +48,23 @@ export type SectionKey =
   | "elettronica"
   | "generale";
 
+/**
+ * Categorie previste per una risorsa trovata online. Definite una volta sola come valore, cosi'
+ * l'elenco usato per i controlli e il tipo qui sotto non possono divergere.
+ */
+export const RESOURCE_CATEGORIES = [
+  "forum",
+  "manuale_pdf",
+  "video",
+  "schema_tecnico",
+  "pezzo_ricambio",
+  "catalogo_ricambi",
+  "piano_manutenzione",
+  "altro",
+] as const;
+
 export interface ResourceLink {
-  categoria:
-    | "forum"
-    | "manuale_pdf"
-    | "video"
-    | "schema_tecnico"
-    | "pezzo_ricambio"
-    | "catalogo_ricambi"
-    | "piano_manutenzione"
-    | "altro";
+  categoria: (typeof RESOURCE_CATEGORIES)[number];
   sezione?: SectionKey;
   titolo: string;
   url: string;
