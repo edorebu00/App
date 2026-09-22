@@ -42,7 +42,7 @@ export default function VehicleDetailTabs({
   const locale = useLocale();
 
   const RESOURCE_TABS: Array<{ id: ResourceTabId; label: string; categorie: ResourceLink["categoria"][] }> = [
-    { id: "documenti", label: tRes("tabDocuments"), categorie: ["manuale_pdf", "schema_tecnico", "pezzo_ricambio", "catalogo_ricambi", "piano_manutenzione"] },
+    { id: "documenti", label: tRes("tabDocuments"), categorie: ["manuale_pdf", "schema_tecnico", "pezzo_ricambio", "catalogo_ricambi", "piano_manutenzione", "altro"] },
     { id: "forum", label: tRes("tabForum"), categorie: ["forum"] },
     { id: "video", label: tRes("tabVideo"), categorie: ["video"] },
   ];
