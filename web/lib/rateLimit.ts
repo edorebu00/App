@@ -45,6 +45,18 @@ export function checkRateLimit(
   return { allowed: true, retryAfterSeconds: 0 };
 }
 
+/**
+ * Sola lettura sullo stesso contatore: dice se la chiave ha già raggiunto il tetto nella finestra
+ * in corso senza creare voci né incrementare nulla. Serve a chi deve sapere se è il caso di
+ * riprovare prima di decidere se consumare una posizione; voce assente o finestra scaduta valgono
+ * come "non limitato".
+ */
+export function isRateLimited(key: string, limit: number): boolean {
+  const bucket = buckets.get(key);
+  if (!bucket || bucket.resetAt <= Date.now()) return false;
+  return bucket.count >= limit;
+}
+
 /** Istante da cui contare le righe della finestra corrente, nel formato accettato da Postgres. */
 export function rateWindowStart(windowMs: number): string {
   return new Date(Date.now() - windowMs).toISOString();
