@@ -83,22 +83,33 @@ export default function FileUploader({ vehicleId }: { vehicleId: string }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ documentId: doc.id }),
     })
-      .then((res) => res.ok)
-      .catch(() => false)
-      .then(async (started) => {
-        if (started) return;
+      .then(async (res) => {
+        if (res.ok) return "ok" as const;
 
-        // Anche questo aggiornamento puo' fallire: scartandone l'esito la voce resterebbe sulla
-        // rotellina esattamente come se non si fosse fatto nulla, di nuovo senza avviso.
-        try {
-          const { error: markError } = await supabase
-            .from("documents")
-            .update({ processing_error: t("processingNotStarted") })
-            .eq("id", doc.id);
+        // La route puo' aver gia' scritto in `processing_error` il motivo preciso (file troppo
+        // grande, formato non supportato, errore di elaborazione) e lo dichiara nella risposta:
+        // in quel caso il ripiego qui sotto cancellerebbe il motivo vero, lasciando a schermo un
+        // invito a ricaricare un file che comunque non puo' essere letto.
+        const body = await res.json().catch(() => null);
+        return body?.errorRecorded ? ("recorded" as const) : ("notStarted" as const);
+      })
+      .catch(() => "notStarted" as const)
+      .then(async (outcome) => {
+        if (outcome === "ok") return;
 
-          if (markError) setError(t("saveError"));
-        } catch {
-          setError(t("saveError"));
+        if (outcome === "notStarted") {
+          // Anche questo aggiornamento puo' fallire: scartandone l'esito la voce resterebbe sulla
+          // rotellina esattamente come se non si fosse fatto nulla, di nuovo senza avviso.
+          try {
+            const { error: markError } = await supabase
+              .from("documents")
+              .update({ processing_error: t("processingNotStarted") })
+              .eq("id", doc.id);
+
+            if (markError) setError(t("saveError"));
+          } catch {
+            setError(t("saveError"));
+          }
         }
 
         router.refresh();
