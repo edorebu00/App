@@ -1962,6 +1962,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       "308": [
         { label: "1.2 PureTech 130cv", yearFrom: 2021, yearTo: null },
         { label: "1.5 BlueHDi 130cv", yearFrom: 2021, yearTo: null },
+        { label: "GTi 1.6 THP 250cv", yearFrom: 2015, yearTo: 2021 },
+        { label: "GTi 1.6 THP 270cv", yearFrom: 2016, yearTo: 2021 },
       ],
       "2008": [
         { label: "1.2 PureTech 130cv", yearFrom: 2019, yearTo: null },
@@ -2031,6 +2033,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.6 E-Tech Hybrid 140cv", yearFrom: 2020, yearTo: null },
         { label: "RS 200 EDC 1.6 Turbo 200cv", yearFrom: 2013, yearTo: 2016 },
         { label: "RS 220 Trophy 1.6 Turbo 220cv", yearFrom: 2016, yearTo: 2019 },
+      ],
+      Symbioz: [
+        { label: "Mild Hybrid 1.2 140cv", yearFrom: 2024, yearTo: null },
+        { label: "Full Hybrid E-Tech 160cv", yearFrom: 2024, yearTo: null },
       ],
       Captur: [
         { label: "1.0 TCe 100cv", yearFrom: 2019, yearTo: null },
@@ -2162,6 +2168,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       Kodiaq: [
         { label: "2.0 TSI 190cv", yearFrom: 2017, yearTo: null },
         { label: "2.0 TDI 150cv", yearFrom: 2017, yearTo: null },
+        { label: "RS 2.0 BiTDI 240cv", yearFrom: 2019, yearTo: 2021 },
+        { label: "RS 2.0 TSI 245cv", yearFrom: 2021, yearTo: 2024 },
+        { label: "RS 2.0 TSI 265cv", yearFrom: 2024, yearTo: null },
+        { label: "RS Plug-in Hybrid 272cv", yearFrom: 2024, yearTo: null },
       ],
       Superb: [
         { label: "2.0 TSI 190cv", yearFrom: 2015, yearTo: null },
@@ -2326,6 +2336,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "2.0 TDI 150cv", yearFrom: 2012, yearTo: null },
         { label: "2.0 TSI GTI 245cv", yearFrom: 2013, yearTo: null },
         { label: "2.0 TSI R 300cv", yearFrom: 2014, yearTo: 2017 },
+        { label: "2.0 TSI R 320cv", yearFrom: 2021, yearTo: 2023 },
+        { label: "2.0 TSI R 333cv", yearFrom: 2024, yearTo: null },
       ],
       Scirocco: [
         { label: "1.4 TSI 122cv", yearFrom: 2008, yearTo: 2017 },
