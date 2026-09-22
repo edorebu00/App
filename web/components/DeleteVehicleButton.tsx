@@ -34,7 +34,13 @@ export default function DeleteVehicleButton({ vehicleId, label }: { vehicleId: s
 
     const filePaths = (documents || []).map((d) => d.storage_path).filter(Boolean);
     if (filePaths.length) {
-      await supabase.storage.from("vehicle-files").remove(filePaths);
+      const { error: filesRemoveError } = await supabase.storage.from("vehicle-files").remove(filePaths);
+
+      if (filesRemoveError) {
+        window.alert(t("deleteError", { message: filesRemoveError.message }));
+        setDeleting(false);
+        return;
+      }
     }
 
     const { data: sections, error: sectionsError } = await supabase
@@ -63,7 +69,13 @@ export default function DeleteVehicleButton({ vehicleId, label }: { vehicleId: s
 
       const imagePaths = (images || []).map((i) => i.storage_path).filter(Boolean) as string[];
       if (imagePaths.length) {
-        await supabase.storage.from("vehicle-images").remove(imagePaths);
+        const { error: imagesRemoveError } = await supabase.storage.from("vehicle-images").remove(imagePaths);
+
+        if (imagesRemoveError) {
+          window.alert(t("deleteError", { message: imagesRemoveError.message }));
+          setDeleting(false);
+          return;
+        }
       }
     }
 

@@ -311,7 +311,8 @@
     "submit": "🏁 Salva veicolo",
     "submitLoading": "Salvataggio…",
     "sessionExpired": "Sessione scaduta, effettua di nuovo l'accesso.",
-    "genericError": "Errore durante la creazione del veicolo."
+    "genericError": "Errore durante la creazione del veicolo.",
+    "incompleteVehicleError": "Veicolo creato solo in parte e non e' stato possibile rimuoverlo: lo trovi in elenco senza sezioni, eliminalo dalla sua pagina prima di riprovare."
   },
   "vehicleAdded": {
     "text": "Veicolo aggiunto! Stiamo cercando le prime info online…"
@@ -372,6 +373,7 @@
     "save": "Salva sezione",
     "saving": "Salvataggio…",
     "saved": "Salvato ✓",
+    "saveError": "Salvataggio non riuscito: le modifiche non sono state registrate, riprova.",
     "uploadedSchemesLabel": "Schemi ed esplosi caricati da te",
     "uploadImage": "Carica immagine",
     "uploading": "Caricamento…",
@@ -392,7 +394,8 @@
     "sessionExpired": "Sessione scaduta, effettua di nuovo l'accesso.",
     "saveError": "Errore durante il salvataggio del documento.",
     "unsupportedFileType": "Formato non supportato: carica un PDF o un file di testo.",
-    "fileTooLarge": "File troppo grande: il limite è 20 MB."
+    "fileTooLarge": "File troppo grande: il limite è 20 MB.",
+    "processingNotStarted": "estrazione del testo non avviata, ricarica il file per riprovare."
   },
   "documentList": {
     "noFiles": "Nessun file caricato per questo veicolo.",

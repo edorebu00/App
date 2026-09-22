@@ -311,7 +311,8 @@
     "submit": "🏁 Fahrzeug speichern",
     "submitLoading": "Wird gespeichert…",
     "sessionExpired": "Sitzung abgelaufen, bitte erneut anmelden.",
-    "genericError": "Fehler beim Erstellen des Fahrzeugs."
+    "genericError": "Fehler beim Erstellen des Fahrzeugs.",
+    "incompleteVehicleError": "Das Fahrzeug wurde nur teilweise angelegt und konnte nicht entfernt werden: Du findest es ohne Bereiche in der Liste, lösche es auf seiner Seite, bevor du es erneut versuchst."
   },
   "vehicleAdded": {
     "text": "Fahrzeug hinzugefügt! Wir suchen bereits erste Infos online…"
@@ -372,6 +373,7 @@
     "save": "Bereich speichern",
     "saving": "Wird gespeichert…",
     "saved": "Gespeichert ✓",
+    "saveError": "Speichern fehlgeschlagen: Deine Änderungen wurden nicht übernommen, bitte versuche es erneut.",
     "uploadedSchemesLabel": "Von dir hochgeladene Schaltpläne",
     "uploadImage": "Bild hochladen",
     "uploading": "Wird hochgeladen…",
@@ -392,7 +394,8 @@
     "sessionExpired": "Sitzung abgelaufen, bitte erneut anmelden.",
     "saveError": "Fehler beim Speichern des Dokuments.",
     "unsupportedFileType": "Nicht unterstütztes Format: lade eine PDF- oder Textdatei hoch.",
-    "fileTooLarge": "Datei zu groß: das Limit liegt bei 20 MB."
+    "fileTooLarge": "Datei zu groß: das Limit liegt bei 20 MB.",
+    "processingNotStarted": "Textextraktion nicht gestartet, lade die Datei erneut hoch."
   },
   "documentList": {
     "noFiles": "Für dieses Fahrzeug wurden keine Dateien hochgeladen.",

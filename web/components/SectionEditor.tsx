@@ -34,6 +34,7 @@ export default function SectionEditor({ section, images: initialImages, specs, r
   const [images, setImages] = useState(initialImages);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [showOwnData, setShowOwnData] = useState(hasOwnData);
@@ -53,6 +54,7 @@ export default function SectionEditor({ section, images: initialImages, specs, r
   async function handleSave() {
     setSaving(true);
     setSaved(false);
+    setSaveError(null);
 
     const data = Object.fromEntries(fields.filter(([k]) => k.trim() !== ""));
 
@@ -62,7 +64,9 @@ export default function SectionEditor({ section, images: initialImages, specs, r
       .eq("id", section.id);
 
     setSaving(false);
-    if (!error) {
+    if (error) {
+      setSaveError(t("saveError"));
+    } else {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }
@@ -87,7 +91,9 @@ export default function SectionEditor({ section, images: initialImages, specs, r
     } = await supabase.auth.getUser();
 
     if (!user) {
+      setUploadError(t("imageUploadError"));
       setUploading(false);
+      e.target.value = "";
       return;
     }
 
@@ -98,13 +104,20 @@ export default function SectionEditor({ section, images: initialImages, specs, r
     if (uploadError) {
       setUploadError(t("imageUploadError"));
     } else {
-      const { data: row } = await supabase
+      const { data: row, error: insertError } = await supabase
         .from("section_images")
         .insert({ section_id: section.id, storage_path: path, source: "upload", caption: file.name })
         .select()
         .single();
 
-      if (row) setImages((prev) => [...prev, row as SectionImage]);
+      if (insertError || !row) {
+        // Il file e' gia' nello storage ma non c'e' piu' alcuna riga che lo referenzi: va tolto,
+        // altrimenti ogni nuovo tentativo ne lascia un altro senza che nessuno lo veda.
+        await supabase.storage.from("vehicle-images").remove([path]);
+        setUploadError(t("imageUploadError"));
+      } else {
+        setImages((prev) => [...prev, row as SectionImage]);
+      }
     }
 
     setUploading(false);
@@ -226,6 +239,8 @@ export default function SectionEditor({ section, images: initialImages, specs, r
             </button>
             {saved && <span className="text-sm text-green-600">{t("saved")}</span>}
           </div>
+
+          {saveError && <p className="mt-2 text-sm text-red-600">{saveError}</p>}
 
           <div className="mt-6 border-t border-graphite-200 pt-4">
             <div className="mb-2 flex items-center justify-between">

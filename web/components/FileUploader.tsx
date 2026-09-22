@@ -75,11 +75,34 @@ export default function FileUploader({ vehicleId }: { vehicleId: string }) {
     }
 
     // Elaborazione asincrona: estrazione testo per la chat IA (non blocca l'upload se fallisce).
+    // L'esito va comunque registrato sulla riga appena creata: se la route non parte (rete,
+    // sessione, limite di frequenza) nessuno scrive `processing_error` e la voce resterebbe
+    // per sempre sulla rotellina "in elaborazione", senza errore ne' modo di riprovare.
     fetch("/api/agent/process-document", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ documentId: doc.id }),
-    }).catch(() => {});
+    })
+      .then((res) => res.ok)
+      .catch(() => false)
+      .then(async (started) => {
+        if (started) return;
+
+        // Anche questo aggiornamento puo' fallire: scartandone l'esito la voce resterebbe sulla
+        // rotellina esattamente come se non si fosse fatto nulla, di nuovo senza avviso.
+        try {
+          const { error: markError } = await supabase
+            .from("documents")
+            .update({ processing_error: t("processingNotStarted") })
+            .eq("id", doc.id);
+
+          if (markError) setError(t("saveError"));
+        } catch {
+          setError(t("saveError"));
+        }
+
+        router.refresh();
+      });
 
     setUploading(false);
     e.target.value = "";

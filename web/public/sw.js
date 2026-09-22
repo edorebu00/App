@@ -86,6 +86,19 @@ self.addEventListener("fetch", (event) => {
   // Navigazione fra pagine: sempre dalla rete, perché il contenuto dipende da chi ha fatto
   // l'accesso. Offline si mostra la pagina dedicata, mai una copia in cache di dati altrui.
   if (request.mode === "navigate") {
-    event.respondWith(fetch(request).catch(() => caches.match(OFFLINE_URL)));
+    event.respondWith(
+      fetch(request).catch(async () => {
+        // Se l'installazione del guscio non è riuscita la pagina offline non è in cache e
+        // `caches.match` restituisce `undefined`: senza un ripiego la navigazione fallirebbe con
+        // l'errore generico del browser, cioè proprio quello che questo service worker evita.
+        const cached = await caches.match(OFFLINE_URL);
+        if (cached) return cached;
+
+        return new Response("Sei offline.", {
+          status: 503,
+          headers: { "Content-Type": "text/plain; charset=utf-8" },
+        });
+      })
+    );
   }
 });
