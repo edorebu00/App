@@ -52,11 +52,16 @@ export default function ChatPanel({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vehicleId, message: text, locale }),
       });
-      const data = await res.json();
+      // Un timeout o un errore della piattaforma (502/504) risponde con una pagina non JSON: il
+      // server pero' ha ricevuto la richiesta e la riga dell'utente puo' essere gia' salvata,
+      // quindi in quel caso la bolla resta al suo posto.
+      const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        setError(data.error || t("errorGeneric"));
-        if (!data.userMessageSaved) restoreUnsent();
+        setError(data?.error || t("errorGeneric"));
+        if (data !== null && !data.userMessageSaved) restoreUnsent();
+      } else if (data === null) {
+        setError(t("errorGeneric"));
       } else {
         setMessages((prev) => [
           ...prev,
