@@ -374,6 +374,7 @@
     "saving": "Wird gespeichert…",
     "saved": "Gespeichert ✓",
     "saveError": "Speichern fehlgeschlagen: Deine Änderungen wurden nicht übernommen, bitte versuche es erneut.",
+    "duplicateFieldName": "Zwei Merkmale haben denselben Namen: benenne eines um, bevor du speicherst.",
     "uploadedSchemesLabel": "Von dir hochgeladene Schaltpläne",
     "uploadImage": "Bild hochladen",
     "uploading": "Wird hochgeladen…",

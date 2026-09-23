@@ -52,6 +52,15 @@ export default function SectionEditor({ section, images: initialImages, specs, r
   }
 
   async function handleSave() {
+    // Dopo il `trim()` "peso" e "peso " diventano la stessa chiave e `Object.fromEntries` terrebbe
+    // solo l'ultima: meglio fermarsi e chiedere di rinominare che perdere una voce in silenzio.
+    const names = fields.map(([k]) => k.trim()).filter((k) => k !== "");
+    if (new Set(names).size !== names.length) {
+      setSaved(false);
+      setSaveError(t("duplicateFieldName"));
+      return;
+    }
+
     setSaving(true);
     setSaved(false);
     setSaveError(null);
