@@ -374,6 +374,7 @@
     "saving": "Salvataggio…",
     "saved": "Salvato ✓",
     "saveError": "Salvataggio non riuscito: le modifiche non sono state registrate, riprova.",
+    "duplicateFieldName": "Due caratteristiche hanno lo stesso nome: rinominane una prima di salvare.",
     "uploadedSchemesLabel": "Schemi ed esplosi caricati da te",
     "uploadImage": "Carica immagine",
     "uploading": "Caricamento…",
