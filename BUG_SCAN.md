@@ -1,20 +1,17 @@
 # Scansione notturna dei bug — MyVehicle
 
-Data scan: 2026-09-22 01:30 UTC
+Data scan: 2026-09-23 01:20 UTC
 Ambito: `web/` (esclusi `node_modules/`, `.next/`, `package-lock.json`, file generati con l'intestazione "GENERATO DA")
 PR aperte al momento dello scan: nessuna (di nessun autore).
 
 Ogni problema qui sotto e' stato verificato leggendo personalmente il codice indicato (file + righe).
-I problemi della scansione precedente (limite di frequenza fra istanze, controllo dimensione dal
-metadato dello Storage, ripiego offline, messaggio di chat perso, immagine orfana nello storage,
-esito elaborazione non registrato) risultano corretti dalle PR #38, #39, #40 e non sono ripetuti qui.
+Tutti i problemi assegnati nella scansione precedente risultano corretti dalle PR #42, #43 e #44 e
+non sono ripetuti qui. Resta aperto soltanto il punto che richiede intervento umano (U1).
 
-Verifiche automatiche eseguite: le chiavi di traduzione di `it`/`en`/`de` combaciano una a una
-(273 chiavi per lingua, nessuna mancante ne' in eccesso); nessuna chiave usata nel codice risulta
-assente dai file dei messaggi; tutti gli `href` verso risorse esterne di provenienza IA passano da
-`safeExternalUrl`; nessun uso di `dangerouslySetInnerHTML`. Non e' stato possibile eseguire
-`npm run lint` / `check:cache` in questa sessione perche' le dipendenze non sono installate
-nell'ambiente.
+Sono stati esaminati e scartati alcuni rilievi della revisione automatica: la rimozione del file
+dello schema quando anche la verifica della riga non riesce (compromesso esplicito e documentato
+nel codice), la duplicazione delle tabelle scheda/categorie e l'API di sola lettura del contatore
+(solo refactoring), e il reinvio dopo un errore del modello (scelta di prodotto).
 
 ## Bloccante
 
@@ -22,128 +19,104 @@ Nessun problema bloccante trovato in questa scansione.
 
 ## Importante
 
-### I1 — La home pubblica puo' rifare la chiamata al modello a ogni visita quando la generazione non riesce
-File: `web/lib/motorsport.ts:166-177`, usato da `web/components/MotorsportSection.tsx:15` sulla home
-pubblica `web/app/(public)/page.tsx:45-47`
+### I1 — Rafforzamento: generazioni contemporanee del riquadro motorsport sulla home pubblica
+File: `web/lib/motorsport.ts:176-191`
 
-Il risultato riuscito viene conservato per 24 ore, quindi a regime costa una generazione al giorno
-per lingua. Il caso non riuscito pero' non lascia traccia in cache: finche' la generazione continua
-a non riuscire, ogni singola visita alla home ne avvia una nuova, e ogni tentativo e' una chiamata a
-consumo con ricerca web piu' un'attesa che puo' arrivare ai 60 secondi di timeout. La home e'
-pubblica e non passa da alcun limite di frequenza, quindi il numero di tentativi cresce con il
-numero di visitatori.
+La pausa dopo un tentativo non riuscito, introdotta ieri, scatta solo *dopo* che un tentativo si e'
+concluso, e ogni tentativo puo' durare fino al timeout di 60 secondi (a cui si aggiungono i
+ritentativi automatici dell'SDK). In quell'intervallo ogni visita alla home trova la cache vuota e
+nessuna pausa registrata, quindi avvia una propria generazione a consumo: `unstable_cache` non
+riunisce le richieste contemporanee sulla stessa chiave. Il numero di generazioni in corso cresce
+quindi con i visitatori proprio nei momenti in cui il servizio e' lento.
 
-Proposta: dopo un tentativo non riuscito, imporre una pausa prima del successivo riutilizzando il
-contatore gia' presente in `web/lib/rateLimit.ts`, restituendo nel frattempo il riquadro vuoto.
+Proposta: tenere per ciascuna lingua la promessa della generazione in corso e farla condividere
+alle visite che arrivano nel frattempo, invece di avviarne un'altra.
 
-### I2 — La cronologia della chat mostra i 50 messaggi piu' VECCHI invece dei piu' recenti
-File: `web/app/(dashboard)/veicoli/[id]/documenti/page.tsx:24-29`
+### I2 — La chat non imposta un timeout sulla chiamata al modello e il ripiego non puo' mai scattare per lentezza
+File: `web/app/api/agent/chat/route.ts:12, 59-72, 192-236`; client in `web/lib/anthropic.ts:6-15`
 
-La query ordina per `created_at` crescente e poi applica `limit(50)`: con piu' di 50 messaggi
-salvati vengono restituiti i primi 50, cioe' i piu' vecchi. Dopo il cinquantesimo messaggio, chi
-ricarica la pagina non vede piu' ne' le proprie domande recenti ne' le risposte appena ricevute — la
-chat sembra tornata indietro nel tempo. La route della chat, al contrario, passa correttamente al
-modello la finestra finale (`historyWindow` in `web/app/api/agent/chat/route.ts:160`), quindi
-l'assistente risponde tenendo conto di messaggi che a schermo non compaiono.
+Il commento a riga 59 dice che il ripiego su OpenAI scatta anche in caso di timeout, ma la chiamata
+ad Anthropic non passa alcun `timeout` e il client usa il valore predefinito dell'SDK (10 minuti,
+piu' i ritentativi automatici). La funzione pero' ha `maxDuration = 90`: con un servizio lento la
+piattaforma interrompe la funzione prima che l'SDK rinunci, il ripiego non parte, la risposta
+d'assistente non viene salvata e il browser riceve una pagina d'errore della piattaforma invece
+del JSON della route (vedi M1 per l'effetto sulla chat).
 
-Proposta: leggere le righe in ordine decrescente con `limit(50)` e invertirle prima di passarle a
-`ChatPanel`.
+Proposta: passare `timeout` e `maxRetries` alla chiamata ad Anthropic (e un `timeout` a quella di
+OpenAI) in modo che il caso peggiore dei due tentativi resti sotto `maxDuration`.
 
-### I3 — Le risorse di categoria "altro" non compaiono in nessuna schermata
-File: `web/components/VehicleDetailTabs.tsx:44-48` e `web/components/GlobalSearch.tsx:13-17`;
-categoria prevista in `web/app/api/agent/search/route.ts:69` e in `web/lib/types.ts:60`
+### I3 — Stesso problema nella ricerca: tre chiamate in fila senza timeout dentro 180 secondi
+File: `web/app/api/agent/search/route.ts:16, 211-240, 408-451`
 
-Lo schema dello strumento di ricerca permette esplicitamente la categoria `altro`, e
-`ResourceCategoryView.tsx:15` ha gia' l'icona corrispondente, ma nessuna delle tre schede
-(Documenti / Forum / Video) la include nel proprio elenco di categorie, e nemmeno il filtro per
-sezione in `VehicleDetailTabs.tsx:268-272`. Il risultato: una risorsa restituita come `altro` viene
-pagata nella ricerca, salvata in `search_results`, occupa uno dei 10 posti disponibili e poi non e'
-raggiungibile da nessuna parte nell'interfaccia. Lo stesso vale per qualunque valore di `categoria`
-fuori elenco, perche' `sanitizePayload` (`web/lib/searchPayload.ts:25-31`) ricopia il campo senza
-verificarlo.
+La ricerca puo' fare in sequenza il tentativo Anthropic, il ritentativo e il ripiego OpenAI, e
+nessuna delle tre chiamate ha un timeout proprio. Se la prima rallenta, la funzione viene
+interrotta a 180 secondi prima di arrivare al ritentativo o al ripiego: il giro di ricerche web e'
+stato comunque consumato, ma nessun risultato viene salvato e l'utente riceve solo l'errore
+generico di connessione.
 
-Proposta: includere `altro` fra le categorie della scheda Documenti in entrambi i componenti e far
-ricondurre ad `altro` in `sanitizePayload` ogni categoria non prevista.
-
-### I4 — Un errore specifico dell'elaborazione documento viene sovrascritto con un messaggio generico
-File: `web/components/FileUploader.tsx:86-105`, in coppia con
-`web/app/api/agent/process-document/route.ts:218-229`
-
-Il client considera "route mai partita" qualunque risposta diversa da 2xx. Ma per le risposte 413
-(file troppo grande), 415 (formato non supportato) e 500 (errore di elaborazione) la route ha gia'
-scritto in `processing_error` il motivo preciso; subito dopo il client lo sostituisce con
-"estrazione del testo non avviata, ricarica il file per riprovare". L'utente legge quindi un invito
-a ricaricare lo stesso file, operazione che per un file troppo grande o di formato non supportato
-non puo' riuscire, e il motivo vero va perso.
-
-Proposta: far distinguere al client i casi in cui la route ha gia' registrato l'esito (per esempio
-con un campo nella risposta d'errore) e scrivere il messaggio di ripiego solo negli altri.
+Proposta: dare a ciascuna chiamata un `timeout` (e `maxRetries`) tali che la somma dei casi peggiori
+resti sotto `maxDuration`.
 
 ## Minore
 
-### M1 — Una bolla di chat gia' salvata viene tolta dallo schermo quando la risposta non arriva
-File: `web/components/ChatPanel.tsx:39-45, 55-57, 71-73`, in coppia con
-`web/app/api/agent/chat/route.ts:172-177, 237-240`
+### M1 — Con una risposta d'errore non JSON la chat toglie una bolla gia' salvata
+File: `web/components/ChatPanel.tsx:49-76`
 
-`restoreUnsent()` parte dal presupposto che una richiesta non riuscita significhi "nulla e' stato
-registrato dal server". La route pero' scrive la riga del messaggio dell'utente *prima* di chiamare
-il modello: se la chiamata fallisce si risponde 500 ma la riga resta. Il client toglie la bolla e
-rimette il testo nel campo, cosi' al ricaricamento della pagina il messaggio ricompare, e se
-l'utente lo reinvia ne resta una copia doppia in cronologia.
+Se la risposta non e' JSON (timeout della piattaforma, 502/504), `res.json()` lancia e il `catch`
+chiama `restoreUnsent()` senza distinguere questo caso da un errore di rete. Ma quando il server ha
+risposto, la route era gia' partita e la riga del messaggio dell'utente e' scritta prima della
+chiamata al modello: la bolla sparisce, il testo torna nel campo e un reinvio lascia il messaggio
+due volte in cronologia — proprio il caso che la correzione di ieri voleva evitare.
 
-Proposta: far indicare alla route, nella risposta d'errore, se il messaggio dell'utente e' stato
-salvato, e in quel caso lasciare la bolla al suo posto senza rimettere il testo nel campo.
+Proposta: leggere il corpo con `res.json().catch(() => null)` e, se il server ha risposto con
+errore ma il corpo non e' leggibile, lasciare la bolla al suo posto.
 
-### M2 — Rafforzamento: un documento gia' elaborato viene riscaricato e rianalizzato a ogni richiesta
-File: `web/app/api/agent/process-document/route.ts:59-63, 95-134`
+### M2 — Due caratteristiche che differiscono solo per gli spazi si sovrascrivono in silenzio
+File: `web/components/SectionEditor.tsx:59-78`
 
-La route non controlla lo stato `processed` della riga prima di procedere: richiamata sullo stesso
-`documentId` riscarica l'oggetto dallo Storage (fino a 20 MB) e rianalizza il PDF (fino a 500
-pagine) tutte le volte, sovrascrivendo poi lo stesso testo estratto. Nell'uso normale la chiamata
-parte una sola volta per caricamento, quindi uscire subito quando il documento risulta gia'
-elaborato non cambia il comportamento visibile e toglie una fonte di lavoro e di traffico ripetuti.
+Dopo il `trim()` introdotto ieri, "peso" e "peso " diventano la stessa chiave e `Object.fromEntries`
+tiene solo l'ultimo valore. Lo schermo mostra ancora due righe e conferma il salvataggio; al
+ricaricamento una delle due e' sparita senza avviso.
 
-Proposta: leggere anche `processed` nella select e rispondere subito con esito positivo quando e'
-gia' vero.
+Proposta: prima di salvare, se due nomi coincidono dopo il `trim()`, fermare il salvataggio e
+mostrare un messaggio (nuova chiave tradotta in it/en/de).
 
-### M3 — Dopo un salvataggio non riuscito il file dello schema puo' essere tolto pur avendo una riga valida
-File: `web/components/SectionEditor.tsx:107-121`
+### M3 — L'uscita anticipata per i documenti gia' elaborati legge l'intero testo estratto
+File: `web/app/api/agent/process-document/route.ts:59-71`
 
-Il ripristino (`remove([path])`) scatta per qualunque errore restituito dall'inserimento, compreso
-il caso in cui la risposta si perde per un problema di rete dopo che la riga e' stata effettivamente
-creata. In quello scenario il file viene cancellato ma la riga `section_images` resta, e nella lista
-degli schemi compare una voce il cui file non esiste piu'.
+La select ora comprende `extracted_text` (fino a 400.000 caratteri) solo per restituirne la
+lunghezza nel caso `processed`. L'unico chiamante (`FileUploader`) guarda solo `res.ok`, quindi
+ogni chiamata trasferisce dal database un campo che nel percorso normale non serve.
 
-Proposta: prima di cancellare il file, verificare se esiste gia' una riga con quello
-`storage_path`; se c'e', tenere il file e aggiungere la riga all'elenco a schermo.
+Proposta: togliere `extracted_text` dalla select e rispondere `{ ok: true }` quando il documento
+e' gia' elaborato.
 
-### M4 — I nomi delle caratteristiche non vengono ripuliti prima del salvataggio
-File: `web/components/SectionEditor.tsx:59`
+### M4 — L'elenco delle categorie nello schema dello strumento di ricerca e' ancora scritto a mano
+File: `web/app/api/agent/search/route.ts:69`, lista unica in `web/lib/types.ts:55`
 
-Il filtro scarta le righe con nome vuoto usando `k.trim()`, ma poi `Object.fromEntries` salva la
-chiave grezza. Una caratteristica scritta con uno spazio davanti o dietro viene quindi salvata con
-lo spazio: a schermo sembra identica a quella senza, ma sono due voci distinte, e riaprendo la
-scheda si vedono due righe apparentemente uguali.
+`RESOURCE_CATEGORIES` e' stato introdotto come unica fonte delle categorie, ma l'`enum` dello
+strumento `submit_findings` ripete le otto voci come letterali: aggiungendo una categoria in
+`types.ts` il modello non potrebbe mai restituirla.
 
-Proposta: applicare `trim()` al nome della caratteristica anche in fase di salvataggio.
+Proposta: usare `enum: [...RESOURCE_CATEGORIES]`.
 
 ## Richiede intervento umano
 
-### U1 — Il limite d'uso condiviso fra le istanze si appoggia a righe che l'account puo' rimuovere, e nella ricerca cresce solo dopo una chiamata riuscita
-File: `web/lib/rateLimit.ts:53-69`, usato in `web/app/api/agent/chat/route.ts:95-108` e
+### U1 — Il limite d'uso condiviso fra le istanze si appoggia a righe che l'account puo' rimuovere (invariato da ieri)
+File: `web/lib/rateLimit.ts:74-86`, usato in `web/app/api/agent/chat/route.ts:95-108` e
 `web/app/api/agent/search/route.ts:370-382`; policy in `supabase/migrations/0001_init.sql:175-182`
 
-Il secondo controllo, quello valido per tutte le istanze, conta le righe gia' scritte in
-`chat_messages` e `search_results`. Sono tabelle che la stessa sessione autenticata puo' anche
-svuotare (le policy sono `for all`), quindi il conteggio non e' un valore su cui si possa contare
-come tetto. Inoltre, nella route di ricerca, la riga viene scritta solo dopo una chiamata andata a
-buon fine: i tentativi che si concludono con un errore non incrementano il contatore comune, pur
-avendo gia' consumato il giro di ricerche web.
+Il conteggio comune si basa su righe di tabelle che la stessa sessione puo' anche svuotare, e nella
+ricerca cresce solo dopo una chiamata riuscita. Serve una struttura dedicata, con sola aggiunta,
+incrementata prima della chiamata al modello: richiede una migrazione in `supabase/`.
 
-Un contatore affidabile va tenuto su una struttura che il client non possa ridurre e va incrementato
-prima della chiamata al modello: serve quindi una migrazione in `supabase/` (nuova tabella con
-policy di sola aggiunta, oppure restrizione della rimozione sulle tabelle attuali) e una scelta su
-cosa fare quando la scrittura del contatore non riesce. Non e' automatizzabile sotto `web/`.
+### U2 — Pausa condivisa fra le istanze per il riquadro motorsport
+File: `web/lib/motorsport.ts:176-191`
+
+Il task su I1 riunisce le generazioni contemporanee dentro una stessa istanza; la pausa dopo un
+tentativo non riuscito resta pero' in memoria di istanza. Renderla comune a tutte le istanze
+richiede una struttura condivisa (tabella in `supabase/` o archivio chiave-valore) e quindi una
+scelta di design.
 
 ## Gia' in PR
 
