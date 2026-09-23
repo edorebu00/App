@@ -8,7 +8,7 @@ import { LOCALE_LANGUAGE_NAME, resolveLocale, type Locale } from "@/i18n/locales
 import { checkRateLimit, checkSharedRateLimit, rateWindowStart } from "@/lib/rateLimit";
 import { clampText, isUuid } from "@/lib/validation";
 import { MAX_RISORSE, sanitizePayload } from "@/lib/searchPayload";
-import type { SearchPayload } from "@/lib/types";
+import { RESOURCE_CATEGORIES, type SearchPayload } from "@/lib/types";
 
 // La ricerca fa alcune chiamate allo strumento web_search piu' l'eventuale retry: teniamo un
 // margine oltre alla durata attesa (~20-50s per tentativo), il piano Hobby di Vercel supporta
@@ -66,7 +66,7 @@ const SUBMIT_FINDINGS_TOOL: Anthropic.Tool = {
           properties: {
             categoria: {
               type: "string",
-              enum: ["forum", "manuale_pdf", "video", "schema_tecnico", "pezzo_ricambio", "catalogo_ricambi", "piano_manutenzione", "altro"],
+              enum: [...RESOURCE_CATEGORIES],
             },
             sezione: {
               type: "string",
