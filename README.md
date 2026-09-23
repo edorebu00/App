@@ -40,7 +40,7 @@ Level Security) e chiamano l'API Anthropic lato server, senza mai esporre la chi
 
 ## 3. Deploy su Vercel
 
-1. Su [vercel.com](https://vercel.com), importa la repo GitHub `edorebu00/App`.
+1. Su [vercel.com](https://vercel.com), importa la repo GitHub `edorebu00/MyVehicle`.
 2. Imposta **Root Directory** su `web`.
 3. Variabili d'ambiente (Settings → Environment Variables), vedi anche [`web/.env.example`](web/.env.example):
    - `NEXT_PUBLIC_SUPABASE_URL`

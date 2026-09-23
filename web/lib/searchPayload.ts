@@ -1,5 +1,6 @@
 import { safeExternalUrl } from "./safeUrl";
 import { clampText } from "./validation";
+import { RESOURCE_CATEGORIES } from "./types";
 import type { ResourceLink, SearchPayload } from "./types";
 
 /** Tetto al numero di risorse restituite. */
@@ -22,8 +23,12 @@ export function sanitizePayload(payload: SearchPayload): SearchPayload {
     const titolo = clampText(risorsa?.titolo, MAX_TEXT_FIELD_CHARS);
     if (!url || !titolo) continue;
 
+    // Anche la categoria arriva dal modello: un valore fuori elenco non comparirebbe in nessuna
+    // scheda, quindi lo ricondurremo ad "altro" invece di lasciare la risorsa irraggiungibile.
+    const categoria = RESOURCE_CATEGORIES.includes(risorsa?.categoria) ? risorsa.categoria : "altro";
+
     risorse.push({
-      categoria: risorsa.categoria,
+      categoria,
       sezione: risorsa.sezione,
       titolo,
       url,

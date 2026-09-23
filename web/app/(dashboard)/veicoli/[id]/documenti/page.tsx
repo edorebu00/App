@@ -21,12 +21,17 @@ export default async function VehicleDocumentsPage({ params }: { params: Promise
     .eq("vehicle_id", id)
     .order("created_at", { ascending: false });
 
+  // Si legge dal piu' recente perche' il `limit` taglia in coda: con l'ordine crescente resterebbero
+  // i 50 messaggi piu' vecchi. L'elenco viene poi rovesciato, cosi' a schermo l'ordine e' sempre dal
+  // meno recente al piu' recente.
   const { data: messages } = await supabase
     .from("chat_messages")
     .select("*")
     .eq("vehicle_id", id)
-    .order("created_at", { ascending: true })
+    .order("created_at", { ascending: false })
     .limit(50);
+
+  const chatMessages = ((messages || []) as ChatMessage[]).reverse();
 
   const v = vehicle as Vehicle;
 
@@ -57,7 +62,7 @@ export default async function VehicleDocumentsPage({ params }: { params: Promise
         </div>
 
         <div>
-          <ChatPanel vehicleId={v.id} initialMessages={(messages || []) as ChatMessage[]} />
+          <ChatPanel vehicleId={v.id} initialMessages={chatMessages} />
         </div>
       </div>
     </div>

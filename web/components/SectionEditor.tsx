@@ -56,7 +56,12 @@ export default function SectionEditor({ section, images: initialImages, specs, r
     setSaved(false);
     setSaveError(null);
 
-    const data = Object.fromEntries(fields.filter(([k]) => k.trim() !== ""));
+    // Il nome va ripulito anche in salvataggio, non solo nel filtro: senza `trim()` " peso " e
+    // "peso" diventano due voci distinte ma identiche a schermo. Il valore resta com'e', perche'
+    // gli spazi al suo interno possono essere voluti.
+    const data = Object.fromEntries(
+      fields.filter(([k]) => k.trim() !== "").map(([k, v]) => [k.trim(), v])
+    );
 
     const { error } = await supabase
       .from("vehicle_sections")
@@ -111,10 +116,24 @@ export default function SectionEditor({ section, images: initialImages, specs, r
         .single();
 
       if (insertError || !row) {
-        // Il file e' gia' nello storage ma non c'e' piu' alcuna riga che lo referenzi: va tolto,
-        // altrimenti ogni nuovo tentativo ne lascia un altro senza che nessuno lo veda.
-        await supabase.storage.from("vehicle-images").remove([path]);
-        setUploadError(t("imageUploadError"));
+        // L'inserimento puo' restituire errore anche dopo aver creato la riga (per esempio se la
+        // risposta si perde per un problema di rete): in quel caso il file serve ancora, quindi lo
+        // teniamo e mostriamo la voce come nel percorso riuscito. Solo se la riga davvero non c'e'
+        // il file va tolto, altrimenti ogni nuovo tentativo ne lascia un altro senza che nessuno
+        // lo veda. Se nemmeno la verifica riesce ci comportiamo come prima, togliendo il file.
+        const { data: existing, error: lookupError } = await supabase
+          .from("section_images")
+          .select()
+          .eq("section_id", section.id)
+          .eq("storage_path", path)
+          .maybeSingle();
+
+        if (!lookupError && existing) {
+          setImages((prev) => [...prev, existing as SectionImage]);
+        } else {
+          await supabase.storage.from("vehicle-images").remove([path]);
+          setUploadError(t("imageUploadError"));
+        }
       } else {
         setImages((prev) => [...prev, row as SectionImage]);
       }
