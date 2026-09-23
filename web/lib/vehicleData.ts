@@ -523,6 +523,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Elettrica 88cv", yearFrom: 2025, yearTo: null },
         { label: "Elettrica 156cv", yearFrom: 2025, yearTo: null },
       ],
+      "Sealion 7": [
+        { label: "Elettrica RWD 313cv", yearFrom: 2024, yearTo: null },
+        { label: "Elettrica AWD 530cv", yearFrom: 2024, yearTo: null },
+      ],
     },
     Chevrolet: {
       Aveo: [{ label: "1.2 16v 86cv", yearFrom: 2011, yearTo: 2015 }],
@@ -1520,6 +1524,8 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Elettrica 204cv", yearFrom: 2023, yearTo: null },
         { label: "GT-Line 384cv", yearFrom: 2023, yearTo: null },
       ],
+      EV3: [{ label: "Elettrica 204cv", yearFrom: 2024, yearTo: null }],
+      EV5: [{ label: "Elettrica 218cv", yearFrom: 2026, yearTo: null }],
       ProCeed: [
         { label: "1.4 T-GDI 140cv", yearFrom: 2018, yearTo: null },
         { label: "GT 1.6 T-GDI 204cv", yearFrom: 2019, yearTo: 2024 },
