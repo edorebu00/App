@@ -11,6 +11,14 @@ import { clampText, isUuid } from "@/lib/validation";
 
 export const maxDuration = 90;
 
+// Tempi massimi delle chiamate ai modelli, scelti per restare dentro `maxDuration`: nel caso
+// peggiore (Anthropic scade, poi scade anche il ripiego OpenAI) 40 s + 35 s = 75 s, piu' i
+// salvataggi su database, < 90 s. Senza questi valori l'SDK aspetterebbe fino a 10 minuti con
+// ritentativi automatici e la piattaforma interromperebbe la funzione prima del ripiego.
+const ANTHROPIC_TIMEOUT_MS = 40_000;
+const ANTHROPIC_MAX_RETRIES = 0;
+const OPENAI_TIMEOUT_MS = 35_000;
+
 // Budget di caratteri per il contesto documentale iniettato nel prompt (MVP senza embeddings/vector DB)
 const MAX_CONTEXT_CHARS = 250_000;
 const HISTORY_LIMIT = 20;
@@ -60,14 +68,17 @@ function toAlternatingMessages(items: ChatHistoryItem[]): ChatHistoryItem[] {
 // l'utente non vede un errore. Scatta solo se OPENAI_API_KEY e' configurata.
 async function chatWithOpenAI(systemPrompt: string, messages: ChatHistoryItem[]) {
   const openai = getOpenAIClient();
-  const completion = await openai.chat.completions.create({
-    model: OPENAI_MODEL,
-    max_tokens: 2048,
-    messages: [
-      { role: "system", content: systemPrompt },
-      ...messages.map((m) => ({ role: m.role, content: m.content })),
-    ],
-  });
+  const completion = await openai.chat.completions.create(
+    {
+      model: OPENAI_MODEL,
+      max_tokens: 2048,
+      messages: [
+        { role: "system", content: systemPrompt },
+        ...messages.map((m) => ({ role: m.role, content: m.content })),
+      ],
+    },
+    { timeout: OPENAI_TIMEOUT_MS, maxRetries: 0 }
+  );
   return completion.choices[0]?.message?.content || "Non sono riuscito a generare una risposta.";
 }
 
@@ -193,24 +204,27 @@ export async function POST(request: Request) {
     let reply: string;
     try {
       const anthropic = getAnthropicClient();
-      const response = await anthropic.messages.create({
-        model: CLAUDE_MODEL,
-        // `max_tokens` e' un tetto su ragionamento PIU' risposta, non sulla sola risposta. I
-        // 2048 di prima erano tarati su un modello che non ragionava: con il ragionamento
-        // adattivo acceso di default il modello poteva consumarne buona parte e lasciare una
-        // risposta mozza, o nessuna risposta affatto. Il margine non si paga se non si usa.
-        max_tokens: 4096,
-        // Vedi EFFORT: qui non impostarlo significava `high`, cioe' pagare a tariffa di output
-        // un ragionamento lungo per rispondere a una domanda su un manuale.
-        output_config: { effort: EFFORT.chat },
-        system: systemBlocks,
-        // La conversazione cresce a ogni turno: la cache automatica segue la coda e sposta da sé
-        // il punto di cache sull'ultimo blocco, così ogni turno rilegge quelli precedenti.
-        // Il TTL deve combaciare con quello del blocco di sistema, altrimenti la API rifiuta
-        // la richiesta.
-        cache_control: { type: "ephemeral", ttl: "1h" },
-        messages,
-      });
+      const response = await anthropic.messages.create(
+        {
+          model: CLAUDE_MODEL,
+          // `max_tokens` e' un tetto su ragionamento PIU' risposta, non sulla sola risposta. I
+          // 2048 di prima erano tarati su un modello che non ragionava: con il ragionamento
+          // adattivo acceso di default il modello poteva consumarne buona parte e lasciare una
+          // risposta mozza, o nessuna risposta affatto. Il margine non si paga se non si usa.
+          max_tokens: 4096,
+          // Vedi EFFORT: qui non impostarlo significava `high`, cioe' pagare a tariffa di output
+          // un ragionamento lungo per rispondere a una domanda su un manuale.
+          output_config: { effort: EFFORT.chat },
+          system: systemBlocks,
+          // La conversazione cresce a ogni turno: la cache automatica segue la coda e sposta da sé
+          // il punto di cache sull'ultimo blocco, così ogni turno rilegge quelli precedenti.
+          // Il TTL deve combaciare con quello del blocco di sistema, altrimenti la API rifiuta
+          // la richiesta.
+          cache_control: { type: "ephemeral", ttl: "1h" },
+          messages,
+        },
+        { timeout: ANTHROPIC_TIMEOUT_MS, maxRetries: ANTHROPIC_MAX_RETRIES }
+      );
 
       logTokenUsage("chat", response.usage);
 
