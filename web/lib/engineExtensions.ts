@@ -842,6 +842,14 @@ export const ENGINE_EXTENSIONS: Partial<
       ],
       Favorit: [{ label: "1.3 54cv", yearFrom: 1987, yearTo: 1995 }],
     },
+
+    Leapmotor: {
+      C10: [
+        { label: "Elettrica RWD 218cv", yearFrom: 2024, yearTo: null },
+        { label: "Elettrica AWD 598cv", yearFrom: 2026, yearTo: null },
+      ],
+      T03: [{ label: "Elettrica 95cv", yearFrom: 2024, yearTo: null }],
+    },
   },
 
   moto: {

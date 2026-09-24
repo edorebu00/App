@@ -58,7 +58,7 @@ export async function POST(request: Request) {
   // La RLS limita gia' la select ai documenti dell'utente: un id altrui non restituisce righe.
   const { data: doc, error: fetchError } = await supabase
     .from("documents")
-    .select("id, file_name, storage_path, mime_type, size_bytes, processed, extracted_text")
+    .select("id, file_name, storage_path, mime_type, size_bytes, processed")
     .eq("id", documentId)
     .maybeSingle();
 
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
   // lavoro vorrebbe dire riscaricare l'oggetto dallo Storage e rianalizzare il PDF per riscrivere
   // lo stesso testo estratto.
   if (doc.processed) {
-    return NextResponse.json({ ok: true, characters: (doc.extracted_text || "").length });
+    return NextResponse.json({ ok: true });
   }
 
   const isPdf = doc.mime_type === "application/pdf" || doc.file_name.toLowerCase().endsWith(".pdf");

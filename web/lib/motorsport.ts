@@ -48,6 +48,8 @@ const MAX_WEB_SEARCHES = 1;
  * ne avvierebbe una nuova, e la home è pubblica.
  */
 const FAILURE_PAUSE_MS = 120_000;
+/** Generazione in corso per lingua, condivisa dalle visite che arrivano nel frattempo. */
+const inFlight = new Map<Locale, Promise<MotorsportBriefing>>();
 
 const SUBMIT_BRIEFING_TOOL: Anthropic.Tool = {
   name: "submit_briefing",
@@ -178,15 +180,27 @@ export async function getMotorsportBriefing(locale: Locale): Promise<MotorsportB
   // la visita successiva vedrebbe il riquadro vuoto pur avendo un risultato buono in cache.
   if (isRateLimited(failureKey, 1)) return EMPTY;
 
-  try {
-    return await unstable_cache(() => fetchBriefing(locale), ["motorsport-briefing", locale], {
-      revalidate: CACHE_SECONDS,
-      tags: ["motorsport-briefing"],
-    })();
-  } catch (err) {
-    // La home deve restare in piedi anche senza: la sezione semplicemente non compare.
-    console.error("Riquadro motorsport non disponibile:", err);
-    checkRateLimit(failureKey, 1, FAILURE_PAUSE_MS);
-    return EMPTY;
-  }
+  // `unstable_cache` non riunisce le richieste contemporanee: finche' una generazione e' in corso
+  // le visite che arrivano la attendono invece di avviarne un'altra.
+  const pending = inFlight.get(locale);
+  if (pending) return pending;
+
+  const promise = (async () => {
+    try {
+      return await unstable_cache(() => fetchBriefing(locale), ["motorsport-briefing", locale], {
+        revalidate: CACHE_SECONDS,
+        tags: ["motorsport-briefing"],
+      })();
+    } catch (err) {
+      // La home deve restare in piedi anche senza: la sezione semplicemente non compare.
+      console.error("Riquadro motorsport non disponibile:", err);
+      checkRateLimit(failureKey, 1, FAILURE_PAUSE_MS);
+      return EMPTY;
+    }
+  })();
+  inFlight.set(locale, promise);
+  // La voce si toglie dopo averla inserita: cosi' resta corretto anche se il blocco sopra si
+  // conclude subito. La promessa non viene mai rifiutata (il `catch` restituisce `EMPTY`).
+  void promise.finally(() => inFlight.delete(locale));
+  return promise;
 }

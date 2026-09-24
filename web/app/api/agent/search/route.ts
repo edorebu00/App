@@ -8,12 +8,19 @@ import { LOCALE_LANGUAGE_NAME, resolveLocale, type Locale } from "@/i18n/locales
 import { checkRateLimit, checkSharedRateLimit, rateWindowStart } from "@/lib/rateLimit";
 import { clampText, isUuid } from "@/lib/validation";
 import { MAX_RISORSE, sanitizePayload } from "@/lib/searchPayload";
-import type { SearchPayload } from "@/lib/types";
+import { RESOURCE_CATEGORIES, type SearchPayload } from "@/lib/types";
 
 // La ricerca fa alcune chiamate allo strumento web_search piu' l'eventuale retry: teniamo un
 // margine oltre alla durata attesa (~20-50s per tentativo), il piano Hobby di Vercel supporta
 // funzioni fino a 300s.
 export const maxDuration = 180;
+
+// Timeout per ogni chiamata ai modelli, senza ritentativi automatici dell'SDK: nel caso peggiore
+// (primo tentativo Anthropic + ritentativo + ripiego OpenAI) 65 + 45 + 50 = 160 s < 180 s, cosi'
+// il ritentativo e il ripiego hanno sempre il tempo di partire prima di maxDuration.
+const ANTHROPIC_SEARCH_TIMEOUT_MS = 65_000;
+const ANTHROPIC_RETRY_TIMEOUT_MS = 45_000;
+const OPENAI_SEARCH_TIMEOUT_MS = 50_000;
 
 /** La query finisce nel prompt: un tetto evita richieste enormi (e costose) verso i modelli. */
 const MAX_QUERY_CHARS = 200;
@@ -66,7 +73,7 @@ const SUBMIT_FINDINGS_TOOL: Anthropic.Tool = {
           properties: {
             categoria: {
               type: "string",
-              enum: ["forum", "manuale_pdf", "video", "schema_tecnico", "pezzo_ricambio", "catalogo_ricambi", "piano_manutenzione", "altro"],
+              enum: [...RESOURCE_CATEGORIES],
             },
             sezione: {
               type: "string",
@@ -217,7 +224,7 @@ async function searchWithOpenAI(systemPrompt: string, userContent: string): Prom
       { role: "system", content: `${systemPrompt}\n\nTermina la risposta con un blocco \`\`\`json\`\`\` contenente un oggetto {"summary": "...", "risorse": [...], "specifiche": {...}, "bollo": "..."} (campo "bollo" omesso se non stimabile).` },
       { role: "user", content: userContent },
     ],
-  });
+  }, { timeout: OPENAI_SEARCH_TIMEOUT_MS, maxRetries: 0 });
   return response.output_text || "";
 }
 
@@ -225,7 +232,8 @@ async function searchWithOpenAI(systemPrompt: string, userContent: string): Prom
 async function callAnthropicSearch(
   userContent: string,
   systemBlocks: Anthropic.TextBlockParam[],
-  maxSearches: number
+  maxSearches: number,
+  timeoutMs: number
 ) {
   const anthropic = getAnthropicClient();
   const message = await anthropic.messages.create({
@@ -249,7 +257,7 @@ async function callAnthropicSearch(
       },
       SUBMIT_FINDINGS_TOOL,
     ],
-  });
+  }, { timeout: timeoutMs, maxRetries: 0 });
 
   logTokenUsage(`ricerca (max ${maxSearches} web search)`, message.usage);
 
@@ -408,7 +416,12 @@ export async function POST(request: Request) {
     let anthropicThrew = false;
 
     try {
-      const first = await callAnthropicSearch(userContent, searchSystemBlocks, MAX_WEB_SEARCHES);
+      const first = await callAnthropicSearch(
+        userContent,
+        searchSystemBlocks,
+        MAX_WEB_SEARCHES,
+        ANTHROPIC_SEARCH_TIMEOUT_MS
+      );
       payload = first.payload;
       summary = first.summary;
       stopReason = first.stopReason;
@@ -426,7 +439,8 @@ export async function POST(request: Request) {
           `${userContent}\n\n(Il tentativo precedente si e' interrotto prima di completare. Sii piu' conciso: ` +
             'massimo 5 risorse e specifiche solo per "motore", poi chiama SUBITO submit_findings.)',
           searchSystemBlocks,
-          MAX_WEB_SEARCHES_RETRY
+          MAX_WEB_SEARCHES_RETRY,
+          ANTHROPIC_RETRY_TIMEOUT_MS
         );
         payload = retry.payload;
         summary = retry.summary;

@@ -374,6 +374,7 @@
     "saving": "Saving…",
     "saved": "Saved ✓",
     "saveError": "Save failed: your changes were not recorded, please try again.",
+    "duplicateFieldName": "Two fields have the same name: rename one of them before saving.",
     "uploadedSchemesLabel": "Diagrams you've uploaded",
     "uploadImage": "Upload image",
     "uploading": "Uploading…",
