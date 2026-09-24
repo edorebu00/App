@@ -1092,6 +1092,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Elettrica 231cv", yearFrom: 2021, yearTo: null },
         { label: "VZ Elettrica 326cv", yearFrom: 2024, yearTo: null },
       ],
+      Raval: [
+        { label: "Elettrica Edge Plus 211cv", yearFrom: 2026, yearTo: null },
+        { label: "Elettrica VZ 226cv", yearFrom: 2026, yearTo: null },
+      ],
       Ateca: [
         { label: "2.0 TSI 300cv", yearFrom: 2019, yearTo: null },
         { label: "2.0 TDI 190cv", yearFrom: 2019, yearTo: null },
@@ -1117,6 +1121,11 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.3 TCe 150cv", yearFrom: 2018, yearTo: null },
         { label: "1.5 dCi 115cv", yearFrom: 2018, yearTo: 2022 },
         { label: "1.6 Hybrid 140cv", yearFrom: 2024, yearTo: null },
+      ],
+      Bigster: [
+        { label: "1.2 TCe 140cv", yearFrom: 2025, yearTo: null },
+        { label: "1.2 TCe 4x4 130cv", yearFrom: 2025, yearTo: null },
+        { label: "1.8 Hybrid 155cv", yearFrom: 2025, yearTo: null },
       ],
       Jogger: [
         { label: "1.0 TCe 110cv", yearFrom: 2022, yearTo: null },
@@ -1411,6 +1420,10 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Elettrica 229cv", yearFrom: 2022, yearTo: null },
         { label: "N Elettrica 650cv", yearFrom: 2025, yearTo: null },
       ],
+      Inster: [
+        { label: "Elettrica Standard Range 97cv", yearFrom: 2025, yearTo: null },
+        { label: "Elettrica Long Range 115cv", yearFrom: 2025, yearTo: null },
+      ],
       i40: [{ label: "1.7 CRDi 136cv", yearFrom: 2011, yearTo: 2019 }],
       Atos: [{ label: "1.0 55cv", yearFrom: 1998, yearTo: 2008 }],
       Coupe: [{ label: "2.0 16v 143cv", yearFrom: 1996, yearTo: 2009 }],
@@ -1525,6 +1538,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "GT-Line 384cv", yearFrom: 2023, yearTo: null },
       ],
       EV3: [{ label: "Elettrica 204cv", yearFrom: 2024, yearTo: null }],
+      EV4: [{ label: "Elettrica 204cv", yearFrom: 2025, yearTo: null }],
       EV5: [{ label: "Elettrica 218cv", yearFrom: 2026, yearTo: null }],
       ProCeed: [
         { label: "1.4 T-GDI 140cv", yearFrom: 2018, yearTo: null },
