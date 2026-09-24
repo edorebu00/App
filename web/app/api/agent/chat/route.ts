@@ -13,11 +13,13 @@ export const maxDuration = 90;
 
 // Tempi massimi delle chiamate ai modelli, scelti per restare dentro `maxDuration`: nel caso
 // peggiore (Anthropic scade, poi scade anche il ripiego OpenAI) 40 s + 35 s = 75 s, piu' i
-// salvataggi su database, < 90 s. Senza questi valori l'SDK aspetterebbe fino a 10 minuti con
+// salvataggi su database, < 90 s. Senza ripiego OpenAI configurato la sua quota va ad Anthropic:
+// 75 s, piu' i salvataggi, < 90 s. Senza questi valori l'SDK aspetterebbe fino a 10 minuti con
 // ritentativi automatici e la piattaforma interromperebbe la funzione prima del ripiego.
 const ANTHROPIC_TIMEOUT_MS = 40_000;
 const ANTHROPIC_MAX_RETRIES = 0;
 const OPENAI_TIMEOUT_MS = 35_000;
+const ANTHROPIC_TIMEOUT_NO_FALLBACK_MS = ANTHROPIC_TIMEOUT_MS + OPENAI_TIMEOUT_MS;
 
 // Budget di caratteri per il contesto documentale iniettato nel prompt (MVP senza embeddings/vector DB)
 const MAX_CONTEXT_CHARS = 250_000;
@@ -223,7 +225,10 @@ export async function POST(request: Request) {
           cache_control: { type: "ephemeral", ttl: "1h" },
           messages,
         },
-        { timeout: ANTHROPIC_TIMEOUT_MS, maxRetries: ANTHROPIC_MAX_RETRIES }
+        {
+          timeout: hasOpenAIFallback() ? ANTHROPIC_TIMEOUT_MS : ANTHROPIC_TIMEOUT_NO_FALLBACK_MS,
+          maxRetries: ANTHROPIC_MAX_RETRIES,
+        }
       );
 
       logTokenUsage("chat", response.usage);
