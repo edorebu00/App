@@ -17,10 +17,12 @@ export const maxDuration = 180;
 
 // Timeout per ogni chiamata ai modelli, senza ritentativi automatici dell'SDK: nel caso peggiore
 // (primo tentativo Anthropic + ritentativo + ripiego OpenAI) 65 + 45 + 50 = 160 s < 180 s, cosi'
-// il ritentativo e il ripiego hanno sempre il tempo di partire prima di maxDuration.
+// il ritentativo e il ripiego hanno sempre il tempo di partire prima di maxDuration. Senza ripiego
+// OpenAI configurato la sua quota va al primo tentativo: 115 + 45 = 160 s < 180 s.
 const ANTHROPIC_SEARCH_TIMEOUT_MS = 65_000;
 const ANTHROPIC_RETRY_TIMEOUT_MS = 45_000;
 const OPENAI_SEARCH_TIMEOUT_MS = 50_000;
+const ANTHROPIC_SEARCH_TIMEOUT_NO_FALLBACK_MS = ANTHROPIC_SEARCH_TIMEOUT_MS + OPENAI_SEARCH_TIMEOUT_MS;
 
 /** La query finisce nel prompt: un tetto evita richieste enormi (e costose) verso i modelli. */
 const MAX_QUERY_CHARS = 200;
@@ -420,7 +422,7 @@ export async function POST(request: Request) {
         userContent,
         searchSystemBlocks,
         MAX_WEB_SEARCHES,
-        ANTHROPIC_SEARCH_TIMEOUT_MS
+        hasOpenAIFallback() ? ANTHROPIC_SEARCH_TIMEOUT_MS : ANTHROPIC_SEARCH_TIMEOUT_NO_FALLBACK_MS
       );
       payload = first.payload;
       summary = first.summary;

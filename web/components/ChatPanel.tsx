@@ -54,14 +54,18 @@ export default function ChatPanel({
       });
       // Un timeout o un errore della piattaforma (502/504) risponde con una pagina non JSON: il
       // server pero' ha ricevuto la richiesta e la riga dell'utente puo' essere gia' salvata,
-      // quindi in quel caso la bolla resta al suo posto.
+      // quindi in quel caso la bolla resta al suo posto. Diverso e' il caso di una richiesta
+      // reindirizzata (sessione scaduta, rimandata a /login) o di una risposta riuscita ma non
+      // JSON: la route risponde sempre in JSON, quindi la richiesta non l'ha raggiunta e nulla e'
+      // stato salvato; la bolla va tolta e il testo rimesso nel campo.
       const data = await res.json().catch(() => null);
 
-      if (!res.ok) {
+      if (res.redirected || (res.ok && data === null)) {
+        setError(t("errorGeneric"));
+        restoreUnsent();
+      } else if (!res.ok) {
         setError(data?.error || t("errorGeneric"));
         if (data !== null && !data.userMessageSaved) restoreUnsent();
-      } else if (data === null) {
-        setError(t("errorGeneric"));
       } else {
         setMessages((prev) => [
           ...prev,

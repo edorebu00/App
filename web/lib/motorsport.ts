@@ -38,7 +38,7 @@ const MAX_NEWS = 4;
 const MAX_TEXT_CHARS = 300;
 /** Una chiamata al giorno per lingua: e' il compromesso fra freschezza e costo a consumo. */
 const CACHE_SECONDS = 86_400;
-/** Oltre questo tempo si rinuncia: la home non deve restare appesa a una ricerca lenta. */
+/** Oltre questo tempo si rinuncia (un solo tentativo): la home non deve restare appesa a una ricerca lenta. */
 const REQUEST_TIMEOUT_MS = 60_000;
 /** Una sola ricerca: solo le notizie passano dal modello, il calendario è un link statico. */
 const MAX_WEB_SEARCHES = 1;
@@ -156,7 +156,9 @@ async function fetchBriefing(locale: Locale): Promise<MotorsportBriefing> {
       ],
       tools: [{ type: "web_search_20260209", name: "web_search", max_uses: MAX_WEB_SEARCHES }, SUBMIT_BRIEFING_TOOL],
     },
-    { timeout: REQUEST_TIMEOUT_MS }
+    // Nessun ritentativo automatico dell'SDK: ognuno ripeterebbe la ricerca web a consumo e
+    // terrebbe le visite in attesa della generazione condivisa oltre REQUEST_TIMEOUT_MS.
+    { timeout: REQUEST_TIMEOUT_MS, maxRetries: 0 }
   );
 
   logTokenUsage(`home motorsport (${locale})`, message.usage);
