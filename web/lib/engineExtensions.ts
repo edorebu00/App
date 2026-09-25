@@ -788,10 +788,6 @@ export const ENGINE_EXTENSIONS: Partial<
         { label: "1.4 75cv", yearFrom: 2003, yearTo: 2005 },
         { label: "1.9 D 63cv", yearFrom: 2003, yearTo: 2005 },
       ],
-      Bigster: [
-        { label: "1.2 Hybrid 155cv", yearFrom: 2025, yearTo: null },
-        { label: "1.2 mild hybrid 140cv", yearFrom: 2025, yearTo: null },
-      ],
     },
 
     Mini: {
