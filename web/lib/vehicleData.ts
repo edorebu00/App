@@ -206,7 +206,7 @@ const CATALOGUE_EXTENSIONS: Partial<Record<VehicleType, Record<string, string[]>
     Seat: ["127", "131", "600", "850", "Cordoba", "Exeo", "Inca", "Malaga", "Marbella", "Panda", "Ronda", "Toledo"],
     SsangYong: ["Actyon", "Musso", "Rodius", "Torres"],
     Seres: ["3", "5"],
-    Škoda: ["105", "120", "1000 MB", "Elroq", "Favorit", "Felicia", "Forman", "Kushaq", "Slavia"],
+    Škoda: ["105", "120", "1000 MB", "Elroq", "Epiq", "Favorit", "Felicia", "Forman", "Kushaq", "Slavia"],
     Smart: ["#1", "#3", "Crossblade", "Roadster"],
     Subaru: ["360", "Alcyone", "Ascent", "Baja", "Justy", "Solterra", "SVX", "Tribeca", "Vivio"],
     Suzuki: ["Across", "Alto", "Cappuccino", "Celerio", "Kizashi", "Liana", "S-Presso", "Samurai", "Swace", "Wagon R+", "X-90", "e Vitara"],
@@ -633,6 +633,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       ],
       Junior: [
         { label: "1.2 Hybrid 136cv", yearFrom: 2024, yearTo: null },
+        { label: "1.2 Hybrid Q4 145cv", yearFrom: 2025, yearTo: null },
         { label: "Elettrica 156cv", yearFrom: 2024, yearTo: null },
         { label: "Elettrica Veloce 280cv", yearFrom: 2024, yearTo: null },
       ],
@@ -1540,6 +1541,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       EV3: [{ label: "Elettrica 204cv", yearFrom: 2024, yearTo: null }],
       EV4: [{ label: "Elettrica 204cv", yearFrom: 2025, yearTo: null }],
       EV5: [{ label: "Elettrica 218cv", yearFrom: 2026, yearTo: null }],
+      PV5: [{ label: "Elettrica 163cv", yearFrom: 2025, yearTo: null }],
       ProCeed: [
         { label: "1.4 T-GDI 140cv", yearFrom: 2018, yearTo: null },
         { label: "GT 1.6 T-GDI 204cv", yearFrom: 2019, yearTo: 2024 },
@@ -2207,6 +2209,11 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.6 TDI 105cv", yearFrom: 2012, yearTo: 2019 },
       ],
       Citigo: [{ label: "1.0 60cv", yearFrom: 2012, yearTo: 2019 }],
+      Epiq: [
+        { label: "Elettrica 35 116cv", yearFrom: 2026, yearTo: null },
+        { label: "Elettrica 40 135cv", yearFrom: 2026, yearTo: null },
+        { label: "Elettrica 55 211cv", yearFrom: 2026, yearTo: null },
+      ],
       Elroq: [
         { label: "Elettrica 50 170cv", yearFrom: 2024, yearTo: null },
         { label: "Elettrica 60 204cv", yearFrom: 2024, yearTo: null },
@@ -2289,6 +2296,11 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       iQ: [{ label: "1.0 VVT-i 68cv", yearFrom: 2009, yearTo: 2015 }],
       "Yaris Cross": [{ label: "1.5 Hybrid 116cv", yearFrom: 2021, yearTo: null }],
       "Corolla Cross": [{ label: "1.8 Hybrid 140cv", yearFrom: 2022, yearTo: null }],
+      "Urban Cruiser": [
+        { label: "Elettrica 49 kWh 144cv", yearFrom: 2026, yearTo: null },
+        { label: "Elettrica 61 kWh 174cv", yearFrom: 2026, yearTo: null },
+        { label: "Elettrica 61 kWh AWD 184cv", yearFrom: 2026, yearTo: null },
+      ],
       GT86: [{ label: "2.0 Boxer 200cv", yearFrom: 2012, yearTo: 2021 }],
       GR86: [{ label: "2.4 Boxer 234cv", yearFrom: 2021, yearTo: null }],
       Verso: [
