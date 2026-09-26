@@ -576,6 +576,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       MG4: [
         { label: "Elettrica Standard 170cv", yearFrom: 2022, yearTo: null },
         { label: "Elettrica Extended 245cv", yearFrom: 2022, yearTo: null },
+        { label: "XPower Elettrica 435cv", yearFrom: 2023, yearTo: null },
       ],
       MG3: [{ label: "1.5 Hybrid+ 194cv", yearFrom: 2023, yearTo: null }],
     },
@@ -1261,7 +1262,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Hybrid 110cv", yearFrom: 2024, yearTo: null },
         { label: "Elettrica 113cv", yearFrom: 2024, yearTo: null },
       ],
-      Topolino: [{ label: "Elettrica quadriciclo 3cv (45 km/h)", yearFrom: 2023, yearTo: null }],
+      Topolino: [{ label: "Elettrica quadriciclo 8cv (45 km/h)", yearFrom: 2023, yearTo: null }],
       Grizzly: [
         { label: "1.2 Turbo Benzina 100cv", yearFrom: 2026, yearTo: null },
         { label: "Hybrid 110cv", yearFrom: 2026, yearTo: null },
@@ -2007,6 +2008,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       "508": [
         { label: "1.6 PureTech 225cv", yearFrom: 2018, yearTo: null },
         { label: "2.0 BlueHDi 160cv", yearFrom: 2018, yearTo: null },
+        { label: "PSE Hybrid 360cv", yearFrom: 2020, yearTo: 2024 },
       ],
     },
     Porsche: {
@@ -2301,6 +2303,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       ],
       GT86: [{ label: "2.0 Boxer 200cv", yearFrom: 2012, yearTo: 2021 }],
       GR86: [{ label: "2.4 Boxer 234cv", yearFrom: 2021, yearTo: null }],
+      "GR Corolla": [{ label: "1.6 Turbo 300cv", yearFrom: 2023, yearTo: null }],
       Verso: [
         { label: "1.8 147cv", yearFrom: 2009, yearTo: 2018 },
         { label: "2.0 D-4D 126cv", yearFrom: 2009, yearTo: 2018 },
