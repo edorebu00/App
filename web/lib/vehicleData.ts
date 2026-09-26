@@ -575,6 +575,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       ],
       MG4: [
         { label: "Elettrica Standard 170cv", yearFrom: 2022, yearTo: null },
+        { label: "Elettrica Long Range 204cv", yearFrom: 2022, yearTo: null },
         { label: "Elettrica Extended 245cv", yearFrom: 2022, yearTo: null },
         { label: "XPower Elettrica 435cv", yearFrom: 2023, yearTo: null },
       ],
@@ -1128,6 +1129,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.2 TCe 140cv", yearFrom: 2025, yearTo: null },
         { label: "1.2 TCe 4x4 130cv", yearFrom: 2025, yearTo: null },
         { label: "1.8 Hybrid 155cv", yearFrom: 2025, yearTo: null },
+        { label: "1.2 TCe ECO-G 140cv GPL", yearFrom: 2025, yearTo: null },
       ],
       Jogger: [
         { label: "1.0 TCe 110cv", yearFrom: 2022, yearTo: null },
@@ -2006,6 +2008,16 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Hybrid 225cv", yearFrom: 2022, yearTo: null },
       ],
       "508": [
+        { label: "1.6 VTi 120cv", yearFrom: 2010, yearTo: 2014 },
+        { label: "1.6 THP 156cv", yearFrom: 2010, yearTo: 2018 },
+        { label: "1.6 e-HDi 112cv", yearFrom: 2011, yearTo: 2014 },
+        { label: "2.0 HDi 140cv", yearFrom: 2010, yearTo: 2014 },
+        { label: "2.0 HDi 163cv", yearFrom: 2010, yearTo: 2014 },
+        { label: "2.2 HDi 204cv", yearFrom: 2011, yearTo: 2014 },
+        { label: "2.0 HDi Hybrid4 200cv", yearFrom: 2012, yearTo: 2018 },
+        { label: "1.6 BlueHDi 120cv", yearFrom: 2014, yearTo: 2018 },
+        { label: "2.0 BlueHDi 150cv", yearFrom: 2014, yearTo: 2018 },
+        { label: "2.0 BlueHDi 180cv", yearFrom: 2014, yearTo: 2018 },
         { label: "1.6 PureTech 225cv", yearFrom: 2018, yearTo: null },
         { label: "2.0 BlueHDi 160cv", yearFrom: 2018, yearTo: null },
         { label: "PSE Hybrid 360cv", yearFrom: 2020, yearTo: 2024 },
@@ -2303,7 +2315,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       ],
       GT86: [{ label: "2.0 Boxer 200cv", yearFrom: 2012, yearTo: 2021 }],
       GR86: [{ label: "2.4 Boxer 234cv", yearFrom: 2021, yearTo: null }],
-      "GR Corolla": [{ label: "1.6 Turbo 300cv", yearFrom: 2023, yearTo: null }],
+      "GR Corolla": [{ label: "1.6 Turbo 300cv", yearFrom: 2022, yearTo: null }],
       Verso: [
         { label: "1.8 147cv", yearFrom: 2009, yearTo: 2018 },
         { label: "2.0 D-4D 126cv", yearFrom: 2009, yearTo: 2018 },
