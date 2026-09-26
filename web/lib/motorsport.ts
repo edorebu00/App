@@ -93,12 +93,17 @@ function buildSystemPrompt(language: string) {
   );
 }
 
-function extractBriefing(content: Anthropic.ContentBlock[]): MotorsportBriefing {
+function extractBriefing(content: Anthropic.ContentBlock[], stopReason: string | null): MotorsportBriefing {
   const toolUse = [...content]
     .reverse()
     .find((b): b is Anthropic.ToolUseBlock => b.type === "tool_use" && b.name === "submit_briefing");
 
-  if (!toolUse || typeof toolUse.input !== "object" || toolUse.input === null) return EMPTY;
+  // Senza submit_briefing (tetto di token, pausa, sola risposta testuale) non c'e' un riquadro da
+  // conservare: l'errore evita che la cache tenga l'elenco vuoto per 24 ore e fa scattare la pausa
+  // con nuovo tentativo. Un submit_briefing con `news: []` resta invece un risultato valido.
+  if (!toolUse || typeof toolUse.input !== "object" || toolUse.input === null) {
+    throw new Error(`Risposta senza submit_briefing (stop_reason: ${stopReason ?? "sconosciuto"})`);
+  }
   const input = toolUse.input as Record<string, unknown>;
 
   const news: MotorsportNews[] = [];
@@ -162,7 +167,7 @@ async function fetchBriefing(locale: Locale): Promise<MotorsportBriefing> {
   );
 
   logTokenUsage(`home motorsport (${locale})`, message.usage);
-  return extractBriefing(message.content);
+  return extractBriefing(message.content, message.stop_reason);
 }
 
 /**
