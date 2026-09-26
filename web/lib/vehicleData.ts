@@ -576,6 +576,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       MG4: [
         { label: "Elettrica Standard 170cv", yearFrom: 2022, yearTo: null },
         { label: "Elettrica Extended 245cv", yearFrom: 2022, yearTo: null },
+        { label: "XPower Elettrica 435cv", yearFrom: 2023, yearTo: null },
       ],
       MG3: [{ label: "1.5 Hybrid+ 194cv", yearFrom: 2023, yearTo: null }],
     },
@@ -1261,7 +1262,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "Hybrid 110cv", yearFrom: 2024, yearTo: null },
         { label: "Elettrica 113cv", yearFrom: 2024, yearTo: null },
       ],
-      Topolino: [{ label: "Elettrica quadriciclo 3cv (45 km/h)", yearFrom: 2023, yearTo: null }],
+      Topolino: [{ label: "Elettrica quadriciclo 8cv (45 km/h)", yearFrom: 2023, yearTo: null }],
       Grizzly: [
         { label: "1.2 Turbo Benzina 100cv", yearFrom: 2026, yearTo: null },
         { label: "Hybrid 110cv", yearFrom: 2026, yearTo: null },
@@ -1420,10 +1421,6 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       "Ioniq 6": [
         { label: "Elettrica 229cv", yearFrom: 2022, yearTo: null },
         { label: "N Elettrica 650cv", yearFrom: 2025, yearTo: null },
-      ],
-      Inster: [
-        { label: "Elettrica Standard Range 97cv", yearFrom: 2025, yearTo: null },
-        { label: "Elettrica Long Range 115cv", yearFrom: 2025, yearTo: null },
       ],
       i40: [{ label: "1.7 CRDi 136cv", yearFrom: 2011, yearTo: 2019 }],
       Atos: [{ label: "1.0 55cv", yearFrom: 1998, yearTo: 2008 }],
@@ -2011,6 +2008,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       "508": [
         { label: "1.6 PureTech 225cv", yearFrom: 2018, yearTo: null },
         { label: "2.0 BlueHDi 160cv", yearFrom: 2018, yearTo: null },
+        { label: "PSE Hybrid 360cv", yearFrom: 2020, yearTo: 2024 },
       ],
     },
     Porsche: {
@@ -2297,12 +2295,15 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       "Yaris Cross": [{ label: "1.5 Hybrid 116cv", yearFrom: 2021, yearTo: null }],
       "Corolla Cross": [{ label: "1.8 Hybrid 140cv", yearFrom: 2022, yearTo: null }],
       "Urban Cruiser": [
-        { label: "Elettrica 49 kWh 144cv", yearFrom: 2026, yearTo: null },
-        { label: "Elettrica 61 kWh 174cv", yearFrom: 2026, yearTo: null },
-        { label: "Elettrica 61 kWh AWD 184cv", yearFrom: 2026, yearTo: null },
+        { label: "1.33 Dual VVT-i 101cv", yearFrom: 2009, yearTo: 2014 },
+        { label: "1.4 D-4D 90cv", yearFrom: 2009, yearTo: 2014 },
+        { label: "Elettrica 49 kWh 144cv", yearFrom: 2025, yearTo: null },
+        { label: "Elettrica 61 kWh 174cv", yearFrom: 2025, yearTo: null },
+        { label: "Elettrica 61 kWh AWD 184cv", yearFrom: 2025, yearTo: null },
       ],
       GT86: [{ label: "2.0 Boxer 200cv", yearFrom: 2012, yearTo: 2021 }],
       GR86: [{ label: "2.4 Boxer 234cv", yearFrom: 2021, yearTo: null }],
+      "GR Corolla": [{ label: "1.6 Turbo 300cv", yearFrom: 2023, yearTo: null }],
       Verso: [
         { label: "1.8 147cv", yearFrom: 2009, yearTo: 2018 },
         { label: "2.0 D-4D 126cv", yearFrom: 2009, yearTo: 2018 },
