@@ -42,6 +42,11 @@ export async function middleware(request: NextRequest) {
     PUBLIC_PREFIX_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
 
   if (!user && !isPublic) {
+    // Le API rispondono in JSON: un rinvio alla pagina di login darebbe al chiamante una pagina HTML
+    // che non puo' leggere, mentre un 401 gli permette di mostrare l'errore di sessione.
+    if (request.nextUrl.pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
