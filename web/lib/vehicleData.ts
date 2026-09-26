@@ -575,6 +575,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       ],
       MG4: [
         { label: "Elettrica Standard 170cv", yearFrom: 2022, yearTo: null },
+        { label: "Elettrica Long Range 204cv", yearFrom: 2022, yearTo: null },
         { label: "Elettrica Extended 245cv", yearFrom: 2022, yearTo: null },
         { label: "XPower Elettrica 435cv", yearFrom: 2023, yearTo: null },
       ],
@@ -1128,6 +1129,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
         { label: "1.2 TCe 140cv", yearFrom: 2025, yearTo: null },
         { label: "1.2 TCe 4x4 130cv", yearFrom: 2025, yearTo: null },
         { label: "1.8 Hybrid 155cv", yearFrom: 2025, yearTo: null },
+        { label: "1.2 TCe ECO-G 140cv GPL", yearFrom: 2025, yearTo: null },
       ],
       Jogger: [
         { label: "1.0 TCe 110cv", yearFrom: 2022, yearTo: null },
@@ -2303,7 +2305,7 @@ const ENGINE_DATA: Record<VehicleType, Record<string, Record<string, EngineVaria
       ],
       GT86: [{ label: "2.0 Boxer 200cv", yearFrom: 2012, yearTo: 2021 }],
       GR86: [{ label: "2.4 Boxer 234cv", yearFrom: 2021, yearTo: null }],
-      "GR Corolla": [{ label: "1.6 Turbo 300cv", yearFrom: 2023, yearTo: null }],
+      "GR Corolla": [{ label: "1.6 Turbo 300cv", yearFrom: 2022, yearTo: null }],
       Verso: [
         { label: "1.8 147cv", yearFrom: 2009, yearTo: 2018 },
         { label: "2.0 D-4D 126cv", yearFrom: 2009, yearTo: 2018 },
